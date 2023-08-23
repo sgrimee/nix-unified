@@ -4,7 +4,11 @@
     enableZshIntegration = true;
     enableBashIntegration = true;
     settings = {
-      format = "[](#9A348E)$os$username[](bg:#DA627D fg:#9A348E)$directory[](fg:#DA627D bg:#FCA17D)$git_branch$git_status[](fg:#FCA17D bg:#86BBD8)$c$elixir$elm$golang$gradle$haskell$java$julia$nodejs$nim$rust$scala[](fg:#86BBD8 bg:#06969A)$docker_context[](fg:#06969A bg:#33658A)$custom[ ](fg:#33658A)";
+      #format = "[](#9A348E)$os$username[](bg:#DA627D fg:#9A348E)$directory[](fg:#DA627D bg:#FCA17D)$git_branch$git_status[](fg:#FCA17D bg:#86BBD8)$c$elixir$elm$golang$gradle$haskell$java$julia$nodejs$nim$rust$scala[](fg:#86BBD8 bg:#06969A)$docker_context[](fg:#06969A bg:#33658A)$custom[ ](fg:#33658A)";
+      format = "$all$directory$character";
+
+      # Change command timeout from 500 to 1000 ms
+      command_timeout = 1000;
 
       continuation_prompt = "󱞩 ";
 
@@ -14,6 +18,17 @@
       };
 
       status.disabled = false;
+
+      hostname = {
+        ssh_only = false;
+        format = "on [$hostname](bold yellow) ";
+        disabled = false;
+      };
+
+      kubernetes = {
+        format = "via [ ﴱ $context\($namespace\) ] (bold purple) ";
+        disabled = false;
+      };
 
       # You can also replace your username with a neat symbol like   or disable this
       # and use the os module below
@@ -29,15 +44,19 @@
       # represents the current operating system
       os = {
         style = "bg:#9A348E";
-        disabled = true; # Disabled by default
+        disabled = false; # Disabled by default
       };
 
       directory = {
+        #format = "[ $path ]($style)";
+        format = "at [$path]($style)[$read_only]($read_only_style) ";
+        home_symbol = " ~";
+        read_only = "  ";
+        read_only_style = "197";
         style = "bg:#DA627D";
-        format = "[ $path ]($style)";
+        truncate_to_repo = false;
         truncation_length = 3;
         truncation_symbol = "…/";
-        truncate_to_repo = false;
       };
 
       # Here is how you can shorten some long paths by text replacement
@@ -87,6 +106,16 @@
       git_status = {
         style = "bg:#FCA17D";
         format = "[$all_status$ahead_behind ]($style)";
+        ahead = "🏎💨";
+        behind = "😰";
+        conflicted = "🏳";
+        deleted = "🗑";
+        diverged = "😵";
+        renamed = "�";
+        staged = "[++\($count\)](green)";
+        stashed = "📦";
+        untracked = "🤷‍";
+        up_to_date = "✓";
       };
 
       golang = {
@@ -128,6 +157,14 @@
         symbol = "󰆥 ";
         style = "bg:#86BBD8";
         format = "[ $symbol ($version) ]($style)";
+      };
+
+      nix_shell = {
+        symbol = " ";
+      };
+
+      python = {
+        symbol = " ";
       };
 
       rust = {
