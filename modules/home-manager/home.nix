@@ -1,8 +1,11 @@
 { pkgs, stateVersion, ... }: {
+  imports = [
+    ./dotfiles # copy dotfiles into home
+    ./programs # install and configure applications using home-manager
+  ];
+
   home = {
     inherit stateVersion;
-
-    manual.html.enable = true;
 
     packages = with pkgs; [
       # common packages
@@ -36,8 +39,6 @@
       zip
     ];
 
-    pam.yubico.authorizedYubiKeys.ids = [ "fetchcjejtbu" ];
-
     # do not use sessionVariables for PATH modifications
     sessionVariables = {
       HOMEBREW_NO_ANALYTICS = 1; # disable homebrew analytics
@@ -53,15 +54,14 @@
 
     shellAliases = {
       sudo = "sudo "; # allow aliases to be run with sudo
-      nixup = "pushd ~/.nix; nix flake update; nixswitch; popd"; # update nix env and refresh
       cls = "clear"; # shorthand and alias to win's cls
       # mux = "tmuxinator"; # create a shell alias for tmuxinator
       # get_idf = ". $HOME/esp/esp-idf/export.sh"                                     # TODO install esp-idf somehow
     };
   };
 
-  imports = [
-    ./dotfiles # copy dotfiles into home
-    ./programs # install and configure applications using home-manager
-  ];
+  manual.html.enable = true;
+
+  pam.yubico.authorizedYubiKeys.ids = [ "fetchcjejtbu" ];
+
 }

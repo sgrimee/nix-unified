@@ -1,4 +1,4 @@
-{host}: {
+{ host, ... }: {
   imports = [
     ../hosts/${host}/system.nix
     ./apps.nix # link nix apps to fix spotlight

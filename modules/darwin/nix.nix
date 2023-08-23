@@ -1,4 +1,3 @@
-{ user, ... }:
 {
   nix = {
     # cofigure nix to use build users
@@ -18,7 +17,7 @@
       auto-optimise-store = true;
       # sandbox builds
       sandbox = true;
-      trusted-users = [ "@admin" "${user}" ];
+      #trusted-users = [ "@admin" "${user}" ];
     };
   };
 

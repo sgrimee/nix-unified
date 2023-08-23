@@ -1,11 +1,13 @@
 {
   programs.zsh = {
     enable = true;
+    autocd = false;
+    defaultKeymap = "emacs";
     enableCompletion = true;
     enableAutosuggestions = true;
     enableSyntaxHighlighting = true;
 
-    autocd = true;
+    # TODO: import the rest from the mac config
     envExtra = ''
       # initialize nix development shells with these aliases
       develop(){

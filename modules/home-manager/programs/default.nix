@@ -1,16 +1,22 @@
 {
   imports = [
     ./alacritty.nix
+    ./bat.nix
+    ./broot.nix
     ./btop.nix
     ./direnv.nix
     ./exa.nix
     ./fzf.nix
+    ./gh.nix
     ./git.nix
-    ./gpg.nix
-    ./sops.nix
+    ./gitui.nix
+    # ./gpg.nix
+    ./helix.nix
+    ./jq.nix
+    ./kitty.nix
+    # ./sops.nix
     ./ssh.nix
     ./starship.nix
-    ./tmux
     ./vscode.nix
     ./zsh.nix
   ];

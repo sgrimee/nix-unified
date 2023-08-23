@@ -1,12 +1,26 @@
 {
   programs.git = {
     enable = true;
-    userName = "peanutbother";
-    userEmail = "peanutbother@proton.me";
+    ignores = [
+      "*.swp"
+      "*~"
+      ".DS_Store"
+      "*.pyc"
+    ];
+    lfs = {
+      enable = true;
+    };
+    # TODO: take this from top-level variable
+    userName = "sgrimee";
+    userEmail = "sgrimee@gmail.com.me";
     extraConfig = {
       init.defaultBranch = "main";
-
-      pull.rebase = false;
+      core = {
+        autocrlf = "input";
+      };
+      commit.gpgsign = false;
+      pull.rebase = true;
+      rebase.autoStash = true;
       push.autoSetupRemote = true;
 
       # url rewrites to ssh

@@ -20,9 +20,9 @@ in
       k = "kubectl";
       laru-ansible = "ANSIBLE_STDOUT_CALLBACK=json ansible -ulx2sg -e'ansible_connection=network_cli' -e'ansible_network_os=community.routeros.routeros' -m'routeros_command'";
       laru-ssh = "ssh -llx2sg -oport=15722";
-      nixswitch = "darwin-rebuild switch --flake ~/src/system-config/.#";
-      nixswitch = "nix run nix-darwin -- switch --flake ~/.nix/.#"; # refresh nix env after config changes
-      nixup = "pushd ~/src/system-config; nix flake update; nixswitch; popd";
+      #nixswitch = "darwin-rebuild switch --flake .#";
+      nixswitch = "nix run nix-darwin -- switch --flake .#"; # refresh nix env after config changes
+      nixup = "nix flake update; nixswitch";
       path-lines = "echo $PATH | tr ':' '\n'";
       search = "rg -p --glob '!node_modules/*'  $@";
     };
