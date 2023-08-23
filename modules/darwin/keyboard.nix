@@ -3,6 +3,7 @@
     keyboard = {
       enableKeyMapping = true;
       nonUS.remapTilde = false;
+      remapCapsLockToControl = true;
     };
     defaults.NSGlobalDomain = {
       InitialKeyRepeat = 14;

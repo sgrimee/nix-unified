@@ -1,4 +1,4 @@
-{ host }: {
+{host}: {
   imports = [
     ../hosts/${host}/system.nix
     ./apps.nix # link nix apps to fix spotlight
@@ -6,7 +6,7 @@
     ./env.nix # configure environment (e.g default shell)
     ./finder.nix # configure finder
     ./fonts.nix # install fonts (e.g. NerdFonts)
-    ./homebrew.nix # install homebrew apps and configure homebrew itsef
+    ./homebrew # install homebrew apps and configure homebrew itsef
     ./keyboard.nix # settings for key repeat etc
     ./networking.nix # configure networking (e.g. hostname, dns, etc)
     ./nix.nix # configure nix itself (use flakes, etc)

@@ -1,16 +1,24 @@
+{ user, ... }:
 {
   nix = {
+    # cofigure nix to use build users
+    configureBuildUsers = true;
     # enable flakes
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-    # cofigure nix to use build users
-    configureBuildUsers = true;
+    gc = {
+      user = "root";
+      automatic = true;
+      interval = { Weekday = 0; Hour = 2; Minute = 0; };
+      options = "--delete-older-than 30d";
+    };
     settings = {
       # automatically hotlink duplicate files
       auto-optimise-store = true;
       # sandbox builds
       sandbox = true;
+      trusted-users = [ "@admin" "${user}" ];
     };
   };
 

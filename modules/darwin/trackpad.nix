@@ -1,11 +1,12 @@
 {
   system.defaults = {
     trackpad = {
-      Clicking = true;
-      TrackpadRightClick = true;
       ActuationStrength = 0; # force feedback
+      Clicking = true;
       FirstClickThreshold = 1; # force feedback
       SecondClickThreshold = 1; # force feedback
+      TrackpadRightClick = true;
+      TrackpadThreeFingerDrag = true;
     };
     NSGlobalDomain = {
       "com.apple.trackpad.scaling" = 2.0; # tracking speed

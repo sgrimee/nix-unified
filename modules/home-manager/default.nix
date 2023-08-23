@@ -12,7 +12,7 @@ in
   home-manager.useGlobalPkgs = true;
   # home-manager.useUserPackages = true;
   home-manager.extraSpecialArgs = {
-    inherit home inputs stateVersion system;
+    inherit home inputs stateVersion system user;
   };
   home-manager.sharedModules = [
     ./apps.nix

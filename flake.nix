@@ -1,5 +1,5 @@
 {
-  description = "nix-conf";
+  description = "mac/nixos nix-conf, forked from peanutbother/dotfiles";
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-23.05-darwin";
     flake-utils.url = "github:numtide/flake-utils";
@@ -22,6 +22,11 @@
 
     sops-nix = {
       url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-search-cli = {
+      url = "github:peterldowns/nix-search-cli";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -50,14 +55,18 @@
     };
   };
 
-  outputs = { darwin, flake-utils, ... } @ inputs:
+  outputs =
+    { darwin
+    , flake-utils
+    , ...
+    } @ inputs:
     let
       stateVersion = "23.05";
       mkModules = host: (import ./modules/hosts/${host} { inherit inputs; });
     in
     {
       # system configs
-      nixosConfigurations.yunix = inputs.nixpkgs.lib.nixosSystem rec {
+      nixosConfigurations.nixair = inputs.nixpkgs.lib.nixosSystem rec {
         system = "x86_64-linux";
 
         specialArgs = {
@@ -65,10 +74,10 @@
           overlays = import ./overlays;
         };
 
-        modules = mkModules "yunix";
+        modules = mkModules "nixair";
       };
 
-      darwinConfigurations.yubook = darwin.lib.darwinSystem rec {
+      darwinConfigurations.SGRIMEE-M-J3HG = darwin.lib.darwinSystem rec {
         system = "x86_64-darwin";
 
         specialArgs = {
@@ -76,47 +85,47 @@
           overlays = import ./overlays;
         };
 
-        modules = mkModules "yubook";
+        modules = mkModules "SGRIMEE-M-J3HG";
       };
     }
     // flake-utils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import inputs.nixpkgs {
-          inherit system;
-          overlays = import ./overlays;
-        };
-      in
-      {
-        # shells
-        devShells.${system} = {
-          embedded = inputs.embedded_shell.devShells.${system}.default;
-          nix = inputs.nix_shell.devShells.${system}.default;
-          rust = inputs.rust_shell.devShells.${system}.default;
-          web = inputs.web_shell.devShells.${system}.default;
-        };
+    let
+      pkgs = import inputs.nixpkgs {
+        inherit system;
+        overlays = import ./overlays;
+      };
+    in
+    {
+      # shells
+      devShells.${system} = {
+        embedded = inputs.embedded_shell.devShells.${system}.default;
+        nix = inputs.nix_shell.devShells.${system}.default;
+        rust = inputs.rust_shell.devShells.${system}.default;
+        web = inputs.web_shell.devShells.${system}.default;
+      };
 
-        # templates
-        templates = {
-          embedded = {
-            description = "embedded development environment";
-            path = ./templates/embedded;
-          };
-          nix = {
-            description = "nix development environment";
-            path = ./templates/nix;
-          };
-          rust = {
-            description = "rust development environment";
-            path = ./templates/rust;
-          };
-          rust-nix = {
-            description = "rust development environment with nix flake";
-            path = ./templates/rust-nix;
-          };
-          web = {
-            description = "web development environment";
-            path = ./templates/web;
-          };
+      # templates
+      templates = {
+        embedded = {
+          description = "embedded development environment";
+          path = ./templates/embedded;
         };
-      });
+        nix = {
+          description = "nix development environment";
+          path = ./templates/nix;
+        };
+        rust = {
+          description = "rust development environment";
+          path = ./templates/rust;
+        };
+        rust-nix = {
+          description = "rust development environment with nix flake";
+          path = ./templates/rust-nix;
+        };
+        web = {
+          description = "web development environment";
+          path = ./templates/web;
+        };
+      };
+    });
 }

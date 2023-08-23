@@ -1,6 +1,6 @@
 {
   system.stateVersion = "23.05";
-  networking.hostName = "yunix";
+  networking.hostName = "sgrimee";
 
   programs.ssh = {
     startAgent = true;
