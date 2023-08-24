@@ -56,7 +56,14 @@
       sudo = "sudo "; # allow aliases to be run with sudo
       cls = "clear"; # shorthand and alias to win's cls
       # mux = "tmuxinator"; # create a shell alias for tmuxinator
-      # get_idf = ". $HOME/esp/esp-idf/export.sh"                                     # TODO install esp-idf somehow
+      # get_idf = ". $HOME/esp/esp-idf/export.sh" 
+      cw = "cargo watch -q -c -x check";
+      gst = "git status";
+      history = "history 1";
+      k = "kubectl";
+      laru-ansible = "ANSIBLE_STDOUT_CALLBACK=json ansible -ulx2sg -e'ansible_connection=network_cli' -e'ansible_network_os=community.routeros.routeros' -m'routeros_command'";
+      laru-ssh = "ssh -llx2sg -oport=15722"; # TODO install esp-idf somehow
+      path-lines = "echo $PATH | tr ':' '\n'";
     };
   };
 
