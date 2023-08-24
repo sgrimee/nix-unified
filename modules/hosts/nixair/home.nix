@@ -1,10 +1,12 @@
-{pkgs, ...}: let
+{ pkgs, ... }:
+let
   user = "sgrimee";
-in {
+in
+{
   users.users.${user} = {
     isNormalUser = true;
     group = "users";
-    extraGroups = ["audio" "networkmanager" "systemd-journal" "video" "wheel"];
+    extraGroups = [ "audio" "networkmanager" "systemd-journal" "video" "wheel" ];
     shell = pkgs.zsh;
   };
   home-manager.users.${user}.home = {
@@ -16,6 +18,7 @@ in {
     # };
     shellAliases = {
       nixswitch = "sudo nixos-rebuild switch --flake ~/.nix/.#"; # refresh nix env after config changes
+      nixup = "nix flake update; nixswitch";
     };
 
     packages = with pkgs; [
