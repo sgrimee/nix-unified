@@ -1,6 +1,6 @@
 {
   system.stateVersion = "23.05";
-  networking.hostName = "sgrimee";
+  networking.hostName = "nixair";
 
   programs.ssh = {
     startAgent = true;

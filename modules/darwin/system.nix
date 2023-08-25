@@ -1,4 +1,7 @@
 {
+  # Add ability to used TouchID for sudo authentication
+  security.pam.enableSudoTouchIdAuth = true;
+
   system = {
     # checks.verifyNixPath = false;
     defaults = {

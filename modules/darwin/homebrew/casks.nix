@@ -1,4 +1,4 @@
-{...}: [
+{ ... }: [
   "1password"
   "ableton-live-suite"
   "alfred"
@@ -12,6 +12,7 @@
   "guitar-pro"
   "insomnia"
   "istat-menus"
+  "karabiner-elements"
   "loopback"
   "macloggerdx"
   "midi-monitor"

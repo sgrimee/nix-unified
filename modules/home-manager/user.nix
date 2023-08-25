@@ -1,43 +1,14 @@
 { pkgs, stateVersion, ... }: {
   imports = [
     ./dotfiles # copy dotfiles into home
+    ./packages.nix
     ./programs # install and configure applications using home-manager
   ];
 
   home = {
     inherit stateVersion;
 
-    packages = with pkgs; [
-      # common packages
-      age
-      alejandra
-      coreutils-full
-      curl
-      du-dust
-      glow # CLI markdown viewer
-      home-manager
-      htop
-      inetutils
-      less
-      mc
-      nchat
-      neofetch
-      nixpkgs-fmt
-      openssh
-      progress
-      ripgrep
-      rnix-lsp
-      rustscan
-      skhd
-      sops
-      spotify-tui
-      spotifyd
-      trippy
-      unzip
-      wget
-      zellij
-      zip
-    ];
+    # packages = import ./packages.nix { inherit pkgs; };
 
     # do not use sessionVariables for PATH modifications
     sessionVariables = {
@@ -70,5 +41,6 @@
   manual.html.enable = true;
 
   pam.yubico.authorizedYubiKeys.ids = [ "fetchcjejtbu" ];
+
 
 }

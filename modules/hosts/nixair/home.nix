@@ -9,24 +9,35 @@ in
     extraGroups = [ "audio" "networkmanager" "systemd-journal" "video" "wheel" ];
     shell = pkgs.zsh;
   };
-  home-manager.users.${user}.home = {
-    # file = {
-    #   ".config/latte" = {
-    #     source = ../../home-manager/dotfiles/latte-dock;
-    #     recursive = true;
-    #   };
-    # };
-    shellAliases = {
-      nixswitch = "sudo nixos-rebuild switch --flake ~/.nix/.#"; # refresh nix env after config changes
-      nixup = "nix flake update; nixswitch";
+  home-manager.users.${user} = {
+    imports = [
+      ./packages.nix
+      ./programs
+      ./spotifyd.nix
+      ./wayland.nix
+    ];
+
+    home = {
+      # file = {
+      #   ".config/latte" = {
+      #     source = ../../home-manager/dotfiles/latte-dock;
+      #     recursive = true;
+      #   };
+      # };
+
+      shellAliases = {
+        nixswitch = "sudo nixos-rebuild switch --flake ~/.nix/.#"; # refresh nix env after config changes
+        nixup = "nix flake update; nixswitch";
+      };
+
+      # packages = import ./packages.nix { inherit pkgs; };
+      # programs = import ./programs { inherit pkgs; };
+
     };
 
-    packages = with pkgs; [
-      # *nix packages
-      chromium
-      interception-tools
-      mako
-      wl-clipboard
-    ];
+    # Nicely reload system units when changing configs
+    systemd.user.startServices = "sd-switch";
   };
+
+
 }

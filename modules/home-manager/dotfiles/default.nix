@@ -4,12 +4,9 @@
       source = ./cargo;
       recursive = true;
     };
-    ".config/tmux" = {
-      source = ./tmux;
-      recursive = true;
-    };
-    ".config/tmuxinator" = {
-      source = ./tmuxinator;
+    # several folders under this
+    ".config" = {
+      source = ./config;
       recursive = true;
     };
     ".ssh" = {
@@ -18,3 +15,8 @@
     };
   };
 }
+
+# TODO: add configs with secrets
+# webex-tui
+# spotify-tui
+# spotifyd

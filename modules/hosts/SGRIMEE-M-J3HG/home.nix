@@ -19,9 +19,6 @@ in
       nixup = "nix flake update; nixswitch";
     };
 
-    packages = with pkgs; [
-      # macos packages
-      bclm
-    ];
+    packages = import packages.nix { inherit pkgs; };
   };
 }

@@ -1,4 +1,4 @@
-{ host, ... }: {
+{ host, user, ... }: {
   imports = [
     ../hosts/${host}/system.nix
     ./apps.nix # link nix apps to fix spotlight
@@ -14,4 +14,9 @@
     ./system.nix # configure system settings
     ./trackpad.nix # configure trackpad (e.g. force feedback)
   ];
+
+  # TODO: put this in a module once I find how to pass the user var
+  # may not have any effect on a corporate managed mac
+  users.users.${user}.openssh.authorizedKeys.keys = import ../../files/authorized_keys.nix;
+
 }

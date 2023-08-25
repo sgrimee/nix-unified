@@ -1,8 +1,0 @@
-name: btop
-
-windows:
-  - null:
-      layout: main-vertical
-      panes:
-        -
-        - btop

@@ -1,4 +1,4 @@
 {
   # Configure console keymap
-  console.keyMap = "de";
+  console.keyMap = "us";
 }

@@ -19,7 +19,7 @@ in
     inputs.sops-nix.homeManagerModule
   ];
 
-  home-manager.users.${user} = import ./home.nix;
+  home-manager.users.${user} = import ./user.nix;
 
   imports = [
     ../hosts/${host}/home.nix
