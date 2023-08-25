@@ -55,15 +55,14 @@
     };
   };
 
-  outputs =
-    { darwin
-    , flake-utils
-    , ...
-    } @ inputs:
-    let
-      stateVersion = "23.05";
-      mkModules = host: (import ./modules/hosts/${host} { inherit inputs; });
-    in
+  outputs = {
+    darwin,
+    flake-utils,
+    ...
+  } @ inputs: let
+    stateVersion = "23.05";
+    mkModules = host: (import ./modules/hosts/${host} {inherit inputs;});
+  in
     {
       # system configs
       nixosConfigurations.nixair = inputs.nixpkgs.lib.nixosSystem rec {
@@ -88,14 +87,12 @@
         modules = mkModules "SGRIMEE-M-J3HG";
       };
     }
-    // flake-utils.lib.eachDefaultSystem (system:
-    let
+    // flake-utils.lib.eachDefaultSystem (system: let
       pkgs = import inputs.nixpkgs {
         inherit system;
         overlays = import ./overlays;
       };
-    in
-    {
+    in {
       # shells
       devShells.${system} = {
         embedded = inputs.embedded_shell.devShells.${system}.default;
