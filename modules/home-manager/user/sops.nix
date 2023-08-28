@@ -4,7 +4,7 @@
   ...
 }: {
   sops = {
-    defaultSopsFile = ../../../../secrets/sgrimee.yaml;
+    defaultSopsFile = ../../../secrets/sgrimee.yaml;
     defaultSopsFormat = "yaml";
 
     # This will automatically import SSH keys as age keys
