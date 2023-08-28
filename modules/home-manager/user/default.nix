@@ -23,6 +23,7 @@
       CLICOLOR = 1; # force cli color
       #EDITOR = "code --wait"; # on darwin requires alias `code` from `shellAliases.code` below
       EDITOR = "hx";
+      SOPS_AGE_KEY_FILE = "~/.config/sops/age/keys.txt";
     };
 
     # sessionPath = [
