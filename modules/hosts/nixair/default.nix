@@ -18,6 +18,4 @@ in [
   # home
   home-manager.nixosModule
   (import ../../home-manager {inherit host user;})
-
-  sops-nix.nixosModules.default
 ]

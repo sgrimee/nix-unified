@@ -7,6 +7,7 @@
     ./dotfiles # copy dotfiles into home
     ./packages.nix
     ./programs # install and configure applications using home-manager
+    ./sops.nix
   ];
 
   home = {

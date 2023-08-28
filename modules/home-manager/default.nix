@@ -1,8 +1,18 @@
-{ host, user }: { inputs, pkgs, system, stateVersion, ... }:
-let
-  home = if pkgs.stdenv.hostPlatform.isDarwin then "/Users/${user}" else "/home/${user}";
-in
 {
+  host,
+  user,
+}: {
+  inputs,
+  pkgs,
+  system,
+  stateVersion,
+  ...
+}: let
+  home =
+    if pkgs.stdenv.hostPlatform.isDarwin
+    then "/Users/${user}"
+    else "/home/${user}";
+in {
   programs.zsh.enable = true;
   users.users.${user} = {
     inherit home;
@@ -19,7 +29,7 @@ in
     inputs.sops-nix.homeManagerModule
   ];
 
-  home-manager.users.${user} = import ./user.nix;
+  home-manager.users.${user} = import ./user;
 
   imports = [
     ../hosts/${host}/home.nix
