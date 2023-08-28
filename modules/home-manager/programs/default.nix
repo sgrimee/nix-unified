@@ -14,7 +14,7 @@
     ./helix.nix
     ./jq.nix
     ./kitty.nix
-    # ./sops.nix
+    ./sops.nix
     ./ssh.nix
     ./starship.nix
     ./vscode.nix
