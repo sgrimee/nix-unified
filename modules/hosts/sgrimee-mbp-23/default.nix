@@ -1,7 +1,7 @@
 {inputs}:
 with inputs; let
   user = "sgrimee";
-  host = "SGRIMEE-M-J3HG";
+  host = "sgrimee-mbp-23";
 in [
   # system
   (import ../../darwin {inherit host user;})

@@ -76,7 +76,7 @@
         modules = mkModules "nixair";
       };
 
-      darwinConfigurations.SGRIMEE-M-J3HG = darwin.lib.darwinSystem rec {
+      darwinConfigurations.sgrimee-mbp-18 = darwin.lib.darwinSystem rec {
         system = "x86_64-darwin";
 
         specialArgs = {
@@ -84,7 +84,18 @@
           overlays = import ./overlays;
         };
 
-        modules = mkModules "SGRIMEE-M-J3HG";
+        modules = mkModules "sgrimee-mbp-18";
+      };
+
+      darwinConfigurations.sgrimee-mbp-23 = darwin.lib.darwinSystem rec {
+        system = "aarch64-darwin";
+
+        specialArgs = {
+          inherit inputs system stateVersion;
+          overlays = import ./overlays;
+        };
+
+        modules = mkModules "sgrimee-mbp-23";
       };
     }
     // flake-utils.lib.eachDefaultSystem (system: let
