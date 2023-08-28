@@ -1,4 +1,8 @@
-{ pkgs, stateVersion, ... }: {
+{
+  pkgs,
+  stateVersion,
+  ...
+}: {
   imports = [
     ./dotfiles # copy dotfiles into home
     ./packages.nix
@@ -16,7 +20,8 @@
       PAGER = "bat"; # use less instead of more
       COLOR = 1; # force cli color
       CLICOLOR = 1; # force cli color
-      EDITOR = "code --wait"; # on darwin requires alias `code` from `shellAliases.code` below
+      #EDITOR = "code --wait"; # on darwin requires alias `code` from `shellAliases.code` below
+      EDITOR = "hx";
     };
 
     # sessionPath = [
@@ -27,7 +32,7 @@
       sudo = "sudo "; # allow aliases to be run with sudo
       cls = "clear"; # shorthand and alias to win's cls
       # mux = "tmuxinator"; # create a shell alias for tmuxinator
-      # get_idf = ". $HOME/esp/esp-idf/export.sh" 
+      # get_idf = ". $HOME/esp/esp-idf/export.sh"
       cw = "cargo watch -q -c -x check";
       gst = "git status";
       history = "history 1";
@@ -40,7 +45,5 @@
 
   manual.html.enable = true;
 
-  pam.yubico.authorizedYubiKeys.ids = [ "fetchcjejtbu" ];
-
-
+  pam.yubico.authorizedYubiKeys.ids = ["fetchcjejtbu"];
 }
