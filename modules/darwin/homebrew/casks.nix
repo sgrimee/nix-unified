@@ -1,4 +1,4 @@
-{ ... }: [
+{...}: [
   "1password"
   "ableton-live-suite"
   "alfred"
@@ -33,7 +33,6 @@
   "telegram"
   "visual-studio-code"
   "vlc"
-  "vmware-fusion"
   "wch-ch34x-usb-serial-driver"
   "whatsapp"
   "zed"
