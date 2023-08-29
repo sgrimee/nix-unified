@@ -11,6 +11,7 @@
     ./git.nix
     ./gitui.nix
     ./helix.nix
+    ./joshuto.nix
     ./jq.nix
     ./kitty.nix
     ./ssh.nix
