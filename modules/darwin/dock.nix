@@ -10,7 +10,6 @@
     orientation = "bottom";
     show-recents = false;
     tilesize = 42; # dock icon size
-    wvous-tl-corner = 1; # disable hot corner
   };
 
   # local.dock options are defined in the ./dock module

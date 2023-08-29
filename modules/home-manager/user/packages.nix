@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   home.packages = with pkgs; [
     # packages for all hosts
     # common packages
@@ -12,6 +11,7 @@
     home-manager
     htop
     inetutils
+    joshuto
     killall
     less
     mc

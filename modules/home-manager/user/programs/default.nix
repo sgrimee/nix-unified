@@ -11,7 +11,7 @@
     ./git.nix
     ./gitui.nix
     ./helix.nix
-    ./joshuto.nix
+    # ./joshuto.nix # not present in 23.5
     ./jq.nix
     ./kitty.nix
     ./ssh.nix
