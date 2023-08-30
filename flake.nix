@@ -7,6 +7,7 @@
     stable.url = "github:nixos/nixpkgs/nixos-21.11";
     nur.url = "github:nix-community/NUR";
     nixpkgs.follows = "unstable";
+    # TODO: find how to differentiate stable-nixos from stable-darwin
 
     # utils
     flake-utils.url = "github:numtide/flake-utils";
