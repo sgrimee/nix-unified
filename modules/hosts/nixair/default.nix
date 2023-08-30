@@ -13,9 +13,9 @@ in [
   nixos-hardware.nixosModules.common-pc-ssd
 
   # system
-  (import ../../nixos {inherit host user;})
+  (import ../../nixos {inherit inputs host user;})
 
   # home
   home-manager.nixosModule
-  (import ../../home-manager {inherit host user;})
+  (import ../../home-manager {inherit inputs host user;})
 ]
