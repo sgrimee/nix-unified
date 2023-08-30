@@ -1,1 +1,1 @@
-rm -Rf ~/.cache/nix/eval-cache-v4/
+rm -Rf ~/.cache/nix/

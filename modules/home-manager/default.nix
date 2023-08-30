@@ -1,5 +1,6 @@
 {
   host,
+  inputs,
   user,
 }: {
   inputs,
@@ -26,10 +27,9 @@ in {
   };
   home-manager.sharedModules = [
     ./apps.nix
-    inputs.sops-nix.homeManagerModule
   ];
 
-  home-manager.users.${user} = import ./user;
+  home-manager.users.${user} = import ./user {inherit home pkgs stateVersion;};
 
   imports = [
     ../hosts/${host}/home.nix

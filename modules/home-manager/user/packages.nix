@@ -26,6 +26,7 @@
     sops
     spotify-tui
     spotifyd
+    ssh-to-age
     trippy
     unzip
     wget

@@ -1,35 +1,37 @@
 {
+  config,
   home,
-  user,
+  inputs,
   ...
-}: {
+}: let
+  user_key_file = "${config.xdg.configHome}/sops/age/keys.txt";
+in {
+  imports = [
+    inputs.sops-nix.homeManagerModules.sops
+  ];
+
   sops = {
     defaultSopsFile = ../../../secrets/sgrimee.yaml;
     defaultSopsFormat = "yaml";
 
-    # This will automatically import SSH keys as age keys
-    age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
-    # This is using an age key that is expected to already be in the filesystem
-    # age.keyFile = "${home}/.nix/secrets/keys.txt";
-    #age.keyFile = "/var/lib/sops-nix/key.txt";
-    # This will generate a new key if the key specified above does not exist
-    #age.generateKey = true;
+    # this won't work because we are running as user and won't read the system file
+    # age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+    # TODO: see if we can use a host key instead of the user key
 
-    # secrets = {
-    #   spotify_userid.owner = user;
-    #   spotify_secret.owner = user;
-    # };
-    # secrets = {
-    #   "ssh-keys/git/peanutbother" = {
-    #     path = "${home}/.ssh/github_peanutbother";
-    #   };
-    #   "ssh-keys/devs/bricksoft" = {
-    #     path = "${home}/.ssh/dev_bricksoft";
-    #   };
-    #   "ssh-keys/devs/ravpower" = {
-    #     path = "${home}/.ssh/dev_ravpower";
-    #   };
-    # };
-    #secrets."myservice/my_subdir/my_secret" = {};
+    # use the user file
+    age.keyFile = user_key_file;
+
+    secrets = {
+      webex_tui.path = "${config.xdg.configHome}/webex-tui/client.yml";
+    };
+  };
+
+  home.sessionVariables = {
+    SOPS_AGE_KEY_FILE = user_key_file;
   };
 }
+# Troubleshooting: monitor the agent logs with
+# cat ~/Library/LaunchAgents/org.nix-community.home.sops-nix.plist | grep std
+# <string>/Users/sgrimee/Library/Logs/SopsNix/stderr</string>
+# <string>/Users/sgrimee/Library/Logs/SopsNix/stdout</string>
+
