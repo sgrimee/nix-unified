@@ -1,5 +1,8 @@
-{ host, user }: {
-
+{
+  host,
+  inputs,
+  user,
+}: {
   # the following variables are passed to the imports (when they accept arguments):
   # config inputs lib modulesPath options overlays specialArgs stateVersion system
 
@@ -25,5 +28,4 @@
     ./wayland.nix
     # ./xserver.nix
   ];
-
 }
