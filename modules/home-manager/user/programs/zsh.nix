@@ -26,7 +26,14 @@
       }
       # Download given URL as best single file video quality resolution via youtube-dl into ~/Downloads
       ytv(){
-        yt-dlp "$1" -o "~/Downloads/%(title)s-%(id)s.%(ext)s" 
+        yt-dlp "$1" -o "~/Downloads/%(title)s-%(id)s.%(ext)s"
+      }
+    '';
+
+    initExtra = ''
+      # tail with colours
+      tailbat() {
+        tail -f $1 | bat --paging=never -l log
       }
     '';
   };
