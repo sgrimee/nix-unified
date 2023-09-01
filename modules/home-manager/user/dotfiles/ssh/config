@@ -113,7 +113,7 @@ Host wap.* rtr-* ptmp* ptp-* lx2sg-rtr-* sxt-* ampr-gw* *.lx1duc.radio
   Port 15722
   StrictHostKeyChecking no
   UserKnownHostsFile /dev/null
-  IdentityFile /Users/sgrimee/.ssh/rsa-sha2-256
+  IdentityFile /Users/sgrimee/.ssh/id.rsa-sha2-256
 
 #   Host *.github.com
 #       AddKeysToAgent yes
