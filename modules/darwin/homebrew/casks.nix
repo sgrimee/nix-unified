@@ -15,6 +15,7 @@
   "karabiner-elements"
   "loopback"
   "macloggerdx"
+  "microsoft-teams"
   "midi-monitor"
   "mounty"
   "notunes"
