@@ -107,7 +107,7 @@
       };
     in {
       #### shells
-      devShells.${system} = {
+      devShells = {
         embedded = inputs.embedded_shell.devShells.${system}.default;
         nix = inputs.nix_shell.devShells.${system}.default;
         rust = inputs.rust_shell.devShells.${system}.default;
