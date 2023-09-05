@@ -9,6 +9,7 @@
   "busycal"
   "devonthink"
   "discord"
+  "gitup"
   "guitar-pro"
   "insomnia"
   "istat-menus"
