@@ -46,7 +46,7 @@ Host rtr-17.lx2sg
   User sgrimee
 Host rtr-17.lx2sg-dev
   HostName 10.0.3.25
-Host rtr-18.lx2sg
+Host rtr-18.lx2sg-dev
   HostName 10.0.3.24
 Host ptp-lx0lwl.lx2sg
   HostName 10.0.1.78
