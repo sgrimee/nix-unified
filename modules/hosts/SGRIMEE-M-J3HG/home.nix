@@ -15,8 +15,7 @@ in {
       };
 
       shellAliases = {
-        code = "env VSCODE_CWD=\"$PWD\" open -n -b \"com.microsoft.VSCode\" --args $*"; # create a shell alias for vs code
-        #nixswitch = "darwin-rebuild switch --flake .#";
+        # code = "env VSCODE_CWD=\"$PWD\" open -n -b \"com.microsoft.VSCode\" --args $*"; # create a shell alias for vs code
         nixswitch = "nix run nix-darwin -- switch --flake .#"; # refresh nix env after config changes
         nixup = "nix flake update; nixswitch";
       };

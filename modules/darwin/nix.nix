@@ -1,15 +1,17 @@
-{
+{lib, ...}: {
   nix = {
-    # cofigure nix to use build users
     configureBuildUsers = true;
-    # enable flakes
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
     gc = {
       user = "root";
       automatic = true;
-      interval = { Weekday = 0; Hour = 2; Minute = 0; };
+      interval = {
+        Weekday = 0;
+        Hour = 2;
+        Minute = 0;
+      };
       options = "--delete-older-than 30d";
     };
     settings = {
@@ -21,7 +23,7 @@
     };
   };
 
-  # allow proprietary software
+  # Ignored when nixpkgs.pkgs is set, but should not be the case here.
   nixpkgs.config.allowUnfree = true;
 
   # add custom overlays
