@@ -1,6 +1,9 @@
-{pkgs, ...}: {
-  home.packages = with pkgs; [
+{
+  inputs,
+  pkgs,
+  ...
+}: {
+  home.packages = [
     # packages for this host
-    bclm
   ];
 }
