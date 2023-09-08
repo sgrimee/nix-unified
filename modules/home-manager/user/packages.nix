@@ -1,4 +1,9 @@
-{pkgs, ...}: {
+{
+  inputs,
+  pkgs,
+  system,
+  ...
+}: {
   home.packages = with pkgs; [
     # packages for all hosts
     # common packages
@@ -14,6 +19,7 @@
     joshuto
     killall
     less
+    inputs.mactelnet.packages.${system}.mactelnet
     mc
     nchat
     neofetch

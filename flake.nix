@@ -41,20 +41,24 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    mactelnet.url = "github:sgrimee/mactelnet";
+
     ### --- de-duplicate flake inputs
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    mkAlias.inputs.nixpkgs.follows = "nixpkgs";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     embedded_shell.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    mactelnet.inputs.nixpkgs.follows = "nixpkgs";
+    mkAlias.inputs.nixpkgs.follows = "nixpkgs";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix_shell.inputs.nixpkgs.follows = "nixpkgs";
     rust_shell.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     web_shell.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = {
     flake-utils,
     home-manager,
+    mactelnet,
     nixos-hardware,
     self,
     sops-nix,
@@ -62,80 +66,77 @@
   } @ inputs: let
     stateVersion = "23.05";
     mkModules = host: (import ./modules/hosts/${host} {inherit inputs;});
-  in
-    {
-      ### hosts configs
-      nixosConfigurations = {
-        nixair = inputs.nixpkgs.lib.nixosSystem rec {
-          system = "x86_64-linux";
-          specialArgs = {
-            inherit inputs system stateVersion;
-            overlays = import ./overlays;
-          };
-          modules = mkModules "nixair";
+  in {
+    ### hosts configs
+    nixosConfigurations = {
+      nixair = inputs.nixpkgs.lib.nixosSystem rec {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs system stateVersion;
+          overlays = import ./overlays;
         };
+        modules = mkModules "nixair";
+      };
+    };
+
+    darwinConfigurations = {
+      SGRIMEE-M-J3HG = inputs.nix-darwin.lib.darwinSystem rec {
+        system = "x86_64-darwin";
+        # inputs = nixpkgs.lib.overrideExisting inputs {nixpkgs = nixpkgs-darwin;};
+        specialArgs = {
+          inherit inputs system stateVersion;
+          overlays = import ./overlays;
+        };
+        modules = mkModules "SGRIMEE-M-J3HG";
       };
 
-      darwinConfigurations = {
-        SGRIMEE-M-J3HG = inputs.nix-darwin.lib.darwinSystem rec {
-          system = "x86_64-darwin";
-          # inputs = nixpkgs.lib.overrideExisting inputs {nixpkgs = nixpkgs-darwin;};
-          # inputs.nixpkgs = nixpkgs-darwin;
-          specialArgs = {
-            inherit inputs system stateVersion;
-            overlays = import ./overlays;
-          };
-          modules = mkModules "SGRIMEE-M-J3HG";
+      SGRIMEE-M-4HJT = inputs.nix-darwin.lib.darwinSystem rec {
+        system = "aarch64-darwin";
+        # inputs = nixpkgs.lib.overrideExisting inputs {nixpkgs = nixpkgs-darwin;};
+        specialArgs = {
+          inherit inputs system stateVersion;
+          overlays = import ./overlays;
         };
+        modules = mkModules "SGRIMEE-M-4HJT";
+      };
+    };
+  };
+  # // flake-utils.lib.eachDefaultSystem (system: let
+  #   pkgs = import inputs.nixpkgs {
+  #     inherit system;
+  #     overlays = import ./overlays;
+  #   };
+  # in {
+  #   #### shells
+  #   devShells = {
+  #     embedded = inputs.embedded_shell.devShells.${system}.default;
+  #     nix = inputs.nix_shell.devShells.${system}.default;
+  #     rust = inputs.rust_shell.devShells.${system}.default;
+  #     web = inputs.web_shell.devShells.${system}.default;
+  #   };
 
-        SGRIMEE-M-4HJT = inputs.nix-darwin.lib.darwinSystem rec {
-          system = "aarch64-darwin";
-          # inputs = nixpkgs.lib.overrideExisting inputs {nixpkgs = nixpkgs-darwin;};
-          # inputs.nixpkgs = nixpkgs-darwin;
-          specialArgs = {
-            inherit inputs system stateVersion;
-            overlays = import ./overlays;
-          };
-          modules = mkModules "SGRIMEE-M-4HJT";
-        };
-      };
-    }
-    // flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = import inputs.nixpkgs {
-        inherit system;
-        overlays = import ./overlays;
-      };
-    in {
-      #### shells
-      devShells = {
-        embedded = inputs.embedded_shell.devShells.${system}.default;
-        nix = inputs.nix_shell.devShells.${system}.default;
-        rust = inputs.rust_shell.devShells.${system}.default;
-        web = inputs.web_shell.devShells.${system}.default;
-      };
-
-      # templates
-      # templates = {
-      #   embedded = {
-      #     description = "embedded development environment";
-      #     path = ./templates/embedded;
-      #   };
-      #   nix = {
-      #     description = "nix development environment";
-      #     path = ./templates/nix;
-      #   };
-      #   rust = {
-      #     description = "rust development environment";
-      #     path = ./templates/rust;
-      #   };
-      #   rust-nix = {
-      #     description = "rust development environment with nix flake";
-      #     path = ./templates/rust-nix;
-      #   };
-      #   web = {
-      #     description = "web development environment";
-      #     path = ./templates/web;
-      #   };
-      # };
-    });
+  # templates
+  # templates = {
+  #   embedded = {
+  #     description = "embedded development environment";
+  #     path = ./templates/embedded;
+  #   };
+  #   nix = {
+  #     description = "nix development environment";
+  #     path = ./templates/nix;
+  #   };
+  #   rust = {
+  #     description = "rust development environment";
+  #     path = ./templates/rust;
+  #   };
+  #   rust-nix = {
+  #     description = "rust development environment with nix flake";
+  #     path = ./templates/rust-nix;
+  #   };
+  #   web = {
+  #     description = "web development environment";
+  #     path = ./templates/web;
+  #   };
+  # };
+  # });
 }

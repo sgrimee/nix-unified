@@ -14,7 +14,9 @@
     then "/Users/${user}"
     else "/home/${user}";
 in {
+  # Required even if present in user/programs, otherwise path is not set correctly
   programs.zsh.enable = true;
+
   users.users.${user} = {
     inherit home;
     name = user;
