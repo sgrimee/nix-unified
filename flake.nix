@@ -2,10 +2,10 @@
   description = "mac/nixos nix-conf, forked from peanutbother/dotfiles";
   inputs = {
     # nixpkgs
-    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    stable.url = "github:nixos/nixpkgs/nixos-23.05";
-    nur.url = "github:nix-community/NUR";
-    nixpkgs.follows = "unstable";
+    pkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    pkgs-stable.url = "github:nixos/nixpkgs/nixos-23.05";
+    pkgs-stable-darwin.url = "github:NixOS/nixpkgs/nixpkgs-23.05-darwin";
+    nixpkgs.follows = "pkgs-unstable";
     # TODO: find how to differentiate stable-nixos from stable-darwin
 
     flake-utils.url = "github:numtide/flake-utils";
