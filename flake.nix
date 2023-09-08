@@ -2,9 +2,8 @@
   description = "mac/nixos nix-conf, forked from peanutbother/dotfiles";
   inputs = {
     # nixpkgs
-    master.url = "github:nixos/nixpkgs/master";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    stable.url = "github:nixos/nixpkgs/nixos-21.11";
+    stable.url = "github:nixos/nixpkgs/nixos-23.05";
     nur.url = "github:nix-community/NUR";
     nixpkgs.follows = "unstable";
     # TODO: find how to differentiate stable-nixos from stable-darwin
