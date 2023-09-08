@@ -1,7 +1,7 @@
 {
-  imports = [
-    ./dock
-  ];
+  # imports = [
+  #   ./dock
+  # ];
 
   system.defaults.dock = {
     autohide = false;
@@ -14,7 +14,7 @@
   };
 
   # local.dock options are defined in the ./dock module
-  local.dock.enable = true;
+  # local.dock.enable = true;
 
-  local.dock.entries = import ./dock-entries.nix {};
+  # local.dock.entries = import ./dock-entries.nix {};
 }
