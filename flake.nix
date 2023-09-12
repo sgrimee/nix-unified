@@ -6,8 +6,6 @@
     stable-nixos.url = "github:nixos/nixpkgs/nixos-23.05";
     stable-darwin.url = "github:NixOS/nixpkgs/nixpkgs-23.05-darwin";
 
-    flake-utils.url = "github:numtide/flake-utils";
-
     mkAlias = {
       url = "github:reckenrode/mkAlias";
       inputs.nixpkgs.follows = "stable-nixos";
@@ -34,7 +32,6 @@
   };
 
   outputs = {
-    flake-utils,
     home-manager,
     mactelnet,
     nixos-hardware,
@@ -59,6 +56,7 @@
     darwinConfigurations = {
       SGRIMEE-M-4HJT = inputs.nix-darwin.lib.darwinSystem rec {
         system = "aarch64-darwin";
+        # pkgs = inputs.stable-darwin.legacyPackages.aarch64-darwin.pkg;
         specialArgs = {
           inherit inputs system stateVersion;
           overlays = import ./overlays;
