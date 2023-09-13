@@ -41,6 +41,7 @@
       laru-ansible = "ANSIBLE_STDOUT_CALLBACK=json ansible -ulx2sg -e'ansible_connection=network_cli' -e'ansible_network_os=community.routeros.routeros' -m'routeros_command'";
       laru-ssh = "ssh -llx2sg -oport=15722"; # TODO install esp-idf somehow
       path-lines = "echo $PATH | tr ':' '\n'";
+      s = "kitty +kitten ssh";
     };
   };
 
