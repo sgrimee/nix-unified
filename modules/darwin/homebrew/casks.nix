@@ -34,6 +34,7 @@
   "spotify"
   "synology-surveillance-station-client"
   "telegram"
+  "utm"
   # "visual-studio-code"
   "vlc"
   "wch-ch34x-usb-serial-driver"
