@@ -15,6 +15,7 @@
   "insomnia"
   "istat-menus"
   "karabiner-elements"
+  "logi-options-plus"
   "loopback"
   "macloggerdx"
   "microsoft-teams"
