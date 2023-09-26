@@ -2,6 +2,7 @@
   inputs,
   pkgs,
   system,
+  unstable,
   ...
 }: {
   home.packages = with pkgs; [
@@ -35,6 +36,7 @@
     ssh-to-age
     trippy
     unzip
+    inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
     wget
     zellij
     zip
