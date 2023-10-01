@@ -4,7 +4,7 @@
     # defaultEditor = true;
     settings = {
       #theme = "base16";
-      theme = "monokai_pro_spectrum";
+      theme = "monokai_aqua";
       editor = {
         bufferline = "always";
         file-picker.hidden = false;

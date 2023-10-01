@@ -2,10 +2,11 @@
   programs.git = {
     enable = true;
     ignores = [
+      "*.pyc"
       "*.swp"
       "*~"
       ".DS_Store"
-      "*.pyc"
+      ".direnv"
     ];
     lfs = {
       enable = true;
