@@ -51,6 +51,14 @@
         };
         modules = mkModules "nixair";
       };
+      dracula = inputs.stable-nixos.lib.nixosSystem rec {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs system stateVersion;
+          overlays = import ./overlays;
+        };
+        modules = mkModules "dracula";
+      };
     };
 
     darwinConfigurations = {
