@@ -26,6 +26,7 @@
     neofetch
     nixpkgs-fmt
     openssh
+    pciutils
     progress
     ripgrep
     rnix-lsp
@@ -38,6 +39,7 @@
     unzip
     inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
     wget
+    wirelesstools
     zellij
     zip
   ];

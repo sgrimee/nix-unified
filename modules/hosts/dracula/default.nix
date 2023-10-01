@@ -7,9 +7,7 @@ in [
 
   # https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i7-2.0-15-iris-only-late-2013-retina-display-specs.html
 
-  nixos-hardware.nixosModules.apple
-
-  nixos-hardware.nixosModules.common-cpu-intel-cpu-only
+  nixos-hardware.nixosModules.common-cpu-intel
   nixos-hardware.nixosModules.common-hidpi # make font too big on console
   nixos-hardware.nixosModules.common-pc-ssd
 

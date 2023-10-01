@@ -3,8 +3,8 @@
     # packages for this host
     chromium
     interception-tools # user to map Caps to Ctrl+Esc
-    # mako # wayland notification daemon
-    # wl-clipboard # wayland clipboard
+    mako # wayland notification daemon
+    wl-clipboard # wayland clipboard
 
     # linux vpn
     #networkmanager-applet
