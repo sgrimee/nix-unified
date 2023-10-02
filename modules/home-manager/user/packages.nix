@@ -6,8 +6,7 @@
   ...
 }: {
   home.packages = with pkgs; [
-    # packages for all hosts
-    # common packages
+    # common packages, found in ~/.nix-profile/bin
     age
     alejandra
     coreutils-full
@@ -26,7 +25,6 @@
     neofetch
     nixpkgs-fmt
     openssh
-    pciutils
     progress
     ripgrep
     rnix-lsp
@@ -39,7 +37,6 @@
     unzip
     inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
     wget
-    wirelesstools
     zellij
     zip
   ];

@@ -7,7 +7,7 @@
     ../hosts/${host}/system.nix
     ./apps.nix # link nix apps to fix spotlight
     ./dock.nix # configure dock
-    ./env.nix # configure environment (e.g default shell)
+    ./environment.nix # configure environment (e.g default shell)
     ./finder.nix # configure finder
     ./fonts.nix # install fonts (e.g. NerdFonts)
     ./homebrew # install homebrew apps and configure homebrew itsef
