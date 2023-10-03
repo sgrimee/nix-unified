@@ -9,5 +9,9 @@
       pciutils
       wirelesstools
     ];
+
+    variables = {
+      BROWSER = "chromium";
+    };
   };
 }
