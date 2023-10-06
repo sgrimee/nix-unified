@@ -35,6 +35,7 @@
   "spotify"
   "synology-surveillance-station-client"
   "telegram"
+  "tqsl"
   "utm"
   # "visual-studio-code"
   "vlc"

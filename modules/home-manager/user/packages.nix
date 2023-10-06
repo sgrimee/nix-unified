@@ -37,6 +37,7 @@
     unzip
     inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
     wget
+    yt-dlp
     zellij
     zip
   ];
