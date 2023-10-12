@@ -24,7 +24,7 @@
   "notunes"
   "obsidian"
   "orcaslicer"
-  "paragon-extfs"
+  # "paragon-extfs"
   "plex"
   "qth"
   "raycast"
