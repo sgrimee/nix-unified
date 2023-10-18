@@ -1,2 +1,3 @@
 {...}: [
+  sgrimee/tap/webex-tui
 ]

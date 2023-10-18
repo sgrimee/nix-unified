@@ -1,7 +1,5 @@
-{ ... }:
-
-[
+{...}: [
   "homebrew/cask-versions"
   "homebrew/services"
-  "koekeishiya/formulae"
+  "sgrimee/tap"
 ]
