@@ -1,3 +1,3 @@
 {...}: [
-  sgrimee/tap/webex-tui
+  "sgrimee/tap/webex-tui"
 ]
