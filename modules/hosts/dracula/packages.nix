@@ -3,8 +3,11 @@
     # packages for this host
     chromium
     firefox
-    interception-tools # user to map Caps to Ctrl+Esc
+    interception-tools # map Caps to Ctrl+Esc
     mako # wayland notification daemon
+    swayidle
+    sway-launcher-desktop
+    swaylock
     wl-clipboard # wayland clipboard
 
     # linux vpn
