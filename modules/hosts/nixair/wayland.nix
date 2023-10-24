@@ -1,6 +1,4 @@
-{ pkgs, ... }:
-{
-
+{pkgs, ...}: {
   wayland.windowManager.sway = {
     enable = true;
     config = {
@@ -14,6 +12,14 @@
     };
     extraConfig = ''
       output "*" bg /etc/foggy_forest.jpg fill
+
+      # trackpad
+      input type:touchpad {
+        dwt enabled
+        tap enabled
+        natural_scroll enabled
+        middle_emulation enabled
+      }
 
       # Brightness
       bindsym XF86MonBrightnessDown exec light -U 10
