@@ -6,7 +6,7 @@
     systemPackages = with pkgs; [
       dockutil
     ];
-    systemPath = ["/usr/local/Homebrew/bin"];
+    systemPath = ["/usr/local/Homebrew/bin" "$HOME/.cargo/bin"];
     pathsToLink = ["/Applications"];
   };
 }
