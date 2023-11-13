@@ -17,6 +17,7 @@
     ./greetd.nix
     ./hardware.nix
     ./i18n.nix
+    ./iwd.nix
     ./keyboard.nix
     ./networking.nix
     ./nix.nix
