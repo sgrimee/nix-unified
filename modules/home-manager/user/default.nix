@@ -25,9 +25,9 @@
       EDITOR = "hx";
     };
 
-    # sessionPath = [
-    #   "$HOME/.spicetify" # needs to be manually installed as of now (incompatible with macos)
-    # ];
+    sessionPath = [
+      "$HOME/.cargo/bin"
+    ];
 
     shellAliases = {
       sudo = "sudo "; # allow aliases to be run with sudo
