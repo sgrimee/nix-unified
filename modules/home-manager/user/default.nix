@@ -25,8 +25,10 @@
       EDITOR = "hx";
     };
 
+    # sessionPath goes to the very end of the list
     sessionPath = [
       "$HOME/.cargo/bin"
+      "$HOME/.local/bin"
     ];
 
     shellAliases = {
