@@ -21,7 +21,6 @@
     less
     inputs.mactelnet.packages.${system}.mactelnet
     mc
-    nchat
     neofetch
     nixpkgs-fmt
     openssh

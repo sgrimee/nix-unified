@@ -5,7 +5,7 @@
     ./broot.nix
     ./btop.nix
     ./direnv.nix
-    ./exa.nix
+    ./eza.nix
     ./fzf.nix
     ./gh.nix
     ./git.nix
