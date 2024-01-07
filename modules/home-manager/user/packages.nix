@@ -24,6 +24,7 @@
     neofetch
     nixpkgs-fmt
     openssh
+    pat
     progress
     ripgrep
     rnix-lsp
