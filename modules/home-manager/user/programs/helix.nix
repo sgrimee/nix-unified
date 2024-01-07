@@ -38,7 +38,7 @@
           roots = ["Cargo.toml" "Cargo.lock"];
           auto-format = true;
           comment-token = "//";
-          language-server = {command = "rust-analyzer";};
+          # language-server = {command = "rust-analyzer";};
           indent = {
             tab-width = 4;
             unit = "    ";
