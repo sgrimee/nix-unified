@@ -13,6 +13,7 @@
     curl
     du-dust
     glow # CLI markdown viewer
+    hamlib_4
     home-manager
     htop
     inetutils
