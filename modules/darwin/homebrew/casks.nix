@@ -8,6 +8,7 @@
   "bambu-studio"
   "battery"
   "busycal"
+  "crossover"
   "devonthink"
   "discord"
   "firefox"
