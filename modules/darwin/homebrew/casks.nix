@@ -6,7 +6,7 @@
   "balenaetcher"
   "bambu-studio"
   "battery"
-  "burp-suite"
+  # "burp-suite"
   "busycal"
   "crossover"
   "devonthink"
