@@ -26,6 +26,7 @@
     nixpkgs-fmt
     openssh
     pat
+    podman
     progress
     ripgrep
     rnix-lsp
