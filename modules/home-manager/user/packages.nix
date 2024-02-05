@@ -29,6 +29,7 @@
     pat
     podman
     progress
+    qemu
     ripgrep
     rnix-lsp
     rustscan
