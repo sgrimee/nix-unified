@@ -8,6 +8,7 @@ keys:
   - &server_mbp_15_2018 age1g3yuwa905tsc5ylx58ax3aq882aet8kluyt8jshntzsza6h9cfuqg9z38m
   - &server_mbp_16_2023 age18xqlukfwr35mumgre56807raq0thq6ps6njdl9vfn8agw4qjlavs5f8qmj
   - &server_nixair age19axf2ac6886gvqxp95wxwhcs4xnqadyg9m6ckhnfvrhs4nasyexqyzet0n
+  - &server_legion age1sdjn90rr0e8vtvq9wt92rsw6vajmmrn5yj8dvzfardyrzj4uzpxs3zjcdx
 creation_rules:
   # - path_regex: secrets/nixair/[^/]+\.(yaml|json|env|ini)$
   #   key_groups:
@@ -27,3 +28,4 @@ creation_rules:
         - *server_mbp_15_2018
         - *server_mbp_16_2023
         - *server_nixair
+        - *server_legion
