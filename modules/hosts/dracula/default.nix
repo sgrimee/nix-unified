@@ -4,6 +4,7 @@ with inputs; let
   host = "dracula";
 in [
   ./hardware-configuration.nix
+  ./boot.nix
 
   # https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i7-2.0-15-iris-only-late-2013-retina-display-specs.html
 
