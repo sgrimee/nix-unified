@@ -43,6 +43,7 @@
     mkModules = host: (import ./modules/hosts/${host} {inherit inputs;});
   in {
     nixosConfigurations = {
+      
       nixair = inputs.stable-nixos.lib.nixosSystem rec {
         system = "x86_64-linux";
         specialArgs = {
@@ -51,6 +52,7 @@
         };
         modules = mkModules "nixair";
       };
+
       dracula = inputs.stable-nixos.lib.nixosSystem rec {
         system = "x86_64-linux";
         specialArgs = {
@@ -58,6 +60,15 @@
           overlays = import ./overlays;
         };
         modules = mkModules "dracula";
+      };
+
+      legion = inputs.stable-nixos.lib.nixosSystem rec {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs system stateVersion;
+          overlays = import ./overlays;
+        };
+        modules = mkModules "legion";
       };
     };
 

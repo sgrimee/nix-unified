@@ -9,7 +9,6 @@
   imports = [
     ../hosts/${host}/system.nix
     ./authorized_keys.nix
-    ./boot.nix
     ./console.nix
     ./display.nix
     ./environment.nix
