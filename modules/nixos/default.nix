@@ -20,12 +20,12 @@
     ./keyboard.nix
     ./networking.nix
     ./nix.nix
+    ./nix-ld.nix
     ./openssh.nix
     ./polkit.nix # used but sth else than wayland?
     ./printing.nix
     ./sound.nix
     ./time.nix
     ./touchpad.nix
-    ./vscode-server.nix
   ];
 }
