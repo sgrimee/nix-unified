@@ -22,7 +22,7 @@
     ./nix.nix
     ./nix-ld.nix
     ./openssh.nix
-    ./polkit.nix # used but sth else than wayland?
+    ./polkit.nix
     ./printing.nix
     ./sound.nix
     ./time.nix
