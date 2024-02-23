@@ -33,7 +33,7 @@
     ripgrep
     rnix-lsp
     rustscan
-    rustup
+    # rustup
     sops
     spotify-tui
     spotifyd

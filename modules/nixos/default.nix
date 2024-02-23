@@ -9,7 +9,6 @@
   imports = [
     ../hosts/${host}/system.nix
     ./authorized_keys.nix
-    ./boot.nix
     ./console.nix
     ./display.nix
     ./environment.nix
@@ -21,12 +20,12 @@
     ./keyboard.nix
     ./networking.nix
     ./nix.nix
+    ./nix-ld.nix
     ./openssh.nix
+    ./polkit.nix
     ./printing.nix
     ./sound.nix
     ./time.nix
     ./touchpad.nix
-    ./wayland.nix
-    # ./xserver.nix
   ];
 }

@@ -4,6 +4,8 @@ with inputs; let
   host = "nixair";
 in [
   ./hardware-configuration.nix
+  ./boot.nix
+  ../../nixos/wl-sway.nix
 
   # quirks
   # https://everymac.com/systems/apple/macbook-air/specs/macbook-air-core-i7-1.8-11-mid-2011-specs.html
