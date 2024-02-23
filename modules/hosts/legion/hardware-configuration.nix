@@ -9,6 +9,7 @@
   ...
 }: {
   imports = [
+    ./nvidia.nix
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 

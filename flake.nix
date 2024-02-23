@@ -43,7 +43,6 @@
     mkModules = host: (import ./modules/hosts/${host} {inherit inputs;});
   in {
     nixosConfigurations = {
-      
       nixair = inputs.stable-nixos.lib.nixosSystem rec {
         system = "x86_64-linux";
         specialArgs = {

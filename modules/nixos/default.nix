@@ -21,11 +21,11 @@
     ./networking.nix
     ./nix.nix
     ./openssh.nix
+    ./polkit.nix # used but sth else than wayland?
     ./printing.nix
     ./sound.nix
     ./time.nix
     ./touchpad.nix
-    ./wayland.nix
-    # ./xserver.nix
+    ./vscode-server.nix
   ];
 }

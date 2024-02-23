@@ -12,7 +12,7 @@ in {
       ./packages.nix
       ./programs
       ./spotifyd.nix
-      ./wayland.nix
+      ../../home-manager/wl-sway.nix
     ];
 
     home = {

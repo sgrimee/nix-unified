@@ -5,6 +5,8 @@ with inputs; let
 in [
   ./hardware-configuration.nix
   ./boot.nix
+  ./x-keyboard.nix
+  ../../nixos/x-gnome.nix
 
   nixos-hardware.nixosModules.common-cpu-intel
   #nixos-hardware.nixosModules.common-hidpi # make font too big on console
