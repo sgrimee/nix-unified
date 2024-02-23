@@ -7,6 +7,7 @@ in [
   ./boot.nix
   ./x-keyboard.nix
   ../../nixos/x-gnome.nix
+  ../../nixos/nvidia.nix
 
   nixos-hardware.nixosModules.common-cpu-intel
   #nixos-hardware.nixosModules.common-hidpi # make font too big on console
