@@ -12,6 +12,7 @@
     coreutils-full
     curl
     du-dust
+    ethtool
     glow # CLI markdown viewer
     hamlib_4
     home-manager
