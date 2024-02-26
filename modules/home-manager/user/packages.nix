@@ -41,6 +41,7 @@
     trippy
     unzip
     inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
+    wakeonlan
     wget
     yt-dlp
     zellij
