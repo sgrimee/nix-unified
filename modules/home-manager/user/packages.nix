@@ -39,7 +39,7 @@
       spotify-tui
       spotifyd
       ssh-to-age
-      trippy
+      trippy # cmd 'trip'
       unzip
       inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
       wakeonlan
