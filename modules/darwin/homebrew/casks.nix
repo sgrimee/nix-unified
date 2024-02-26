@@ -26,7 +26,7 @@
   "orcaslicer"
   # "paragon-extfs"
   "plex"
-  "qth"
+  # "qth"
   # "raycast"
   "rectangle"
   "serial"
