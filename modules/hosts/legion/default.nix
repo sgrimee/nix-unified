@@ -8,6 +8,7 @@ in [
   ./x-keyboard.nix
   ../../nixos/x-gnome.nix
   ../../nixos/nvidia.nix
+  ../../nixos/homeassistant-user.nix
 
   nixos-hardware.nixosModules.common-cpu-intel
   #nixos-hardware.nixosModules.common-hidpi # make font too big on console
