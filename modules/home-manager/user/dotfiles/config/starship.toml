@@ -1,3 +1,5 @@
+command_timeout = 1000
+
 [directory]
 format = "[ ﱮ $path ]($style)"
 style = "fg:bright-blue"
@@ -36,4 +38,7 @@ style = "fg:bright-white"
 format = '[ 󱑍 $time ]($style)'
 
 [os]
+disabled = false
+
+[direnv]
 disabled = false
