@@ -7,8 +7,12 @@
     settings = {
       # automatically hotlink duplicate files
       auto-optimise-store = true;
-      # sandbox builds
       sandbox = true;
+
+      # use faster cache
+      substituters = ["https://aseipp-nix-cache.global.ssl.fastly.net"];
+      # implied by substituters, but keeping in case we remove substituters
+      trusted-substituters = ["https://aseipp-nix-cache.global.ssl.fastly.net"];
     };
   };
 
