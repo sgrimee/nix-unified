@@ -2,7 +2,6 @@
   inputs,
   pkgs,
   system,
-  unstable,
   ...
 }: {
   home.packages = with pkgs;
@@ -18,7 +17,7 @@
       home-manager
       htop
       inetutils
-      joshuto
+      inputs.unstable.legacyPackages.${system}.joshuto
       killall
       less
       inputs.mactelnet.packages.${system}.mactelnet
