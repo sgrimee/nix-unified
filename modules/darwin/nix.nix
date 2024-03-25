@@ -1,4 +1,9 @@
-{lib, ...}: {
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}: {
   nix = {
     configureBuildUsers = true;
     extraOptions = ''
@@ -14,6 +19,11 @@
       };
       options = "--delete-older-than 30d";
     };
+
+    # pin nixpkgs system wide
+    registry.nixpkgs.flake = inputs.stable-darwin;
+    registry.unstable.flake = inputs.unstable;
+
     settings = {
       # automatically hotlink duplicate files
       auto-optimise-store = true;
