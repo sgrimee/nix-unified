@@ -11,6 +11,7 @@
   "crossover"
   "devonthink"
   "discord"
+  "etrecheckpro"
   "firefox"
   "gitup"
   "guitar-pro"
