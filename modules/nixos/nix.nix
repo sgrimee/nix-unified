@@ -8,13 +8,14 @@
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
+
+    # pin nixpkgs system wide
+    registry.nixpkgs.flake = inputs.stable-nixos;
+    registry.unstable.flake = inputs.unstable;
+
     settings = {
       # automatically hotlink duplicate files
       auto-optimise-store = true;
-
-      # pin nixpkgs system wide
-      registry.nixpkgs.flake = inputs.stable-nixos;
-      registry.unstable.flake = inputs.unstable;
 
       sandbox = true;
 

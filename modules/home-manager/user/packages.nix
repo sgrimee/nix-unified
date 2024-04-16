@@ -31,7 +31,7 @@
       progress
       qemu
       ripgrep
-      rnix-lsp
+      # rnix-lsp # insecure
       rustscan
       # rustup
       sops
