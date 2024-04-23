@@ -6,6 +6,7 @@ in [
   ./hardware-configuration.nix
   ./boot.nix
   ./x-keyboard.nix
+  ./firewall.nix
   ../../nixos/x-gnome.nix
   ../../nixos/nvidia.nix
   ../../nixos/homeassistant-user.nix
