@@ -23,6 +23,7 @@
   "midi-monitor"
   # "mounty"
   "notunes"
+  "nrlquaker-winbox"
   "obsidian"
   "orcaslicer"
   # "paragon-extfs"
