@@ -8,7 +8,7 @@
     ];
 
     # this goes to the top of the list, before nixos profiles, but after shell/develop paths
-    systemPath = ["/usr/local/Homebrew/bin"];
+    # systemPath = [];
     pathsToLink = ["/Applications"];
   };
 }
