@@ -40,7 +40,6 @@ Host samael
 Host carnas
   HostName 10.1.1.18
 Host nms.lx9laru.ampr.org
-  User librenms
   Port 22
 Host lx9laru
   HostName 44.161.251.5
