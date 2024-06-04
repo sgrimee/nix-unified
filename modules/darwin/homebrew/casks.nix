@@ -3,6 +3,7 @@
   "ableton-live-suite"
   "alfred"
   "arc"
+  "arturia-software-center"
   "balenaetcher"
   "bambu-studio"
   "battery"
