@@ -22,7 +22,6 @@
       less
       inputs.mactelnet.packages.${system}.mactelnet
       mc
-      mitmproxy
       neofetch
       nixpkgs-fmt
       openssh
@@ -35,7 +34,6 @@
       rustscan
       # rustup
       sops
-      spotify-tui
       spotifyd
       ssh-to-age
       trippy # cmd 'trip'

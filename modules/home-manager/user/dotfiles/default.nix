@@ -11,7 +11,3 @@
     };
   };
 }
-# TODO: add configs with secrets
-# spotify-tui
-# spotifyd
-

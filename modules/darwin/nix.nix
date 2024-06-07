@@ -25,8 +25,8 @@
     registry.unstable.flake = inputs.unstable;
 
     settings = {
-      # automatically hotlink duplicate files
-      auto-optimise-store = true;
+      # disabled as per https://github.com/NixOS/nix/issues/7273
+      auto-optimise-store = false;
 
       sandbox = true;
 
