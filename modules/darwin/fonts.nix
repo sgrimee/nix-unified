@@ -1,7 +1,6 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   fonts = {
-    fontDir.enable = true; # DANGER
-    fonts = [
+    packages = [
       pkgs.meslo-lgs-nf
       (pkgs.nerdfonts.override {
         fonts = [
