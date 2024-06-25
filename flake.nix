@@ -1,15 +1,9 @@
 {
   description = "mac/nixos nix-conf, forked from peanutbother/dotfiles";
   inputs = {
-    # nixpkgs
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     stable-nixos.url = "github:nixos/nixpkgs/nixos-24.05";
     stable-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
-
-    mkAlias = {
-      url = "github:reckenrode/mkAlias";
-      inputs.nixpkgs.follows = "stable-nixos";
-    };
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 

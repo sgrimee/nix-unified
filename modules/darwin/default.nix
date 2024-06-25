@@ -5,7 +5,6 @@
 }: {
   imports = [
     ../hosts/${host}/system.nix
-    # ./apps.nix # link nix apps to fix spotlight
     ./dock.nix # configure dock
     ./environment.nix # configure environment (e.g default shell)
     ./finder.nix # configure finder

@@ -28,7 +28,6 @@ in {
     inherit home inputs stateVersion system user;
   };
   home-manager.sharedModules = [
-    ./apps.nix
   ];
 
   home-manager.users.${user} = import ./user {inherit home pkgs stateVersion;};
