@@ -15,6 +15,7 @@
   "firefox"
   "gitup"
   "guitar-pro"
+  "iterm2"
   "karabiner-elements"
   "logi-options-plus"
   "loopback"
