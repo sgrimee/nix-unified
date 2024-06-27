@@ -16,6 +16,9 @@
     ./ssh.nix
     ./starship.nix
     ./vscode.nix
+    ./yt-dlp.nix
+    ./yazi.nix
     ./zsh.nix
+    ./zoxide.nix
   ];
 }

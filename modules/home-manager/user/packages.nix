@@ -12,6 +12,7 @@
       coreutils-full
       curl
       du-dust
+      ffmpegthumbnailer
       glow # CLI markdown viewer
       hamlib_4
       home-manager
@@ -27,6 +28,7 @@
       openssh
       pat
       podman
+      poppler # pdf preview
       progress
       qemu
       ripgrep
@@ -37,11 +39,12 @@
       spotifyd
       ssh-to-age
       trippy # cmd 'trip'
+      unrar
       unzip
       inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
       wakeonlan
       wget
-      yt-dlp
+      yazi # also installed as user program
       zellij
       zip
     ]
