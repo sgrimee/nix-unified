@@ -23,6 +23,7 @@
       less
       inputs.mactelnet.packages.${system}.mactelnet
       mc
+      mpv
       neofetch
       nixpkgs-fmt
       openssh
