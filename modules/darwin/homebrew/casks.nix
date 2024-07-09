@@ -16,6 +16,7 @@
   "gitup"
   "guitar-pro"
   "iterm2"
+  "itermai"
   "karabiner-elements"
   "logi-options-plus"
   "loopback"
