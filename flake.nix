@@ -18,7 +18,7 @@
     };
 
     sops-nix.url = "github:Mic92/sops-nix/master";
-
+    mac-app-util.url = "github:hraban/mac-app-util";
     mactelnet = {
       url = "github:sgrimee/mactelnet";
       inputs.nixpkgs.follows = "stable-nixos";
@@ -27,6 +27,7 @@
 
   outputs = {
     home-manager,
+    mac-app-util,
     mactelnet,
     nixos-hardware,
     self,
