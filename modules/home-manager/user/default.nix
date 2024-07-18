@@ -32,10 +32,7 @@
     ];
 
     shellAliases = {
-      sudo = "sudo "; # allow aliases to be run with sudo
       cls = "clear"; # shorthand and alias to win's cls
-      # mux = "tmuxinator"; # create a shell alias for tmuxinator
-      # get_idf = ". $HOME/esp/esp-idf/export.sh"
       cw = "cargo watch -q -c -x check";
       gst = "git status";
       history = "history 1";
@@ -44,6 +41,9 @@
       laru-ssh = "ssh -llx2sg -oport=15722"; # TODO install esp-idf somehow
       path-lines = "echo $PATH | tr ':' '\n'";
       s = "kitty +kitten ssh";
+      sudo = "sudo "; # allow aliases to be run with sudo
+      yt-dl-audio = "yt-dlp -x --audio-format mp3";
+      yt-dl-video = "yt-dlp -f bestvideo+bestaudio/best --recode mp4";
     };
   };
 
