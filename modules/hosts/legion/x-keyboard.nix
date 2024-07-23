@@ -1,6 +1,6 @@
 {
   services.xserver = {
-    layout = "us";
+    xkb.layout = "fr";
     xkb.model = "pc105";
   };
 }

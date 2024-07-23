@@ -11,6 +11,7 @@
       # `grub-install` if efiSupport is true
       # (the devices list is not used by the EFI grub install,
       # but must be set to some value in order to pass an assert in grub.nix)
+      default = 1;
       devices = ["nodev"];
       efiSupport = true;
       enable = true;

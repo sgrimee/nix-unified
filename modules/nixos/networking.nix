@@ -16,7 +16,7 @@
   services.avahi = {
     enable = true;
     # allow apps to resolve avahi addresses
-    nssmdns = true;
+    nssmdns4 = true;
     publish = {
       enable = true;
       addresses = true;
