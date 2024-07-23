@@ -1,7 +1,9 @@
 {
   services.xserver = {
-    layout = "us";
-    xkb.model = "apple_laptop";
-    xkb.variant = "intl";
+    xkb = {
+      layout = "us";
+      model = "apple_laptop";
+      variant = "intl";
+    };
   };
 }
