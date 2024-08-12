@@ -25,7 +25,7 @@
   "midi-monitor"
   # "mounty"
   "notunes"
-  "nrlquaker-winbox"
+  #"nrlquaker-winbox" # false positive malware detected
   "obsidian"
   "orcaslicer"
   # "paragon-extfs"
