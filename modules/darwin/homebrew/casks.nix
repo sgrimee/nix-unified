@@ -18,7 +18,7 @@
   "iterm2"
   "itermai"
   "karabiner-elements"
-  "logi-options-plus"
+  "logi-options+"
   "loopback"
   "macloggerdx"
   "microsoft-teams"
