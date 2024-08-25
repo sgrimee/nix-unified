@@ -3,7 +3,6 @@
     enable = true;
     # defaultEditor = true;
     settings = {
-      #theme = "base16";
       theme = "monokai_aqua";
       editor = {
         bufferline = "always";
@@ -26,21 +25,22 @@
     languages = {
       language = [
         {
-          name = "nix";
-          formatter.command = "alejandra";
           auto-format = true;
+          file-types = ["nix"];
+          formatter.command = "alejandra";
+          name = "nix";
         }
         {
-          name = "rust";
-          scope = "source.rust";
-          injection-regex = "rust";
-          file-types = ["rs"];
-          roots = ["Cargo.toml" "Cargo.lock"];
           auto-format = true;
+          file-types = ["rs"];
+          injection-regex = "rust";
           indent = {
             tab-width = 4;
             unit = "    ";
           };
+          name = "rust";
+          roots = ["Cargo.toml" "Cargo.lock"];
+          scope = "source.rust";
         }
       ];
     };

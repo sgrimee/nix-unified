@@ -25,6 +25,7 @@
       mc
       mpv
       neofetch
+      nil
       nixpkgs-fmt
       openssh
       pat
@@ -33,9 +34,7 @@
       progress
       qemu
       ripgrep
-      # rnix-lsp # insecure
       rustscan
-      # rustup
       sops
       spotifyd
       ssh-to-age
