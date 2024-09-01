@@ -32,6 +32,8 @@ in {
 
   home-manager.users.${user} = import ./user {inherit home pkgs stateVersion;};
 
+  home-manager.backupFileExtension = "nixbup";
+
   imports = [
     ../hosts/${host}/home.nix
   ];
