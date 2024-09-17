@@ -29,7 +29,6 @@
       nixpkgs-fmt
       openssh
       pat
-      podman
       poppler # pdf preview
       progress
       qemu
