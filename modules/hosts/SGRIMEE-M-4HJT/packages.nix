@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: {
-  home.packages = [
+  home.packages = with pkgs; [
     # packages for this host
   ];
 }
