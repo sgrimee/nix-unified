@@ -37,6 +37,7 @@
   "rectangle"
   "serial"
   "signal"
+  "slack"
   "sonos"
   "spotify"
   "synology-surveillance-station-client"
