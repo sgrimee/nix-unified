@@ -20,7 +20,7 @@
         autocrlf = "input";
       };
       commit.gpgsign = false;
-      pull.rebase = true;
+      pull.rebase = false;
       rebase.autoStash = true;
       push.autoSetupRemote = true;
 
