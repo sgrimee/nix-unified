@@ -26,7 +26,6 @@
   "SmartSDR for Mac" = 1523656696;
   "Speedtest" = 1153157709;
   "Spotica Menu" = 570549457;
-  "Telegram" = 747648890;
   "TextSniper" = 1528890965;
   "Todoist" = 585829637;
   "WiFi Explorer" = 494803304;

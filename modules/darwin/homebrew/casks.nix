@@ -41,7 +41,6 @@
   "sonos"
   "spotify"
   "synology-surveillance-station-client"
-  "telegram"
   "tqsl"
   "utm"
   "vlc"
