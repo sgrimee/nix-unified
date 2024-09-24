@@ -14,10 +14,11 @@
       du-dust
       ffmpegthumbnailer
       glow # CLI markdown viewer
+      gping
       hamlib_4
       home-manager
       htop
-      inetutils
+      # inetutils # disabled due to ping DUP issue
       inputs.unstable.legacyPackages.${system}.joshuto
       killall
       less
