@@ -37,6 +37,7 @@
   "rectangle"
   "serial"
   "signal"
+  "steam"
   "slack"
   "sonos"
   "spotify"
