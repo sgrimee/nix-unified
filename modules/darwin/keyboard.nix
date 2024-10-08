@@ -2,9 +2,8 @@
   system = {
     keyboard = {
       enableKeyMapping = true;
-      nonUS.remapTilde = false;
-      # using karabiner instead
-      #remapCapsLockToControl = true;
+      nonUS.remapTilde = true;
+      remapCapsLockToControl = true;
     };
     defaults.NSGlobalDomain = {
       InitialKeyRepeat = 14;
