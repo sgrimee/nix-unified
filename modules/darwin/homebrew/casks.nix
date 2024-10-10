@@ -28,7 +28,6 @@
   "midi-monitor"
   # "mounty"
   "notunes"
-  #"nrlquaker-winbox" # false positive malware detected
   "obsidian"
   "orcaslicer"
   # "paragon-extfs"
@@ -48,5 +47,6 @@
   "vlc"
   "wch-ch34x-usb-serial-driver"
   "whatsapp"
+  "winbox"
   "wireshark"
 ]
