@@ -25,6 +25,7 @@
   "microsoft-auto-update"
   "microsoft-teams"
   "midi-monitor"
+  "minecraft"
   # "mounty"
   "notunes"
   "obsidian"
