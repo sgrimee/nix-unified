@@ -26,6 +26,7 @@
   "microsoft-teams"
   "midi-monitor"
   "minecraft"
+  "mongodb-compass"
   # "mounty"
   "notunes"
   "obsidian"
