@@ -36,7 +36,7 @@ Host hass
   User hassio
 Host samael
   HostName 10.0.1.186
-  RemoteCommand bash --login
+  # RemoteCommand bash --login # causes login issues
 Host carnas
   HostName 10.1.1.18
 Host nms.lx9laru.ampr.org
