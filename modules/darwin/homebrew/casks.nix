@@ -33,7 +33,6 @@
   "orcaslicer"
   # "paragon-extfs"
   "plex"
-  "podman-desktop"
   # "qth"
   "raspberry-pi-imager"
   "rectangle"
