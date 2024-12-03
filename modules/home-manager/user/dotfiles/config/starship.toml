@@ -5,19 +5,7 @@ format = "[ ﱮ $path ]($style)"
 style = "fg:bright-blue"
 
 [git_branch]
-# format = '[ $symbol$branch(:$remote_branch) ]($style)'
 symbol = "  "
-# style = "fg:#1C3A5E bg:#FCF392"
-
-# [git_status]
-# format = '[$all_status]($style)'
-# style = "fg:#1C3A5E bg:#FCF392"
-
-# [git_metrics]
-# format = "([+$added]($added_style))[]($added_style)"
-# added_style = "fg:#1C3A5E bg:#FCF392"
-# deleted_style = "fg:bright-red bg:235"
-# disabled = false
 
 # [hostname]
 # ssh_only = true
@@ -42,3 +30,8 @@ disabled = false
 
 [direnv]
 disabled = false
+
+[shell]
+disabled = false
+format = '[$shell]($style) '
+style = 'bold yellow'

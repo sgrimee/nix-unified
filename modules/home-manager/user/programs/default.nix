@@ -4,6 +4,7 @@
     ./bat.nix
     ./broot.nix
     ./btop.nix
+    ./carapace.nix
     ./direnv.nix
     ./eza.nix
     ./fzf.nix
