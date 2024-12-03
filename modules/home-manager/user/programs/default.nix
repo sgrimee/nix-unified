@@ -13,6 +13,7 @@
     ./helix.nix
     ./jq.nix
     ./kitty.nix
+    ./nushell.nix
     ./ssh.nix
     ./starship.nix
     ./vscode.nix
