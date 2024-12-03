@@ -8,6 +8,7 @@
   "LightBlue" = 557428110;
   "MacFamilyTree 10" = 1567970985;
   "MindNode" = 1289197285;
+  "OmniFocus" = 1346203938;
   "Overlap" = 1516950324;
   "Paprika Recipe Manager 3" = 1303222628;
   "Plash" = 1494023538;
