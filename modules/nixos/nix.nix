@@ -4,10 +4,7 @@
   ...
 }: {
   nix = {
-    package = pkgs.nixFlakes;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
+    package = pkgs.nixVersions.stable;
 
     # pin nixpkgs system wide
     registry.nixpkgs.flake = inputs.stable-nixos;
@@ -16,7 +13,7 @@
     settings = {
       # automatically hotlink duplicate files
       auto-optimise-store = true;
-
+      experimental-features = ["nix-command" "flakes"];
       sandbox = true;
 
       # use faster cache
