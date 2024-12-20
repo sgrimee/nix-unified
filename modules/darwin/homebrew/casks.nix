@@ -26,6 +26,7 @@
   "logi-options+"
   "loopback"
   "macloggerdx"
+  "microsoft-auto-update"
   "microsoft-teams"
   "microsoft-excel"
   "microsoft-powerpoint"
