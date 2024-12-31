@@ -1,5 +1,6 @@
 {...}: [
   "1password"
+  "1password-cli"
   "ableton-live-suite"
   "alfred"
   "arc"
