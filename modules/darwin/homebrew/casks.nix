@@ -21,6 +21,7 @@
   "google-chrome"
   "guitar-pro"
   "home-assistant"
+  "inkscape"
   "iterm2"
   "itermai"
   # "karabiner-elements"
