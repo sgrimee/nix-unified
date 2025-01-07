@@ -42,6 +42,7 @@
   "nikitabobko/tap/aerospace"
   "notunes"
   "obsidian"
+  "omnifocus"
   # "orcaslicer"
   # "paragon-extfs"
   "plex"
