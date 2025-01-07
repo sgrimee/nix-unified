@@ -6,8 +6,8 @@
       remapCapsLockToControl = true;
     };
     defaults.NSGlobalDomain = {
-      InitialKeyRepeat = 14;
-      KeyRepeat = 1;
+      InitialKeyRepeat = 30;
+      KeyRepeat = 2;
       "com.apple.keyboard.fnState" = true; # function keys without Fn
     };
   };
