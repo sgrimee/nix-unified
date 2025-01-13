@@ -24,7 +24,7 @@
   "inkscape"
   "iterm2"
   "itermai"
-  # "karabiner-elements"
+  "karabiner-elements"
   "logi-options+"
   "loopback"
   "macloggerdx"
