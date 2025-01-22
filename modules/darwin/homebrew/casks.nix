@@ -54,6 +54,7 @@
   # "rectangle"
   "serial"
   "signal"
+  "silicon-labs-vcp-driver"
   "steam"
   "slack"
   "sonos"
