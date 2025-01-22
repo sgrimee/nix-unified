@@ -2,13 +2,13 @@
   description = "mac/nixos nix-conf, forked from peanutbother/dotfiles";
   inputs = {
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    stable-nixos.url = "github:nixos/nixpkgs/nixos-24.11";
+    stable-nixos.url = "github:nixos/nixpkgs/release-24.11";
     stable-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
     nix-darwin = {
-      url = "github:lnl7/nix-darwin";
+      url = "github:lnl7/nix-darwin/nix-darwin-24.11";
       inputs.nixpkgs.follows = "stable-darwin";
     };
 
