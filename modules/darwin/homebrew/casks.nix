@@ -16,6 +16,7 @@
   "devonthink"
   "discord"
   "etrecheckpro"
+  "FelixKratz/formulae/borders"
   "firefox"
   "ghostty"
   "gitup"
