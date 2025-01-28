@@ -10,7 +10,6 @@
   "battery"
   "busycal"
   "cocoapacketanalyzer"
-  "crossover"
   "curseforge"
   "daisydisk"
   "devonthink"
