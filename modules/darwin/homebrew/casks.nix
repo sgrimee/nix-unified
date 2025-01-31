@@ -52,6 +52,7 @@
   "raycast"
   # "rectangle"
   "serial"
+  "shortcat"
   "signal"
   "silicon-labs-vcp-driver"
   "steam"
