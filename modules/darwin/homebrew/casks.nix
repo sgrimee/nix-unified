@@ -41,6 +41,7 @@
   # "mounty"
   "mqtt-explorer"
   "nikitabobko/tap/aerospace"
+  "neo4j"
   "notunes"
   "obsidian"
   "omnifocus"
