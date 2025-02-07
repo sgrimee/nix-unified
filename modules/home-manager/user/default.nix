@@ -34,6 +34,7 @@
     shellAliases = {
       cls = "clear"; # shorthand and alias to win's cls
       cw = "cargo watch -q -c -x check";
+      docker = "podman";
       gst = "git status";
       history = "history 1";
       k = "kubectl";
