@@ -9,6 +9,7 @@
       # common packages, found in ~/.nix-profile/bin
       age
       alejandra
+      carapace
       coreutils-full
       curl
       du-dust

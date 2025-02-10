@@ -1,6 +1,6 @@
 {...}: [
   "borders"
-  "carapace"
+  # "carapace"
   "sketchybar"
   "pam-reattach"
   "podman"

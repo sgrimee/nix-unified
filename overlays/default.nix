@@ -1,2 +1,3 @@
 [
+  (import ./carapace.nix)
 ]
