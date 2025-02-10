@@ -1,6 +1,7 @@
 # mas search <app name>
 {...}: {
   "BlueSee" = 1336679524;
+  "Brother P-touch Editor" = 1453365242;
   "BT Terminal" = 1511543453;
   "Deliveries" = 924726344;
   "Discovery" = 1381004916;
