@@ -43,6 +43,7 @@
       path-lines = "echo $PATH | tr ':' '\n'";
       s = "kitty +kitten ssh";
       sudo = "sudo "; # allow aliases to be run with sudo
+      x = "exit";
       yt-dl-audio = "yt-dlp -x --audio-format mp3";
       yt-dl-video = "yt-dlp -f bestvideo+bestaudio/best --recode mp4";
     };
