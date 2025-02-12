@@ -39,6 +39,7 @@
       sops
       spotifyd
       ssh-to-age
+      tldr
       trippy # cmd 'trip'
       unrar
       unzip
