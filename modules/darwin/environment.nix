@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   environment = {
-    shells = [pkgs.zsh];
+    shells = with pkgs; [fish nushell zsh];
     # darwin only system packages, go to /run/current-system/sw
     systemPackages = with pkgs; [
       dockutil
