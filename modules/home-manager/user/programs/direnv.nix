@@ -1,6 +1,8 @@
 {
   programs.direnv = {
     enable = true;
+    # Fish integration is enabled by fish module
+    enableNushellIntegration = true;
     enableZshIntegration = true;
 
     nix-direnv.enable = true;

@@ -1,15 +1,12 @@
 command_timeout = 2000
 
 [directory]
-format = "[ ﱮ $path ]($style)"
+format = "[ ﱮ $path]($style)[$read_only]($read_only_style) "
 style = "fg:bright-blue"
+fish_style_pwd_dir_length = 3
 
 [git_branch]
 symbol = "  "
-
-# [hostname]
-# ssh_only = true
-# disabled = false
 
 [cmd_duration]
 format = "[  $duration ]($style)"
@@ -20,7 +17,7 @@ success_symbol = '[ ➜](bold green) '
 error_symbol = '[ ✗](#E84D44) '
 
 [time]
-disabled = false
+# disabled = false
 time_format = "%R" # Hour:Minute Format
 style = "fg:bright-white"
 format = '[ 󱑍 $time ]($style)'
@@ -33,5 +30,10 @@ disabled = false
 
 [shell]
 disabled = false
-format = '[$shell]($style) '
+format = '[$indicator]($style) '
 style = 'bold yellow'
+
+[sudo]
+style = 'bold green'
+symbol = '👩‍💻 '
+disabled = false

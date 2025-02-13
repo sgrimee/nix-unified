@@ -52,4 +52,6 @@
   manual.html.enable = true;
 
   pam.yubico.authorizedYubiKeys.ids = ["fetchcjejtbu"];
+
+  xdg.enable = true;
 }

@@ -7,6 +7,7 @@
     ./carapace.nix
     ./direnv.nix
     ./eza.nix
+    ./fish.nix
     ./fzf.nix
     ./gh.nix
     ./git.nix

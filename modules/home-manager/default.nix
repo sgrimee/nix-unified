@@ -16,6 +16,8 @@
 in {
   # Required even if present in user/programs, otherwise path is not set correctly
   programs.zsh.enable = true;
+  programs.fish.enable = true;
+  # no opton for nushell exists here, seems not needed
 
   users.users.${user} = {
     inherit home;
