@@ -1,9 +1,4 @@
-{
-  pkgs,
-  stateVersion,
-  home,
-  ...
-}: {
+{stateVersion, ...}: {
   imports = [
     ./dotfiles # copy dotfiles into home
     ./packages.nix
@@ -32,7 +27,6 @@
     ];
 
     shellAliases = {
-      cls = "clear"; # shorthand and alias to win's cls
       cw = "cargo watch -q -c -x check";
       docker = "podman";
       gst = "git status";
@@ -40,8 +34,7 @@
       k = "kubectl";
       laru-ansible = "ANSIBLE_STDOUT_CALLBACK=json ansible -ulx2sg -e'ansible_connection=network_cli' -e'ansible_network_os=community.routeros.routeros' -m'routeros_command'";
       laru-ssh = "ssh -llx2sg -oport=15722"; # TODO install esp-idf somehow
-      path-lines = "echo $PATH | tr ':' '\n'";
-      s = "kitty +kitten ssh";
+      path-lines = "echo $PATH | tr ':' '\n' | tr ' ' '\n'";
       sudo = "sudo "; # allow aliases to be run with sudo
       x = "exit";
       yt-dl-audio = "yt-dlp -x --audio-format mp3";
