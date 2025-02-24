@@ -22,6 +22,7 @@
       # inetutils # disabled due to ping DUP issue
       inputs.unstable.legacyPackages.${system}.joshuto
       killall
+      lazygit
       less
       inputs.mactelnet.packages.${system}.mactelnet
       mc
