@@ -32,6 +32,12 @@ disabled = false
 disabled = false
 format = '[$indicator]($style) '
 style = 'bold yellow'
+fish_indicator = '🐠 '
+bash_indicator = '🐚 '
+zsh_indicator = '⚡'
+elvish_indicator = '✨ '
+nu_indicator = '🌊 '
+unknown_indicator = '🌀 '
 
 [sudo]
 style = 'bold green'
