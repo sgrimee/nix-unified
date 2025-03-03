@@ -37,6 +37,7 @@
       qemu
       ripgrep
       rustscan
+      inputs.unstable.legacyPackages.${system}.superfile
       sops
       spotifyd
       ssh-to-age
