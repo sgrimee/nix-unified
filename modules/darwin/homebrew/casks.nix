@@ -63,6 +63,7 @@
   "synology-surveillance-station-client"
   "textsniper"
   "tqsl"
+  "ubersicht"
   "utm"
   "vlc"
   "wch-ch34x-usb-serial-driver"

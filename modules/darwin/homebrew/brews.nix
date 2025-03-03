@@ -1,7 +1,7 @@
 {...}: [
   "borders"
   # "carapace"
-  "sketchybar"
+  # "sketchybar"
   "pam-reattach"
   "podman"
   "podman-compose"
