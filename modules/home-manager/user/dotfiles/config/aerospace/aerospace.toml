@@ -82,7 +82,7 @@ inner.horizontal = 10
 inner.vertical = 10
 outer.left = 10
 outer.bottom = 10
-outer.top = [{ monitor."built-in" = 10}, 30]
+outer.top = [{ monitor."built-in" = 10 }, { monitor."DELL UP3214Q" = 40 }, { monitor."DELL S3222DGM" = 40 }, 40]
 outer.right = 10
 
 # 'main' binding mode declaration
