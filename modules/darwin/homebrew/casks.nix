@@ -65,6 +65,7 @@
   "tqsl"
   "ubersicht"
   "utm"
+  "visual-studio-code@insiders"
   "vlc"
   "wch-ch34x-usb-serial-driver"
   "whatsapp"
