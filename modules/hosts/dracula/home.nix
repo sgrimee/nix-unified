@@ -1,6 +1,12 @@
 {pkgs, ...}: let
   user = "sgrimee";
 in {
+  users.users.lgrimee = {
+    isNormalUser = true;
+    group = "users";
+    extraGroups = ["audio" "networkmanager" "video"];
+    shell = pkgs.zsh;
+  };
   users.users.${user} = {
     isNormalUser = true;
     group = "users";
