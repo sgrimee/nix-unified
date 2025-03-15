@@ -4,6 +4,7 @@
     chromium
     firefox
     interception-tools # map Caps to Ctrl+Esc
+    lunar-client # minecraft
 
     # linux vpn
     #networkmanager-applet
