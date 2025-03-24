@@ -36,6 +36,7 @@
       laru-ssh = "ssh -llx2sg -oport=15722"; # TODO install esp-idf somehow
       path-lines = "echo $PATH | tr ':' '\n' | tr ' ' '\n'";
       sudo = "sudo "; # allow aliases to be run with sudo
+      tree = "broot";
       x = "exit";
       yt-dl-audio = "yt-dlp -x --audio-format mp3";
       yt-dl-video = "yt-dlp -f bestvideo+bestaudio/best --recode mp4";
