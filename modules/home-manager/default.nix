@@ -16,7 +16,10 @@
 in {
   # Required even if present in user/programs, otherwise path is not set correctly
   programs.zsh.enable = true;
-  programs.fish.enable = true;
+  programs.fish = {
+    enable = true;
+    package = inputs.unstable.legacyPackages.${system}.fish;
+  };
   # no opton for nushell exists here, seems not needed
 
   users.users.${user} = {
@@ -32,7 +35,7 @@ in {
   home-manager.sharedModules = [
   ];
 
-  home-manager.users.${user} = import ./user {inherit home pkgs stateVersion;};
+  home-manager.users.${user} = import ./user {inherit inputs home pkgs stateVersion system;};
 
   home-manager.backupFileExtension = "nixbup";
 

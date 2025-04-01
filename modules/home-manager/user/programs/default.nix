@@ -1,4 +1,8 @@
 {
+  inputs,
+  system,
+  ...
+}: {
   imports = [
     ./alacritty.nix
     ./bat.nix

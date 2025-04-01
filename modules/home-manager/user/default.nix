@@ -1,4 +1,9 @@
-{stateVersion, ...}: {
+{
+  inputs,
+  stateVersion,
+  system,
+  ...
+}: {
   imports = [
     ./dotfiles # copy dotfiles into home
     ./packages.nix

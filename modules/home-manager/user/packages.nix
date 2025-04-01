@@ -13,6 +13,7 @@
       coreutils-full
       curl
       du-dust
+      inputs.unstable.legacyPackages.${system}.fish
       ffmpegthumbnailer
       glow # CLI markdown viewer
       gping
