@@ -17,6 +17,7 @@
     ./hardware.nix
     ./i18n.nix
     ./iwd.nix
+    ./kanata.nix
     ./keyboard.nix
     ./networking.nix
     ./nix.nix
