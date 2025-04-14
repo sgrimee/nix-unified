@@ -7,6 +7,7 @@
   home.packages = with pkgs;
     [
       # common packages, found in ~/.nix-profile/bin
+      _1password-cli
       age
       alejandra
       carapace
@@ -46,6 +47,7 @@
       trippy # cmd 'trip'
       unrar
       unzip
+      uv
       inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
       wakeonlan
       wget
