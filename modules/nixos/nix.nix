@@ -22,7 +22,7 @@
       # implied by substituters, but keeping in case we remove substituters
       trusted-substituters = ["https://aseipp-nix-cache.global.ssl.fastly.net"];
 
-      trusted-users = ["root" "sgrimee"];
+      trusted-users = ["root" "sgrimee" "nixremote"];
     };
   };
 
