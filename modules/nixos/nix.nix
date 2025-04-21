@@ -37,8 +37,14 @@
     ];
   };
 
-  # Allow proprietary packages
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+
+    # Applies to all Rust packages using buildRustPackage
+    cargoBuildType = "release";
+    cargoParallelBuilding = true;
+    cargoBuildJobs = "$NIX_BUILD_CORES"; # Use all allocated cores
+  };
 
   # add custom overlays
   nixpkgs.overlays = import ../../overlays;
