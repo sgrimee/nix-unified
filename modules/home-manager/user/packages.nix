@@ -24,6 +24,7 @@
       htop
       # inetutils # disabled due to ping DUP issue
       inputs.unstable.legacyPackages.${system}.joshuto
+      just
       killall
       lazygit
       less
