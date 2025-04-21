@@ -24,6 +24,17 @@
 
       trusted-users = ["root" "sgrimee"];
     };
+
+    distributedBuilds = true;
+    buildMachines = [
+      {
+        hostName = "legion.local";
+        sshUser = "sgrimee";
+        sshKey = "/Users/sgrimee/.ssh/id_rsa";
+        system = "x86_64-linux";
+        supportedFeatures = ["kvm" "nixos-test" "big-parallel"];
+      }
+    ];
   };
 
   # Allow proprietary packages
@@ -31,16 +42,4 @@
 
   # add custom overlays
   nixpkgs.overlays = import ../../overlays;
-
-  # Enable distributed builds
-  distributedBuilds = true;
-  buildMachines = [
-    {
-      hostName = "legion.local";
-      sshUser = "sgrimee";
-      sshKey = "/Users/sgrimee/.ssh/id_rsa";
-      system = "x86_64-linux";
-      supportedFeatures = ["kvm" "nixos-test" "big-parallel"];
-    }
-  ];
 }
