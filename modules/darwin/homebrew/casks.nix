@@ -16,7 +16,7 @@
   "discord"
   "etrecheckpro"
   "firefox"
-  # "ghostty" # as package now
+  "ghostty"
   "gitup"
   "google-chrome"
   "guitar-pro"
