@@ -8,6 +8,7 @@
     swayidle
     sway-launcher-desktop
     swaylock
+    udiskie
     wl-clipboard # wayland clipboard
 
     # linux vpn

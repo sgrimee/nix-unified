@@ -19,6 +19,7 @@
     ./iwd.nix
     ./kanata.nix
     ./keyboard.nix
+    ./mounts.nix
     ./networking.nix
     ./nix.nix
     ./nix-ld.nix
