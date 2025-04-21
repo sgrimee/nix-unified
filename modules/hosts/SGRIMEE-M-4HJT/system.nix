@@ -11,6 +11,8 @@
     buildMachines = [
       {
         hostName = "legion.local";
+        maxJobs = 8;
+        speedFactor = 2;
         sshUser = "sgrimee";
         sshKey = "/Users/sgrimee/.ssh/id_ed25519";
         system = "x86_64-linux";
