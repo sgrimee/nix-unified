@@ -16,6 +16,7 @@
       du-dust
       inputs.unstable.legacyPackages.${system}.fish
       ffmpegthumbnailer
+      ghostty
       glow # CLI markdown viewer
       gping
       hamlib_4
