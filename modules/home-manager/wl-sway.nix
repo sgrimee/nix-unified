@@ -7,7 +7,6 @@
       down = "k";
       up = "l";
       right = "semicolon";
-
       menu = "exec rofi -show drun";
       terminal = "kitty";
       output = {
