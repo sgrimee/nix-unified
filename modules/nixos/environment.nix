@@ -16,5 +16,7 @@
     variables = {
       BROWSER = "firefox";
     };
+
+    enableAllTerminfo = true;
   };
 }

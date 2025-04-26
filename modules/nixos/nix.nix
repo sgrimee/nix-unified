@@ -22,19 +22,8 @@
       # implied by substituters, but keeping in case we remove substituters
       trusted-substituters = ["https://aseipp-nix-cache.global.ssl.fastly.net"];
 
-      trusted-users = ["root" "sgrimee"];
+      trusted-users = ["root" "sgrimee" "nixremote"];
     };
-
-    distributedBuilds = true;
-    buildMachines = [
-      {
-        hostName = "legion.local";
-        sshUser = "sgrimee";
-        sshKey = "/Users/sgrimee/.ssh/id_rsa";
-        system = "x86_64-linux";
-        supportedFeatures = ["kvm" "nixos-test" "big-parallel"];
-      }
-    ];
   };
 
   nixpkgs.config = {

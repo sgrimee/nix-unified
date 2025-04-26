@@ -5,4 +5,19 @@
     hostName = "SGRIMEE-M-4HJT";
     localHostName = "SGRIMEE-M-4HJT";
   };
+
+  nix = {
+    distributedBuilds = true;
+    buildMachines = [
+      {
+        hostName = "legion.local";
+        maxJobs = 8;
+        speedFactor = 2;
+        sshUser = "sgrimee";
+        sshKey = "/Users/sgrimee/.ssh/id_ed25519";
+        system = "x86_64-linux";
+        supportedFeatures = ["kvm" "nixos-test" "big-parallel"];
+      }
+    ];
+  };
 }

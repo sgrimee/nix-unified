@@ -39,18 +39,6 @@
       # trusted-users = ["root" "@admins"];
       builders-use-substitutes = true;
     };
-
-    # Enable distributed builds
-    distributedBuilds = true;
-    buildMachines = [
-      {
-        hostName = "legion.local";
-        sshUser = "sgrimee";
-        sshKey = "/Users/sgrimee/.ssh/id_rsa";
-        system = "x86_64-linux";
-        supportedFeatures = ["kvm" "nixos-test" "big-parallel"];
-      }
-    ];
   };
 
   # Ignored when nixpkgs.pkgs is set, but should not be the case here.
