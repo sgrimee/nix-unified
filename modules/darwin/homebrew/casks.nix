@@ -14,6 +14,7 @@
   "daisydisk"
   "devonthink"
   "discord"
+  "docker"
   "etrecheckpro"
   "firefox"
   "ghostty"
