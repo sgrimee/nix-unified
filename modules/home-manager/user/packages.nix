@@ -48,7 +48,6 @@
       trippy # cmd 'trip'
       unrar
       unzip
-      uv
       inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
       wakeonlan
       wget
