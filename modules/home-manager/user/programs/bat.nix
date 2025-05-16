@@ -1,6 +1,9 @@
 {
   programs.bat = {
     enable = true;
-    config.theme = "TwoDark";
+    config = {
+      theme = "TwoDark";
+      style = "changes,header";
+    };
   };
 }
