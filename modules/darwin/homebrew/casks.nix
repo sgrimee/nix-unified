@@ -9,6 +9,7 @@
   "bambu-studio"
   "battery"
   "busycal"
+  "claude"
   "cocoapacketanalyzer"
   "curseforge"
   "daisydisk"
