@@ -7,6 +7,6 @@ in [
   (import ../../darwin {inherit inputs host user;})
 
   # home
-  home-manager.darwinModule
+  home-manager.darwinModules.home-manager
   (import ../../home-manager {inherit inputs host user;})
 ]

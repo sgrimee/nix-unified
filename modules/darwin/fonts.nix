@@ -2,13 +2,9 @@
   fonts = {
     packages = [
       pkgs.meslo-lgs-nf
-      (pkgs.nerdfonts.override {
-        fonts = [
-          "FiraCode"
-          "FiraMono"
-          "Hack"
-        ];
-      })
+      pkgs.nerd-fonts.fira-code
+      pkgs.nerd-fonts.fira-mono
+      pkgs.nerd-fonts.hack
     ];
   };
 }

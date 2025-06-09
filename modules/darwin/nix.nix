@@ -5,12 +5,10 @@
   ...
 }: {
   nix = {
-    configureBuildUsers = true;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
     gc = {
-      user = "root";
       automatic = true;
       interval = {
         Weekday = 0;
@@ -47,6 +45,4 @@
   # add custom overlays
   nixpkgs.overlays = import ../../overlays;
 
-  # activate nix daemon
-  services.nix-daemon.enable = true;
 }
