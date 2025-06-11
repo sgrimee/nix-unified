@@ -73,5 +73,6 @@
   "whatsapp"
   "wifi-explorer"
   "winbox"
+  "windsurf"
   "wireshark"
 ]
