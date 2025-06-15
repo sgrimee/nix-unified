@@ -50,11 +50,29 @@ build HOST:
         nix build .#nixosConfigurations.{{HOST}}.config.system.build.toplevel --print-build-logs; \
     fi
 
+# Build with timing information
+build-timed HOST:
+    @echo "Building configuration for {{HOST}} with timing..."
+    @if [ "{{HOST}}" = "SGRIMEE-M-4HJT" ]; then \
+        time nix build .#darwinConfigurations.{{HOST}}.system --print-build-logs; \
+    else \
+        time nix build .#nixosConfigurations.{{HOST}}.config.system.build.toplevel --print-build-logs; \
+    fi
+
+# Check what will be built before building
+check-derivations HOST:
+    @echo "Checking what needs to be built for {{HOST}}..."
+    @if [ "{{HOST}}" = "SGRIMEE-M-4HJT" ]; then \
+        nix path-info --derivation .#darwinConfigurations.{{HOST}}.system; \
+    else \
+        nix path-info --derivation .#nixosConfigurations.{{HOST}}.config.system.build.toplevel; \
+    fi
+
 # Switch to configuration for current host
 switch:
     @echo "Switching to current host configuration..."
     @if [[ "$OSTYPE" == "darwin"* ]]; then \
-        darwin-rebuild switch --flake .; \
+        sudo darwin-rebuild switch --flake .; \
     else \
         sudo nixos-rebuild switch --flake .; \
     fi
@@ -63,7 +81,7 @@ switch:
 switch-host HOST:
     @echo "Switching to {{HOST}} configuration..."
     @if [ "{{HOST}}" = "SGRIMEE-M-4HJT" ]; then \
-        darwin-rebuild switch --flake .#{{HOST}}; \
+        sudo darwin-rebuild switch --flake .#{{HOST}}; \
     else \
         sudo nixos-rebuild switch --flake .#{{HOST}}; \
     fi
@@ -72,7 +90,7 @@ switch-host HOST:
 dry-run:
     @echo "Dry run for current host..."
     @if [[ "$OSTYPE" == "darwin"* ]]; then \
-        darwin-rebuild check --flake .; \
+        darwin-rebuild build --dry-run --flake .; \
     else \
         sudo nixos-rebuild dry-run --flake .; \
     fi
@@ -160,6 +178,28 @@ clean-generations N="5":
 optimize:
     @echo "Optimizing Nix store..."
     nix store optimise
+
+# === Performance ===
+
+# Analyze build performance and system configuration
+analyze-performance:
+    @echo "Analyzing build performance..."
+    ./utils/analyze-performance.sh
+
+# Show current Nix configuration
+show-nix-config:
+    @echo "Current Nix configuration:"
+    nix config show
+
+# Profile store usage
+profile-store:
+    @echo "Nix store analysis:"
+    @echo "Store path: $$(nix eval --impure --expr 'builtins.storeDir')"
+    @if command -v du >/dev/null 2>&1; then \
+        echo "Store size: $$(du -sh /nix/store 2>/dev/null | cut -f1)"; \
+        echo "Largest store items:"; \
+        du -sh /nix/store/* 2>/dev/null | sort -rh | head -10; \
+    fi
 
 # === Debugging ===
 
