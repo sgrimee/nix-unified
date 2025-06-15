@@ -1,5 +1,5 @@
 final: prev: {
-  carapace = prev.carapace.overrideAttrs (_: prev: rec {
+  carapace = prev.carapace.overrideAttrs (_: _prev: rec {
     version = "1.2.1";
 
     src = final.fetchFromGitHub {

@@ -13,7 +13,17 @@
       "Bash(just analyze-performance:*)",
       "Bash(nix config:*)",
       "Bash(darwin-rebuild:*)",
-      "Bash(just switch:*)"
+      "Bash(just switch:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:github.com)",
+      "mcp__github__list_issues",
+      "mcp__github__get_file_contents",
+      "mcp__github__list_commits",
+      "Bash(gh run list:*)",
+      "Bash(just lint)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": []
   }

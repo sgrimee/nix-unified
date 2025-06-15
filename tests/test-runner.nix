@@ -3,7 +3,6 @@
   pkgs,
   ...
 }: let
-  inherit (lib) runTests;
   
   # Import all test suites
   allTests = import ./default.nix { inherit lib pkgs; };
