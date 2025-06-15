@@ -11,7 +11,7 @@
     envExtra = ''
     '';
 
-    initExtra = ''
+    initContent = ''
       # tail with colours
       tailbat() {
         tail -f $1 | bat --paging=never -l log --style=plain

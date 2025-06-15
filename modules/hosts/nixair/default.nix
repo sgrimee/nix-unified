@@ -18,6 +18,6 @@ in [
   (import ../../nixos {inherit inputs host user;})
 
   # home
-  home-manager.nixosModule
+  home-manager.nixosModules.home-manager
   (import ../../home-manager {inherit inputs host user;})
 ]

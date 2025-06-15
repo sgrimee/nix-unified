@@ -77,5 +77,11 @@
         modules = mkModules "SGRIMEE-M-4HJT";
       };
     };
+
+    # Test outputs
+    checks = {
+      x86_64-linux = {};
+      aarch64-darwin = {};
+    };
   };
 }
