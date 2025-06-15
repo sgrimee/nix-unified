@@ -1,4 +1,7 @@
 {
+  lib,
+  ...
+}: {
   system.stateVersion = "23.11";
   networking.hostName = "legion";
 
@@ -8,7 +11,7 @@
   };
 
   nix.settings = {
-    max-jobs = 8; # Number of parallel build processes
-    cores = 4; # Threads per build (see note below)
+    max-jobs = lib.mkForce 8; # Number of parallel build processes (override global setting)
+    cores = lib.mkForce 4; # Threads per build (override global setting)
   };
 }
