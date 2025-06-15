@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Install just
+        run: nix profile install nixpkgs#just
+
+      - name: Run unit tests
+        run: just test-verbose
+
+      - name: Check flake
+        run: just check
+
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Install just
+        run: nix profile install nixpkgs#just
+
+      - name: Check for dead code
+        run: just lint-check
+
+      - name: Format check
+        run: |
+          # Run formatting and check if any files changed
+          just fmt
+          if ! git diff --exit-code; then
+            echo "Files are not properly formatted. Run 'just fmt' locally and commit the changes."
+            exit 1
+          fi
+
+  build-nixos:
+    name: Build NixOS Configurations
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        host: [nixair, dracula, legion]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Install just
+        run: nix profile install nixpkgs#just
+
+      - name: Build ${{ matrix.host }}
+        run: just build ${{ matrix.host }}
+
+  build-darwin:
+    name: Build Darwin Configuration
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Install just
+        run: nix profile install nixpkgs#just
+
+      - name: Build Darwin configuration
+        run: just build SGRIMEE-M-4HJT

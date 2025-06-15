@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(just test:*)",
+      "Bash(nix eval:*)",
+      "Bash(./run-tests.sh)",
+      "Bash(just lint-check:*)",
+      "Bash(rm:*)",
+      "Bash(nix flake show:*)",
+      "Bash(nix flake check:*)"
+    ],
+    "deny": []
+  }
+}
