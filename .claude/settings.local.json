@@ -7,7 +7,13 @@
       "Bash(just lint-check:*)",
       "Bash(rm:*)",
       "Bash(nix flake show:*)",
-      "Bash(nix flake check:*)"
+      "Bash(nix flake check:*)",
+      "Bash(nix show-config:*)",
+      "Bash(chmod:*)",
+      "Bash(just analyze-performance:*)",
+      "Bash(nix config:*)",
+      "Bash(darwin-rebuild:*)",
+      "Bash(just switch:*)"
     ],
     "deny": []
   }
