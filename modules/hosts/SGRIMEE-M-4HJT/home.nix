@@ -17,8 +17,6 @@ in {
       # work for bash, fish and zsh but not nushell:  https://github.com/nix-community/home-manager/pull/3529
       shellAliases = {
         # code = "env VSCODE_CWD=\"$PWD\" open -n -b \"com.microsoft.VSCode\" --args $*"; # create a shell alias for vs code
-        nixswitch = "sudo nix run nix-darwin -- switch --flake .#"; # refresh nix env after config changes
-        nixup = "nix flake update; nixswitch";
       };
     };
   };

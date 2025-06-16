@@ -24,8 +24,6 @@ in {
       # };
 
       shellAliases = {
-        nixswitch = "sudo nixos-rebuild switch --flake .#"; # refresh nix env after config changes
-        nixup = "nix flake update; nixswitch";
       };
     };
 
