@@ -27,7 +27,6 @@
   "iterm2"
   "itermai"
   "karabiner-elements"
-  "logi-options+"
   "loopback"
   "macloggerdx"
   "menuwhere"
