@@ -33,3 +33,5 @@ secrets/keys.txt
 
 # test builds
 /result
+
+.claude/settings.local.json

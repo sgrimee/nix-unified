@@ -35,7 +35,6 @@
   "microsoft-excel"
   "microsoft-powerpoint"
   "microsoft-outlook"
-  "microsoft-remote-desktop"
   "microsoft-word"
   "midi-monitor"
   "mongodb-compass"
