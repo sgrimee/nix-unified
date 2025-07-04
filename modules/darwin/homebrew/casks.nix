@@ -19,7 +19,7 @@
   "etrecheckpro"
   "firefox"
   "ghostty"
-  "gitup"
+  "gitup-app"
   "google-chrome"
   "guitar-pro"
   "home-assistant"
