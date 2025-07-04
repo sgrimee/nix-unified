@@ -29,6 +29,7 @@
       lazygit
       less
       inputs.mactelnet.packages.${system}.mactelnet
+      mdformat
       mpv
       neofetch
       nil
