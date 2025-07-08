@@ -26,6 +26,9 @@
         "com.apple.sound.beep.volume" = 0.0;
         "com.apple.sound.beep.feedback" = 0; # disable sound when changing volume
       };
+      screencapture = {
+        location = "~/Downloads";
+      };
     };
   };
 }
