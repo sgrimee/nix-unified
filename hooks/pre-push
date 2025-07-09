@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Pre-push hook to run lint checks before pushing to origin
+# This prevents pushing code that would fail CI lint checks
+
+remote="$1"
+url="$2"
+
+# Only run checks when pushing to origin
+if [[ "$remote" == "origin" ]]; then
+    echo "Running pre-push lint checks..."
+    
+    # Run lint check (without auto-fix to avoid modifying during push)
+    if ! just lint-check; then
+        echo "❌ Lint check failed. Please run 'just lint' to fix issues and commit changes."
+        echo "Blocking push to prevent CI failure."
+        exit 1
+    fi
+    
+    echo "✅ Lint checks passed."
+fi
+
+exit 0

@@ -38,6 +38,11 @@ darwin-rebuild switch --flake .#<hostname>
 
 ### Development and Maintenance
 
+**Install git hooks:**
+```bash
+just install-hooks
+```
+
 **Clear evaluation cache:**
 ```bash
 ./utils/clear-eval-cache.sh
@@ -137,3 +142,42 @@ The repository includes GitHub Actions workflows:
 - **build-darwin**: Builds Darwin configuration (SGRIMEE-M-4HJT)
 
 The CI automatically runs on pushes to main and pull requests.
+
+## Git Hooks
+
+The repository includes git hooks to maintain code quality and prevent common issues:
+
+### Available Hooks
+
+**Pre-commit hook** (`hooks/pre-commit`):
+- Scans for secrets using gitleaks
+- Checks for large files (>1MB)
+- Formats Nix files with nixfmt-classic
+- Validates Nix syntax
+- Checks for problematic patterns (TODO/FIXME, debugging code)
+
+**Pre-push hook** (`hooks/pre-push`):
+- Runs lint checks before pushing to origin
+- Prevents pushing code that would fail CI
+
+**Post-merge hook** (`hooks/post-merge`):
+- Runs after successful merge operations
+
+### Setup
+
+**Install hooks for new contributors:**
+```bash
+just install-hooks
+```
+
+**Manual installation:**
+```bash
+./utils/install-hooks.sh
+```
+
+### Hook Management
+
+- Hooks are stored in `hooks/` directory and version controlled
+- Use `just install-hooks` to install/update hooks
+- Hooks can be bypassed with `--no-verify` flag if needed
+- CI/CD provides the same validation as hooks for comprehensive testing

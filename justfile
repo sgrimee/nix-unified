@@ -129,6 +129,11 @@ dev:
     @echo "Entering development shell..."
     nix develop
 
+# Install git hooks for the project
+install-hooks:
+    @echo "Installing git hooks..."
+    ./utils/install-hooks.sh
+
 # Format Nix files
 fmt:
     @echo "Formatting Nix files..."
