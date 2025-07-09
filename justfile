@@ -144,6 +144,21 @@ lint-check:
     @echo "Checking for dead code..."
     nix run github:astro/deadnix -- --fail --no-lambda-pattern-names .
 
+# Scan for secrets with gitleaks
+scan-secrets:
+    @echo "Scanning for secrets..."
+    nix run nixpkgs#gitleaks -- detect --source . --config .gitleaks.toml --verbose
+
+# Scan for secrets in specific file or directory
+scan-secrets-path PATH:
+    @echo "Scanning {{PATH}} for secrets..."
+    nix run nixpkgs#gitleaks -- detect --source {{PATH}} --config .gitleaks.toml --verbose --no-git
+
+# Scan staged files for secrets (useful before commit)
+scan-secrets-staged:
+    @echo "Scanning staged files for secrets..."
+    nix run nixpkgs#gitleaks -- detect --source . --config .gitleaks.toml --staged --verbose
+
 # === Maintenance ===
 
 # Garbage collect old generations and store paths

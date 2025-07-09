@@ -1,9 +1,4 @@
-{
-  inputs,
-  pkgs,
-  system,
-  ...
-}: {
+{ inputs, pkgs, system, ... }: {
   home.packages = with pkgs;
     [
       # common packages, found in ~/.nix-profile/bin
@@ -17,6 +12,7 @@
       inputs.unstable.legacyPackages.${system}.fish
       ffmpegthumbnailer
       # ghostty # marked broken
+      gitleaks
       glow # CLI markdown viewer
       gping
       hamlib_4
@@ -55,8 +51,5 @@
       yazi # also installed as user program
       zellij
       zip
-    ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
-      ethtool
-    ];
+    ] ++ lib.optionals pkgs.stdenv.isLinux [ ethtool ];
 }

@@ -1,0 +1,62 @@
+# Gitleaks configuration for nix-unified repository
+# This file configures secret detection patterns and exclusions
+
+title = "gitleaks config for nix-unified"
+
+# Extend default ruleset
+[extend]
+useDefault = true
+
+# Custom rules specific to Nix configurations
+[[rules]]
+id = "nix-store-path"
+description = "Nix store paths (not secrets)"
+regex = '''/nix/store/[a-z0-9]{32}-'''
+secretGroup = 1
+
+[[rules]]
+id = "sops-encrypted-value"
+description = "SOPS encrypted values (not plaintext secrets)"
+regex = '''ENC\[AES256_GCM,data:[A-Za-z0-9+/=]+,'''
+secretGroup = 1
+
+# Allowlist for known false positives
+[allowlist]
+description = "Nix-specific patterns and common false positives"
+regexes = [
+    '''/nix/store/[a-z0-9]{32}-''',  # Nix store paths
+    '''ENC\[AES256_GCM,data:[A-Za-z0-9+/=]+,''',  # SOPS encrypted values
+    '''age1[a-z0-9]{58}''',  # Age public keys
+    '''ssh-(rsa|ed25519) [A-Za-z0-9+/=]+''',  # SSH public keys
+    '''sha256-[A-Za-z0-9+/=]{44}''',  # Nix hash values
+    '''(example|dummy|placeholder|test)''',  # Example/dummy values
+]
+paths = [
+    '''tests/.*''',
+    '''debug/.*''',
+    '''debug/test-secret\.txt''',
+    '''.*\.sample$''',
+    '''.*\.example$''',
+    '''.*\.png$''',
+    '''.*\.jpg$''',
+    '''.*\.jpeg$''',
+    '''.*\.gif$''',
+    '''.*\.pdf$''',
+    '''.*\.zip$''',
+    '''.*\.tar\.gz$''',
+    '''flake\.lock$''',
+    '''.*\.log$''',
+    '''.direnv/.*''',
+    '''result''',
+    '''result-.*''',
+    '''.*\.tmp$''',
+    '''.*\.bak$''',
+]
+stopwords = [
+    "example",
+    "dummy",
+    "placeholder",
+    "test",
+    "sample",
+    "demo",
+]
