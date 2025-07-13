@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Install git hooks from hooks/ directory to .git/hooks/
 # This script ensures all team members use the same git hooks
