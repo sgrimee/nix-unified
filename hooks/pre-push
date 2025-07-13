@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Pre-push hook to run lint checks before pushing to origin
 # This prevents pushing code that would fail CI lint checks

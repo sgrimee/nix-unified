@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Post-merge hook to help with dependency updates and system maintenance
 # This runs after successful git merge operations

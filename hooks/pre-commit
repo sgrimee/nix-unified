@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Pre-commit hook to run various checks before allowing commits
 # This helps maintain code quality and prevents secrets from being committed

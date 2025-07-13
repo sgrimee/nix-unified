@@ -47,8 +47,9 @@ for hook_file in "$HOOKS_DIR"/*; do
             rm "$target_file"
         fi
         
-        # Create symlink
-        ln -s "$hook_file" "$target_file"
+        # Create symlink with relative path
+        relative_path="$(realpath --relative-to="$GIT_HOOKS_DIR" "$hook_file")"
+        ln -s "$relative_path" "$target_file"
         chmod +x "$target_file"
         
         print_status "$GREEN" "✅ Installed $hook_name hook"
