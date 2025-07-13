@@ -25,72 +25,76 @@
     };
   };
 
-  outputs = {
-    home-manager,
-    mac-app-util,
-    mactelnet,
-    nixos-hardware,
-    self,
-    sops-nix,
-    ...
-  } @ inputs: let
-    stateVersion = "23.05";
-    mkModules = host: (import ./modules/hosts/${host} {inherit inputs;});
-    
-    # Configure unstable with allowUnfree
-    unstableConfig = {
-      allowUnfree = true;
-    };
-  in {
-    nixosConfigurations = {
-      nixair = inputs.stable-nixos.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs system stateVersion;
-          overlays = import ./overlays;
-          unstable = import inputs.unstable {
-            inherit system;
-            config = unstableConfig;
+  outputs = { home-manager, mac-app-util, mactelnet, nixos-hardware, self
+    , sops-nix, ... }@inputs:
+    let
+      stateVersion = "23.05";
+      mkModules = host: (import ./modules/hosts/${host} { inherit inputs; });
+
+      # Configure unstable with allowUnfree
+      unstableConfig = { allowUnfree = true; };
+    in {
+      nixosConfigurations = {
+        nixair = inputs.stable-nixos.lib.nixosSystem rec {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit inputs system stateVersion;
+            overlays = import ./overlays;
+            unstable = import inputs.unstable {
+              inherit system;
+              config = unstableConfig;
+            };
           };
+          modules = mkModules "nixair";
         };
-        modules = mkModules "nixair";
+
+        dracula = inputs.stable-nixos.lib.nixosSystem rec {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit inputs system stateVersion;
+            overlays = import ./overlays;
+            unstable = import inputs.unstable {
+              inherit system;
+              config = unstableConfig;
+            };
+          };
+          modules = mkModules "dracula";
+        };
+
+        legion = inputs.stable-nixos.lib.nixosSystem rec {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit inputs system stateVersion;
+            overlays = import ./overlays;
+            unstable = import inputs.unstable {
+              inherit system;
+              config = unstableConfig;
+            };
+          };
+          modules = mkModules "legion";
+        };
       };
 
-      dracula = inputs.stable-nixos.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs system stateVersion;
-          overlays = import ./overlays;
+      darwinConfigurations = {
+        SGRIMEE-M-4HJT = inputs.nix-darwin.lib.darwinSystem rec {
+          system = "aarch64-darwin";
+          # pkgs = inputs.stable-darwin.legacyPackages.aarch64-darwin.pkg;
+          specialArgs = {
+            inherit inputs system stateVersion;
+            overlays = import ./overlays;
+            unstable = import inputs.unstable {
+              inherit system;
+              config = unstableConfig;
+            };
+          };
+          modules = mkModules "SGRIMEE-M-4HJT";
         };
-        modules = mkModules "dracula";
       };
 
-      legion = inputs.stable-nixos.lib.nixosSystem rec {
-        system = "x86_64-linux";
-        specialArgs = {
-          inherit inputs system stateVersion;
-          overlays = import ./overlays;
-        };
-        modules = mkModules "legion";
+      # Test outputs
+      checks = {
+        x86_64-linux = { };
+        aarch64-darwin = { };
       };
     };
-
-    darwinConfigurations = {
-      SGRIMEE-M-4HJT = inputs.nix-darwin.lib.darwinSystem rec {
-        system = "aarch64-darwin";
-        # pkgs = inputs.stable-darwin.legacyPackages.aarch64-darwin.pkg;
-        specialArgs = {
-          inherit inputs system stateVersion;
-          overlays = import ./overlays;
-        };
-        modules = mkModules "SGRIMEE-M-4HJT";
-      };
-    };
-
-    # Test outputs
-    checks = {
-      x86_64-linux = {};
-      aarch64-darwin = {};
-    };
-  };
 }
