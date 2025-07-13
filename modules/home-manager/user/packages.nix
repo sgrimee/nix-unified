@@ -12,6 +12,7 @@
       age
       alejandra
       carapace
+      unstable.claude-code
       coreutils-full
       curl
       du-dust
