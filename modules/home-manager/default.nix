@@ -7,6 +7,7 @@
   pkgs,
   system,
   stateVersion,
+  unstable,
   ...
 }: let
   home =
@@ -28,14 +29,14 @@ in {
   };
 
   home-manager.useGlobalPkgs = true;
-  # home-manager.useUserPackages = true;
+  home-manager.useUserPackages = true;
   home-manager.extraSpecialArgs = {
-    inherit home inputs stateVersion system user;
+    inherit home inputs stateVersion system user unstable;
   };
   home-manager.sharedModules = [
   ];
 
-  home-manager.users.${user} = import ./user {inherit inputs home pkgs stateVersion system;};
+  home-manager.users.${user} = import ./user {inherit inputs home pkgs stateVersion system unstable;};
 
   home-manager.backupFileExtension = "nixbup";
 

@@ -1,4 +1,10 @@
-{ inputs, pkgs, system, ... }: {
+{
+  inputs,
+  pkgs,
+  system,
+  unstable,
+  ...
+}: {
   home.packages = with pkgs;
     [
       # common packages, found in ~/.nix-profile/bin
@@ -9,7 +15,7 @@
       coreutils-full
       curl
       du-dust
-      inputs.unstable.legacyPackages.${system}.fish
+      unstable.fish
       ffmpegthumbnailer
       # ghostty # marked broken
       gitleaks
@@ -19,7 +25,7 @@
       home-manager
       htop
       # inetutils # disabled due to ping DUP issue
-      inputs.unstable.legacyPackages.${system}.joshuto
+      unstable.joshuto
       just
       killall
       lazygit
@@ -34,10 +40,11 @@
       pat
       poppler # pdf preview
       progress
+      unstable.qdmr
       qemu
       ripgrep
       rustscan
-      inputs.unstable.legacyPackages.${system}.superfile
+      unstable.superfile
       sops
       spotifyd
       ssh-to-age
@@ -45,11 +52,12 @@
       trippy # cmd 'trip'
       unrar
       unzip
-      inputs.unstable.legacyPackages.${system}.vscode-langservers-extracted
+      unstable.vscode-langservers-extracted
       wakeonlan
       wget
       yazi # also installed as user program
       zellij
       zip
-    ] ++ lib.optionals pkgs.stdenv.isLinux [ ethtool ];
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [ethtool];
 }

@@ -2,6 +2,7 @@
   inputs,
   stateVersion,
   system,
+  unstable,
   ...
 }: {
   imports = [

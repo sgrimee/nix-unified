@@ -36,6 +36,11 @@
   } @ inputs: let
     stateVersion = "23.05";
     mkModules = host: (import ./modules/hosts/${host} {inherit inputs;});
+    
+    # Configure unstable with allowUnfree
+    unstableConfig = {
+      allowUnfree = true;
+    };
   in {
     nixosConfigurations = {
       nixair = inputs.stable-nixos.lib.nixosSystem rec {
@@ -43,6 +48,10 @@
         specialArgs = {
           inherit inputs system stateVersion;
           overlays = import ./overlays;
+          unstable = import inputs.unstable {
+            inherit system;
+            config = unstableConfig;
+          };
         };
         modules = mkModules "nixair";
       };
