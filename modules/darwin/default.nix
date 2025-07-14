@@ -1,11 +1,5 @@
-{
-  host,
-  inputs,
-  user,
-  ...
-}: {
+{ host, inputs, user, ... }: {
   imports = [
-    ../hosts/${host}/system.nix
     ./dock.nix # configure dock
     ./environment.nix # configure environment (e.g default shell)
     ./finder.nix # configure finder
@@ -23,5 +17,6 @@
 
   # TODO: put this in a module once I find how to pass the user var
   # may not have any effect on a corporate managed mac
-  users.users.${user}.openssh.authorizedKeys.keys = import ../../files/authorized_keys.nix;
+  users.users.${user}.openssh.authorizedKeys.keys =
+    import ../../files/authorized_keys.nix;
 }

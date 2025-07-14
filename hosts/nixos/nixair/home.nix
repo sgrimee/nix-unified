@@ -13,7 +13,7 @@ in {
       ./packages.nix
       ./programs
       ./spotifyd.nix
-      ../../home-manager/wl-sway.nix
+      ../../../modules/home-manager/wl-sway.nix
     ];
 
     home = {

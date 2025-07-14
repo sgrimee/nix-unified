@@ -8,18 +8,20 @@ in [
   ./boot.nix
   ./x-keyboard.nix
   ./firewall.nix
-  ../../nixos/x-gnome.nix
-  ../../nixos/nvidia.nix
-  ../../nixos/homeassistant-user.nix
+  ./system.nix
+  ../../../modules/nixos/x-gnome.nix
+  ../../../modules/nixos/nvidia.nix
+  ../../../modules/nixos/homeassistant-user.nix
 
   nixos-hardware.nixosModules.common-cpu-intel
   #nixos-hardware.nixosModules.common-hidpi # make font too big on console
   nixos-hardware.nixosModules.common-pc-ssd
 
   # system
-  (import ../../nixos { inherit inputs host user; })
+  (import ../../../modules/nixos { inherit inputs host user; })
 
   # home
   home-manager.nixosModules.home-manager
-  (import ../../home-manager { inherit inputs host user; })
+  (import ../../../modules/home-manager { inherit inputs host user; })
+  ./home.nix
 ]

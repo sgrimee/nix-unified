@@ -7,6 +7,7 @@ in [
   ./hardware-configuration.nix
   ./boot.nix
   ./x-keyboard.nix
+  ./system.nix
   # ../../nixos/x-gnome.nix
   # ../../nixos/homeassistant-user.nix
 
@@ -16,9 +17,10 @@ in [
   nixos-hardware.nixosModules.common-pc-ssd
 
   # system
-  (import ../../nixos { inherit inputs host user; })
+  (import ../../../modules/nixos { inherit inputs host user; })
 
   # home
   home-manager.nixosModules.home-manager
-  (import ../../home-manager { inherit inputs host user; })
+  (import ../../../modules/home-manager { inherit inputs host user; })
+  ./home.nix
 ]

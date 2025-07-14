@@ -1,13 +1,8 @@
-{
-  host,
-  inputs,
-  user,
-}: {
+{ host, inputs, user, }: {
   # the following variables are passed to the imports (when they accept arguments):
   # config inputs lib modulesPath options overlays specialArgs stateVersion system
 
   imports = [
-    ../hosts/${host}/system.nix
     ./authorized_keys.nix
     ./console.nix
     ./display.nix

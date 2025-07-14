@@ -7,7 +7,8 @@ in [
   ./hardware-configuration.nix
   ./boot.nix
   ./x-keyboard.nix
-  ../../nixos/x-gnome.nix
+  ./system.nix
+  ../../../modules/nixos/x-gnome.nix
 
   # https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i7-2.0-15-iris-only-late-2013-retina-display-specs.html
   nixos-hardware.nixosModules.common-cpu-intel
@@ -15,9 +16,10 @@ in [
   nixos-hardware.nixosModules.common-pc-ssd
 
   # system
-  (import ../../nixos { inherit inputs host user; })
+  (import ../../../modules/nixos { inherit inputs host user; })
 
   # home
   home-manager.nixosModules.home-manager
-  (import ../../home-manager { inherit inputs host user; })
+  (import ../../../modules/home-manager { inherit inputs host user; })
+  ./home.nix
 ]
