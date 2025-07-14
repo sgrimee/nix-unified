@@ -1,10 +1,4 @@
-{
-  inputs,
-  pkgs,
-  system,
-  unstable,
-  ...
-}: {
+{ inputs, pkgs, system, unstable, ... }: {
   home.packages = with pkgs;
     [
       # common packages, found in ~/.nix-profile/bin
@@ -41,13 +35,11 @@
       pat
       poppler # pdf preview
       progress
-      unstable.qdmr
       qemu
       ripgrep
       rustscan
       unstable.superfile
       sops
-      spotifyd
       ssh-to-age
       tldr
       trippy # cmd 'trip'
@@ -59,6 +51,5 @@
       yazi # also installed as user program
       zellij
       zip
-    ]
-    ++ lib.optionals pkgs.stdenv.isLinux [ethtool];
+    ] ++ lib.optionals pkgs.stdenv.isLinux [ ethtool unstable.qdmr spotifyd ];
 }
