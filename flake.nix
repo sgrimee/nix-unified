@@ -85,8 +85,8 @@
         else
           throw "Unsupported platform: ${platform}";
 
-      # Auto-detect system architecture from host configuration or use defaults
-      getHostSystem = platform: hostName:
+      # Get default system architecture for platform
+      getHostSystem = platform:
         let
           defaultSystems = {
             "nixos" = "x86_64-linux";
@@ -104,8 +104,7 @@
           hosts = allHosts.${platform} or [ ];
           configs = map (hostName: {
             name = hostName;
-            value = makeHostConfig platform hostName
-              (getHostSystem platform hostName);
+            value = makeHostConfig platform hostName (getHostSystem platform);
           }) hosts;
         in lib.listToAttrs configs;
 
