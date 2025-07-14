@@ -263,6 +263,88 @@ fix-darwin-env:
     @echo "Fixing Darwin environment..."
     ./utils/darwin-fix-env.sh
 
+# === Host Management ===
+
+# List all discovered hosts
+list-hosts:
+    @echo "Discovered host configurations:"
+    @echo "NixOS hosts:"
+    @nix eval --raw .#nixosConfigurations --apply 'configs: "  " + builtins.concatStringsSep "\n  " (builtins.attrNames configs)'
+    @echo "Darwin hosts:"
+    @nix eval --raw .#darwinConfigurations --apply 'configs: "  " + builtins.concatStringsSep "\n  " (builtins.attrNames configs)'
+
+# List hosts by platform
+list-hosts-by-platform PLATFORM:
+    @echo "{{PLATFORM}} hosts:"
+    @if [ "{{PLATFORM}}" = "nixos" ]; then \
+        find hosts/nixos/ -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo "  No {{PLATFORM}} hosts found"; \
+    elif [ "{{PLATFORM}}" = "darwin" ]; then \
+        find hosts/darwin/ -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null || echo "  No {{PLATFORM}} hosts found"; \
+    else \
+        echo "Unknown platform: {{PLATFORM}}. Use 'nixos' or 'darwin'"; \
+    fi
+
+# Create a new NixOS host template
+new-nixos-host NAME:
+    @echo "Creating new NixOS host: {{NAME}}"
+    @mkdir -p hosts/nixos/{{NAME}}
+    @echo "# NixOS configuration for {{NAME}}" > hosts/nixos/{{NAME}}/default.nix
+    @echo "{inputs}:" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "with inputs; let" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  user = \"sgrimee\";" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  host = \"{{NAME}}\";" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "in [" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  ./hardware-configuration.nix" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  ./system.nix" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  # System modules" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  (import ../../nixos {inherit inputs host user;})" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  # Home manager" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  home-manager.nixosModules.home-manager" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  (import ../../home-manager {inherit inputs host user;})" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "]" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "# System-specific configuration for {{NAME}}" > hosts/nixos/{{NAME}}/system.nix
+    @echo "{ config, lib, pkgs, ... }:" >> hosts/nixos/{{NAME}}/system.nix
+    @echo "{" >> hosts/nixos/{{NAME}}/system.nix
+    @echo "  networking.hostName = \"{{NAME}}\";" >> hosts/nixos/{{NAME}}/system.nix
+    @echo "  # Add host-specific configuration here" >> hosts/nixos/{{NAME}}/system.nix
+    @echo "}" >> hosts/nixos/{{NAME}}/system.nix
+    @echo "Generated hardware-configuration.nix placeholder" > hosts/nixos/{{NAME}}/hardware-configuration.nix
+    @echo "Host {{NAME}} created! Remember to:"
+    @echo "1. Generate hardware-configuration.nix: nixos-generate-config --dir hosts/nixos/{{NAME}}"
+    @echo "2. Customize hosts/nixos/{{NAME}}/system.nix for this host"
+    @echo "3. Test with: just build {{NAME}}"
+
+# Create a new Darwin host template  
+new-darwin-host NAME:
+    @echo "Creating new Darwin host: {{NAME}}"
+    @mkdir -p hosts/darwin/{{NAME}}
+    @echo "# Darwin configuration for {{NAME}}" > hosts/darwin/{{NAME}}/default.nix
+    @echo "{inputs}:" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "with inputs; let" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  user = \"sgrimee\";" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  host = \"{{NAME}}\";" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "in [" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  ./system.nix" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  # System modules" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  (import ../../darwin {inherit inputs host user;})" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  # Home manager" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  home-manager.darwinModules.home-manager" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  (import ../../home-manager {inherit inputs host user;})" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "]" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "# System-specific configuration for {{NAME}}" > hosts/darwin/{{NAME}}/system.nix
+    @echo "{ config, lib, pkgs, ... }:" >> hosts/darwin/{{NAME}}/system.nix
+    @echo "{" >> hosts/darwin/{{NAME}}/system.nix
+    @echo "  networking.hostName = \"{{NAME}}\";" >> hosts/darwin/{{NAME}}/system.nix
+    @echo "  # Add host-specific configuration here" >> hosts/darwin/{{NAME}}/system.nix
+    @echo "}" >> hosts/darwin/{{NAME}}/system.nix
+    @echo "Host {{NAME}} created! Remember to:"
+    @echo "1. Customize hosts/darwin/{{NAME}}/system.nix for this host"
+    @echo "2. Test with: just build {{NAME}}"
+
 # === Host-specific shortcuts ===
 
 # Build Darwin host
