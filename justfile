@@ -284,6 +284,61 @@ list-hosts-by-platform PLATFORM:
         echo "Unknown platform: {{PLATFORM}}. Use 'nixos' or 'darwin'"; \
     fi
 
+# Copy configuration from existing host to new host
+copy-host SOURCE TARGET:
+    @echo "Copying host configuration from {{SOURCE}} to {{TARGET}}"
+    @SOURCE_PLATFORM=""; \
+    TARGET_PLATFORM=""; \
+    if [ -d "hosts/nixos/{{SOURCE}}" ]; then SOURCE_PLATFORM="nixos"; fi; \
+    if [ -d "hosts/darwin/{{SOURCE}}" ]; then SOURCE_PLATFORM="darwin"; fi; \
+    if [ -z "$SOURCE_PLATFORM" ]; then echo "Error: Source host {{SOURCE}} not found"; exit 1; fi; \
+    echo "Source platform: $SOURCE_PLATFORM"; \
+    read -p "Target platform (nixos/darwin) [default: $SOURCE_PLATFORM]: " TARGET_PLATFORM; \
+    TARGET_PLATFORM=$${TARGET_PLATFORM:-$SOURCE_PLATFORM}; \
+    if [ "$TARGET_PLATFORM" != "nixos" ] && [ "$TARGET_PLATFORM" != "darwin" ]; then echo "Error: Invalid target platform"; exit 1; fi; \
+    if [ -d "hosts/$TARGET_PLATFORM/{{TARGET}}" ]; then echo "Error: Target host {{TARGET}} already exists"; exit 1; fi; \
+    mkdir -p "hosts/$TARGET_PLATFORM/{{TARGET}}"; \
+    cp -r "hosts/$SOURCE_PLATFORM/{{SOURCE}}"/* "hosts/$TARGET_PLATFORM/{{TARGET}}/"; \
+    sed -i '' 's/{{SOURCE}}/{{TARGET}}/g' "hosts/$TARGET_PLATFORM/{{TARGET}}"/*.nix; \
+    echo "Host {{TARGET}} created as copy of {{SOURCE}} on $TARGET_PLATFORM platform"
+
+# Validate host configuration
+validate-host HOST:
+    @echo "Validating host {{HOST}}..."
+    @FOUND=false; \
+    if [ -d "hosts/nixos/{{HOST}}" ]; then \
+        echo "Found NixOS host: {{HOST}}"; \
+        FOUND=true; \
+        nix eval --no-warn-dirty .#nixosConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ Configuration evaluates successfully" || echo "❌ Configuration has evaluation errors"; \
+    fi; \
+    if [ -d "hosts/darwin/{{HOST}}" ]; then \
+        echo "Found Darwin host: {{HOST}}"; \
+        FOUND=true; \
+        nix eval --no-warn-dirty .#darwinConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ Configuration evaluates successfully" || echo "❌ Configuration has evaluation errors"; \
+    fi; \
+    if [ "$FOUND" = false ]; then echo "❌ Host {{HOST}} not found"; exit 1; fi
+
+# Show host information
+host-info HOST:
+    @echo "Host Information for {{HOST}}:"
+    @echo "=============================="
+    @FOUND=false; \
+    if [ -d "hosts/nixos/{{HOST}}" ]; then \
+        echo "Platform: NixOS"; \
+        echo "Path: hosts/nixos/{{HOST}}/"; \
+        echo "Files:"; \
+        ls -la hosts/nixos/{{HOST}}/ | tail -n +2; \
+        FOUND=true; \
+    fi; \
+    if [ -d "hosts/darwin/{{HOST}}" ]; then \
+        echo "Platform: Darwin"; \
+        echo "Path: hosts/darwin/{{HOST}}/"; \
+        echo "Files:"; \
+        ls -la hosts/darwin/{{HOST}}/ | tail -n +2; \
+        FOUND=true; \
+    fi; \
+    if [ "$FOUND" = false ]; then echo "Host {{HOST}} not found"; exit 1; fi
+
 # Create a new NixOS host template
 new-nixos-host NAME:
     @echo "Creating new NixOS host: {{NAME}}"
@@ -298,11 +353,12 @@ new-nixos-host NAME:
     @echo "  ./system.nix" >> hosts/nixos/{{NAME}}/default.nix
     @echo "" >> hosts/nixos/{{NAME}}/default.nix
     @echo "  # System modules" >> hosts/nixos/{{NAME}}/default.nix
-    @echo "  (import ../../nixos {inherit inputs host user;})" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  (import ../../../modules/nixos {inherit inputs host user;})" >> hosts/nixos/{{NAME}}/default.nix
     @echo "" >> hosts/nixos/{{NAME}}/default.nix
     @echo "  # Home manager" >> hosts/nixos/{{NAME}}/default.nix
     @echo "  home-manager.nixosModules.home-manager" >> hosts/nixos/{{NAME}}/default.nix
-    @echo "  (import ../../home-manager {inherit inputs host user;})" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  (import ../../../modules/home-manager {inherit inputs host user;})" >> hosts/nixos/{{NAME}}/default.nix
+    @echo "  ./home.nix" >> hosts/nixos/{{NAME}}/default.nix
     @echo "]" >> hosts/nixos/{{NAME}}/default.nix
     @echo "# System-specific configuration for {{NAME}}" > hosts/nixos/{{NAME}}/system.nix
     @echo "{ config, lib, pkgs, ... }:" >> hosts/nixos/{{NAME}}/system.nix
@@ -310,11 +366,38 @@ new-nixos-host NAME:
     @echo "  networking.hostName = \"{{NAME}}\";" >> hosts/nixos/{{NAME}}/system.nix
     @echo "  # Add host-specific configuration here" >> hosts/nixos/{{NAME}}/system.nix
     @echo "}" >> hosts/nixos/{{NAME}}/system.nix
+    @echo "# User and home-manager configuration for {{NAME}}" > hosts/nixos/{{NAME}}/home.nix
+    @echo "{ pkgs, ... }:" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "let user = \"sgrimee\";" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "in {" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "  users.users.\${user} = {" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "    isNormalUser = true;" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "    group = \"users\";" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "    extraGroups = [ \"audio\" \"networkmanager\" \"systemd-journal\" \"video\" \"wheel\" ];" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "    shell = pkgs.zsh;" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "  };" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "  home-manager.users.\${user} = {" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "    imports = [" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "      ./packages.nix" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "      # Add other home-manager modules here" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "    ];" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "    home.shellAliases = {};" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "    systemd.user.startServices = \"sd-switch\";" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "  };" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "}" >> hosts/nixos/{{NAME}}/home.nix
+    @echo "# Package configuration for {{NAME}}" > hosts/nixos/{{NAME}}/packages.nix
+    @echo "{ pkgs, unstable, ... }:" >> hosts/nixos/{{NAME}}/packages.nix
+    @echo "{" >> hosts/nixos/{{NAME}}/packages.nix
+    @echo "  home.packages = with pkgs; [" >> hosts/nixos/{{NAME}}/packages.nix
+    @echo "    # Add host-specific packages here" >> hosts/nixos/{{NAME}}/packages.nix
+    @echo "  ];" >> hosts/nixos/{{NAME}}/packages.nix
+    @echo "}" >> hosts/nixos/{{NAME}}/packages.nix
     @echo "Generated hardware-configuration.nix placeholder" > hosts/nixos/{{NAME}}/hardware-configuration.nix
     @echo "Host {{NAME}} created! Remember to:"
     @echo "1. Generate hardware-configuration.nix: nixos-generate-config --dir hosts/nixos/{{NAME}}"
     @echo "2. Customize hosts/nixos/{{NAME}}/system.nix for this host"
-    @echo "3. Test with: just build {{NAME}}"
+    @echo "3. Customize hosts/nixos/{{NAME}}/home.nix and packages.nix"
+    @echo "4. Test with: just build {{NAME}}"
 
 # Create a new Darwin host template  
 new-darwin-host NAME:
@@ -329,11 +412,12 @@ new-darwin-host NAME:
     @echo "  ./system.nix" >> hosts/darwin/{{NAME}}/default.nix
     @echo "" >> hosts/darwin/{{NAME}}/default.nix
     @echo "  # System modules" >> hosts/darwin/{{NAME}}/default.nix
-    @echo "  (import ../../darwin {inherit inputs host user;})" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  (import ../../../modules/darwin {inherit inputs host user;})" >> hosts/darwin/{{NAME}}/default.nix
     @echo "" >> hosts/darwin/{{NAME}}/default.nix
     @echo "  # Home manager" >> hosts/darwin/{{NAME}}/default.nix
     @echo "  home-manager.darwinModules.home-manager" >> hosts/darwin/{{NAME}}/default.nix
-    @echo "  (import ../../home-manager {inherit inputs host user;})" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  (import ../../../modules/home-manager {inherit inputs host user;})" >> hosts/darwin/{{NAME}}/default.nix
+    @echo "  ./home.nix" >> hosts/darwin/{{NAME}}/default.nix
     @echo "]" >> hosts/darwin/{{NAME}}/default.nix
     @echo "# System-specific configuration for {{NAME}}" > hosts/darwin/{{NAME}}/system.nix
     @echo "{ config, lib, pkgs, ... }:" >> hosts/darwin/{{NAME}}/system.nix
@@ -341,9 +425,33 @@ new-darwin-host NAME:
     @echo "  networking.hostName = \"{{NAME}}\";" >> hosts/darwin/{{NAME}}/system.nix
     @echo "  # Add host-specific configuration here" >> hosts/darwin/{{NAME}}/system.nix
     @echo "}" >> hosts/darwin/{{NAME}}/system.nix
+    @echo "# User and home-manager configuration for {{NAME}}" > hosts/darwin/{{NAME}}/home.nix
+    @echo "{ pkgs, ... }:" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "let user = \"sgrimee\";" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "in {" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "  users.users.\${user} = {" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "    home = \"/Users/\${user}\";" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "    shell = pkgs.zsh;" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "  };" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "  home-manager.users.\${user} = {" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "    imports = [" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "      ./packages.nix" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "      # Add other home-manager modules here" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "    ];" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "    home.shellAliases = {};" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "  };" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "}" >> hosts/darwin/{{NAME}}/home.nix
+    @echo "# Package configuration for {{NAME}}" > hosts/darwin/{{NAME}}/packages.nix
+    @echo "{ pkgs, unstable, ... }:" >> hosts/darwin/{{NAME}}/packages.nix
+    @echo "{" >> hosts/darwin/{{NAME}}/packages.nix
+    @echo "  home.packages = with pkgs; [" >> hosts/darwin/{{NAME}}/packages.nix
+    @echo "    # Add host-specific packages here" >> hosts/darwin/{{NAME}}/packages.nix
+    @echo "  ];" >> hosts/darwin/{{NAME}}/packages.nix
+    @echo "}" >> hosts/darwin/{{NAME}}/packages.nix
     @echo "Host {{NAME}} created! Remember to:"
     @echo "1. Customize hosts/darwin/{{NAME}}/system.nix for this host"
-    @echo "2. Test with: just build {{NAME}}"
+    @echo "2. Customize hosts/darwin/{{NAME}}/home.nix and packages.nix"
+    @echo "3. Test with: just build {{NAME}}"
 
 # === Host-specific shortcuts ===
 

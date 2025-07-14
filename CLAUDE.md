@@ -8,19 +8,20 @@ This is a unified Nix configuration repository that manages both NixOS (Linux) a
 
 ### Architecture
 
-- **flake.nix**: Main entry point defining all system configurations
-- **modules/**: Organized by platform (darwin/, nixos/, home-manager/) and hosts/
+- **flake.nix**: Main entry point with dynamic host discovery
+- **hosts/**: Platform-organized host configurations (nixos/, darwin/)
+- **modules/**: Organized by platform (darwin/, nixos/, home-manager/)
 - **overlays/**: Custom package overlays
 - **secrets/**: SOPS-encrypted secrets management
 - **utils/**: Helper scripts for system management
 
 ### Host Configurations
 
-The flake defines configurations for:
-- **NixOS systems**: nixair, dracula, legion (x86_64-linux)
-- **Darwin systems**: SGRIMEE-M-4HJT (aarch64-darwin)
+The flake uses automatic host discovery from directory structure:
+- **NixOS systems**: Discovered from `hosts/nixos/` (nixair, dracula, legion)
+- **Darwin systems**: Discovered from `hosts/darwin/` (SGRIMEE-M-4HJT)
 
-Each host has its own module directory under `modules/hosts/` containing system.nix, home.nix, and packages.nix.
+Each host directory contains system.nix, home.nix, packages.nix, and default.nix as the entry point.
 
 ## Common Commands
 
@@ -73,6 +74,34 @@ nix flake check
 **Show system info:**
 ```bash
 nix flake show
+```
+
+### Host Management
+
+**List all discovered hosts:**
+```bash
+just list-hosts
+```
+
+**Create new host from template:**
+```bash
+just new-nixos-host hostname
+just new-darwin-host hostname
+```
+
+**Validate host configuration:**
+```bash
+just validate-host hostname
+```
+
+**Get host information:**
+```bash
+just host-info hostname
+```
+
+**Copy configuration between hosts:**
+```bash
+just copy-host source-host target-host
 ```
 
 ## Module Structure
