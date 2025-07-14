@@ -270,6 +270,7 @@ list-hosts:
     @echo "Discovered host configurations:"
     @echo "NixOS hosts:"
     @nix eval --raw .#nixosConfigurations --apply 'configs: "  " + builtins.concatStringsSep "\n  " (builtins.attrNames configs)'
+    @echo ""
     @echo "Darwin hosts:"
     @nix eval --raw .#darwinConfigurations --apply 'configs: "  " + builtins.concatStringsSep "\n  " (builtins.attrNames configs)'
 
