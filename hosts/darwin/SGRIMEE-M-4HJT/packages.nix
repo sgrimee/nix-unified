@@ -1,6 +1,1 @@
-{ inputs, pkgs, ... }: {
-  home.packages = with pkgs;
-    [
-      # packages for this host
-    ];
-}
+{ inputs, pkgs, ... }: { home.packages = with pkgs; [ sonar-scanner-cli ]; }
