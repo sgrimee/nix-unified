@@ -16,6 +16,7 @@
     ./helix.nix
     ./jq.nix
     ./kitty.nix
+    ./neomutt.nix
     ./nushell.nix
     ./ssh.nix
     ./starship.nix
