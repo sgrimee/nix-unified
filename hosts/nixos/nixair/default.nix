@@ -8,6 +8,7 @@ in [
   ./boot.nix
   ./x-keyboard.nix
   ./system.nix
+  ./firewall.nix
   # ../../nixos/x-gnome.nix
   # ../../nixos/homeassistant-user.nix
 
