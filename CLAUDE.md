@@ -210,3 +210,9 @@ just install-hooks
 - Use `just install-hooks` to install/update hooks
 - Hooks can be bypassed with `--no-verify` flag if needed
 - CI/CD provides the same validation as hooks for comprehensive testing
+
+## Additional Guidance
+
+### Commit and PR Guidelines
+
+- Never mention the AI agent in commit messages and PR messages
