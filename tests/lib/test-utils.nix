@@ -1,7 +1,6 @@
 { lib, pkgs, ... }:
 let
-  inherit (lib) types mkOption;
-  inherit (builtins) attrNames listToAttrs;
+  inherit (builtins) listToAttrs;
 
   # Helper to get all available modules for a platform
   getModulesForPlatform = platform:
@@ -25,8 +24,6 @@ let
   # Test that two modules can be imported together without conflicts
   testModuleCompatibility = module1: module2: platform:
     let
-      platformSystem =
-        if platform == "darwin" then "aarch64-darwin" else "x86_64-linux";
 
       # Skip testing combinations with default.nix or directories
       shouldSkipTest = module1 == "default.nix" || module2 == "default.nix"
@@ -144,20 +141,6 @@ let
         reason = "Skipped default.nix or directory modules";
       } else
         builtins.tryEval (let
-          modulePath = ../../modules + "/${platform}/${module}";
-          imported = import modulePath;
-
-          moduleConfig = if builtins.isFunction imported then
-            imported {
-              host = "test-host";
-              inputs = { };
-              user = "test-user";
-              inherit lib pkgs;
-              config = { };
-            }
-          else
-            imported;
-
           # For now, assume dependency resolution is satisfied if module loads
           # In reality, this would need more sophisticated dependency checking
           hasRequiredDeps = true;

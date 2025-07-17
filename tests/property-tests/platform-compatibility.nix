@@ -99,7 +99,7 @@ let
       "aarch64-darwin" = "arm64";
     };
 
-    archTests = lib.listToAttrs (lib.mapAttrsToList (system: arch: {
+    archTests = lib.listToAttrs (lib.mapAttrsToList (system: _: {
       name = "arch-compatibility-${system}";
       value = {
         expr = builtins.hasAttr "hello" pkgs; # Test that basic packages work
@@ -135,7 +135,7 @@ let
       "aarch64-darwin" = [ "darwinConfigurations" "checks" ];
     };
 
-    outputTests = lib.listToAttrs (lib.mapAttrsToList (system: expected: {
+    outputTests = lib.listToAttrs (lib.mapAttrsToList (system: _: {
       name = "flake-outputs-${system}";
       value = {
         expr =

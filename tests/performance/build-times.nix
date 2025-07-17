@@ -1,19 +1,18 @@
 { lib, pkgs, ... }:
 let
   testUtils = import ../lib/test-utils.nix { inherit lib pkgs; };
-  inherit (testUtils) measureBuildTime;
 
   # Get all host configurations for testing
   getAllHostConfigs = let
     discoverHosts = dir:
       let
         entries = builtins.readDir dir;
-        platforms = lib.filterAttrs (name: type: type == "directory") entries;
+        platforms = lib.filterAttrs (_: type: type == "directory") entries;
       in lib.mapAttrs (platform: _:
         let
           platformDir = dir + "/${platform}";
           hostEntries = builtins.readDir platformDir;
-          hosts = lib.filterAttrs (name: type: type == "directory") hostEntries;
+          hosts = lib.filterAttrs (_: type: type == "directory") hostEntries;
         in builtins.attrNames hosts) platforms;
   in if builtins.pathExists ../../hosts then
     discoverHosts ../../hosts

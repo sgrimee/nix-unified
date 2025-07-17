@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 let
   testUtils = import ../lib/test-utils.nix { inherit lib pkgs; };
-  inherit (testUtils) testCrossPlatformPortability testModuleOnPlatform;
+  inherit (testUtils) testModuleOnPlatform;
 
   # Test home-manager configs work on both platforms
   testHomeManagerPortability = let

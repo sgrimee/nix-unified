@@ -1,6 +1,5 @@
 { lib, pkgs, ... }:
 let
-  testUtils = import ../lib/test-utils.nix { inherit lib pkgs; };
 
   # Test development environment setup
   testDevEnvironment = {

@@ -1,8 +1,7 @@
 { lib, pkgs, ... }:
 let
   testUtils = import ../lib/test-utils.nix { inherit lib pkgs; };
-  inherit (testUtils)
-    testModuleCompatibility runIntegrationTest verifySystemServices;
+  inherit (testUtils) testModuleCompatibility;
 
   # Test common module interaction patterns
   testCommonInteractions = {
