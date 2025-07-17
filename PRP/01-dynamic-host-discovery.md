@@ -1,5 +1,7 @@
 # Dynamic Host Discovery with Directory-Based Platform Detection
 
+Status: implemented.
+
 ## Problem Statement
 Currently, each host configuration in `flake.nix` is manually defined with repetitive code patterns. Adding a new host requires manually updating the flake outputs, which is error-prone and creates maintenance overhead. Additionally, host platform types are not clearly organized or automatically detected.
 

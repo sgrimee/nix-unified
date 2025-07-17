@@ -5,38 +5,142 @@ default:
     @just --list
 
 # === Testing ===
+# 
+# Test Strategy:
+# - test: Lightweight basic validation (syntax, core modules, flake check)
+# - test-*: Individual test categories for focused development
+# - test-comprehensive: Full test suite for CI/releases
+# - test-verbose: All tests including internal cross-platform tests
+# - test-linux/test-darwin: Platform-specific configuration validation
 
-# Run all unit tests
+# Run basic validation tests (lightweight - syntax + flake validation)
 test:
-    @echo "🧪 Running Nix Configuration Tests"
-    @echo "=================================="
-    @echo "📝 Running unit tests..."
-    just test-verbose
+    @echo "🧪 Running Basic Validation Tests"
+    @echo "================================="
+    @echo "📝 Running core unit tests..."
+    just test-basic
     @echo "🔍 Running flake validation..."
     just check
     @echo ""
-    @echo "🎉 All tests completed successfully!"
+    @echo "🎉 Basic validation completed successfully!"
 
-# Run tests for specific platform  
+# Run property-based tests (module combinations, compatibility, conflicts)
+test-properties:
+    @echo "🧪 Running Property-Based Tests"
+    @echo "==============================="
+    @if [[ "$OSTYPE" == "darwin"* ]]; then \
+        echo "Running property tests on Darwin..."; \
+        if nix-instantiate --eval --strict --expr 'import ./tests/property-tests/module-combinations.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }' > /tmp/property-test-results.txt; then echo "✅ Property tests completed successfully"; else echo "❌ Property tests failed"; exit 1; fi; \
+    else \
+        nix build .#checks.x86_64-linux.property-tests --print-build-logs; \
+    fi
+
+# Run cross-platform compatibility tests (platform isolation, architecture support)
+test-platform-compatibility:
+    @echo "🧪 Running Cross-Platform Tests"
+    @echo "==============================="
+    @if [[ "$OSTYPE" == "darwin"* ]]; then \
+        echo "Running cross-platform tests on Darwin..."; \
+        if nix-instantiate --eval --strict --expr 'import ./tests/property-tests/platform-compatibility.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }' > /tmp/platform-test-results.txt; then echo "✅ Cross-platform tests completed successfully"; else echo "❌ Cross-platform tests failed"; exit 1; fi; \
+    else \
+        nix build .#checks.x86_64-linux.platform-tests --print-build-logs; \
+    fi
+
+# Run performance regression tests (build times, memory usage, artifact sizes)
+test-performance:
+    @echo "🧪 Running Performance Tests"
+    @echo "============================"
+    @if [[ "$OSTYPE" == "darwin"* ]]; then \
+        echo "Running performance tests on Darwin..."; \
+        if nix-instantiate --eval --strict --expr 'import ./tests/performance/build-times.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }' > /tmp/performance-test-results.txt; then echo "✅ Performance tests completed successfully"; else echo "❌ Performance tests failed"; exit 1; fi; \
+    else \
+        nix build .#checks.x86_64-linux.performance-tests --print-build-logs; \
+    fi
+
+# Run integration tests (module interactions, service conflicts, dependency resolution)
+test-integration:
+    @echo "🧪 Running Integration Tests"
+    @echo "============================"
+    @if [[ "$OSTYPE" == "darwin"* ]]; then \
+        echo "Running integration tests on Darwin..."; \
+        if nix-instantiate --eval --strict --expr 'import ./tests/integration/module-interactions.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }' > /tmp/integration-test-results.txt; then echo "✅ Integration tests completed successfully"; else echo "❌ Integration tests failed"; exit 1; fi; \
+    else \
+        nix build .#checks.x86_64-linux.integration-tests --print-build-logs; \
+    fi
+
+# Run real-world scenario tests (dev environments, system recovery, multi-user setups)
+test-scenarios:
+    @echo "🧪 Running Scenario Tests"
+    @echo "========================="
+    @if [[ "$OSTYPE" == "darwin"* ]]; then \
+        echo "Running scenario tests on Darwin..."; \
+        if nix-instantiate --eval --strict --expr 'import ./tests/scenarios/real-world.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }' > /tmp/scenario-test-results.txt; then echo "✅ Scenario tests completed successfully"; else echo "❌ Scenario tests failed"; exit 1; fi; \
+    else \
+        nix build .#checks.x86_64-linux.scenario-tests --print-build-logs; \
+    fi
+
+# Run comprehensive test suite (all test categories - use for CI/releases)
+test-comprehensive:
+    @echo "🧪 Running Comprehensive Test Suite"
+    @echo "=================================="
+    @echo "📝 Running property tests..."
+    @if ! just test-properties; then echo "❌ Property tests failed"; exit 1; fi
+    @echo "🔍 Running cross-platform tests..."
+    @if ! just test-platform-compatibility; then echo "❌ Cross-platform tests failed"; exit 1; fi
+    @echo "⏱️  Running performance tests..."
+    @if ! just test-performance; then echo "❌ Performance tests failed"; exit 1; fi
+    @echo "🔗 Running integration tests..."
+    @if ! just test-integration; then echo "❌ Integration tests failed"; exit 1; fi
+    @echo "🌍 Running scenario tests..."
+    @if ! just test-scenarios; then echo "❌ Scenario tests failed"; exit 1; fi
+    @echo ""
+    @echo "🎉 All comprehensive tests completed successfully!"
+
+# Run test coverage analysis (shows test coverage statistics)
+test-coverage:
+    @echo "🧪 Running Tests with Coverage Analysis"
+    @echo "======================================"
+    @echo "📊 Analyzing test coverage..."
+    @if [[ "$OSTYPE" == "darwin"* ]]; then \
+        echo "=== Test Coverage Analysis ===" > /tmp/coverage-results.txt; \
+        echo "Property Tests: $(find tests/property-tests -name "*.nix" 2>/dev/null | wc -l) files" >> /tmp/coverage-results.txt; \
+        echo "Integration Tests: $(find tests/integration -name "*.nix" 2>/dev/null | wc -l) files" >> /tmp/coverage-results.txt; \
+        echo "Performance Tests: $(find tests/performance -name "*.nix" 2>/dev/null | wc -l) files" >> /tmp/coverage-results.txt; \
+        echo "Scenario Tests: $(find tests/scenarios -name "*.nix" 2>/dev/null | wc -l) files" >> /tmp/coverage-results.txt; \
+        echo "Total Test Files: $(find tests -name "*.nix" 2>/dev/null | wc -l)" >> /tmp/coverage-results.txt; \
+        echo "Module Coverage: $(find modules -name "*.nix" 2>/dev/null | wc -l) modules" >> /tmp/coverage-results.txt; \
+        echo "Host Coverage: $(find hosts -name "*.nix" 2>/dev/null | wc -l) hosts" >> /tmp/coverage-results.txt; \
+        cat /tmp/coverage-results.txt; \
+        echo "✅ Coverage analysis completed successfully"; \
+    else \
+        nix build .#checks.x86_64-linux.coverage-analysis --print-build-logs; \
+    fi
+
+# Run tests for specific platform (lightweight - just config evaluation)
 test-linux:
-    @echo "Running Linux tests..."
-    @echo "📝 Running unit tests..."
-    just test-verbose
+    @echo "🧪 Running Linux Platform Tests"
+    @echo "==============================="
     @echo "🔍 Evaluating NixOS configurations..."
-    nix eval .#nixosConfigurations.nixair.config.system.stateVersion
-    nix eval .#nixosConfigurations.dracula.config.system.stateVersion
-    nix eval .#nixosConfigurations.legion.config.system.stateVersion
+    @nix eval .#nixosConfigurations.nixair.config.system.stateVersion --no-warn-dirty && echo "✅ nixair configuration valid"
+    @nix eval .#nixosConfigurations.dracula.config.system.stateVersion --no-warn-dirty && echo "✅ dracula configuration valid"
+    @nix eval .#nixosConfigurations.legion.config.system.stateVersion --no-warn-dirty && echo "✅ legion configuration valid"
+    @echo "🎉 All Linux configurations validated successfully!"
 
 test-darwin:
-    @echo "Running Darwin tests..."
-    @echo "📝 Running unit tests..."
-    just test-verbose
+    @echo "🧪 Running Darwin Platform Tests"
+    @echo "================================"
     @echo "🔍 Evaluating Darwin configuration..."
-    nix eval .#darwinConfigurations.SGRIMEE-M-4HJT.config.system.stateVersion
+    @nix eval .#darwinConfigurations.SGRIMEE-M-4HJT.config.system.stateVersion --no-warn-dirty && echo "✅ SGRIMEE-M-4HJT configuration valid"
+    @echo "🎉 Darwin configuration validated successfully!"
 
-# Run tests with verbose output
+# Run basic core tests only (syntax, module loading, config validation - internal use)
+test-basic:
+    @echo "Running basic core tests..."
+    nix-instantiate --eval --strict --expr 'import ./tests/basic.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }'
+
+# Run all unit tests with verbose output (includes all tests + internal cross-platform tests)
 test-verbose:
-    @echo "Running tests with verbose output..."
+    @echo "Running all unit tests with verbose output..."
     nix-instantiate --eval --strict --expr 'import ./tests/default.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }'
 
 # === Building and Switching ===
