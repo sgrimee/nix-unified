@@ -5,6 +5,7 @@
     ./finder.nix # configure finder
     ./fonts.nix # install fonts (e.g. NerdFonts)
     ./homebrew # install homebrew apps and configure homebrew itsef
+    ./window-manager.nix # window manager (aerospace + jankyborders)
     ./keyboard.nix # settings for key repeat etc
     ./mac-app-util.nix # tools to make apps launchable with spotlight and Alfred.app
     ./music_app.nix # set default music app instead of Apple music

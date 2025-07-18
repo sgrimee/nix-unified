@@ -1,4 +1,4 @@
-{...}: [
+{ ... }: [
   "1password"
   "1password-cli"
   "ableton-live-suite"
@@ -40,7 +40,7 @@
   "mongodb-compass"
   # "mounty"
   "mqtt-explorer"
-  "nikitabobko/tap/aerospace"
+  # "nikitabobko/tap/aerospace" # Now managed via services.aerospace
   "neo4j-desktop"
   "notunes"
   "obsidian"
