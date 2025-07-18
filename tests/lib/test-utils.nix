@@ -126,7 +126,7 @@ let
       success = !hasConflicts;
       packageCount = builtins.length packages;
       uniqueCount = builtins.length uniquePackages;
-      conflicts = if hasConflicts then packages - -uniquePackages else [ ];
+      conflicts = if hasConflicts then packages else [ ];
     };
 
   # Test that required dependencies are available
