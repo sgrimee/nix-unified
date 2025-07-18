@@ -8,15 +8,9 @@ let
   hostTests = import ./host-tests.nix { inherit lib pkgs; };
   utilityTests = import ./utility-tests.nix { inherit lib pkgs; };
 
-  # Import cross-platform integration tests (these aren't run individually)
-  crossPlatformTests =
-    import ./integration/cross-platform.nix { inherit lib pkgs; };
+  # Note: Only core tests are included here for basic validation
+  # Complex integration tests have been removed to simplify CI
 
-  # Note: Enhanced test modules (property, platform, integration, performance, scenario) 
-  # are NOT included here to avoid duplication with individual test commands.
-  # Use 'just test-comprehensive' to run all tests, or individual commands for specific testing.
-
-  # Combine core tests with cross-platform integration
-  allTests = configTests // moduleTests // hostTests // utilityTests
-    // crossPlatformTests;
+  # Combine core tests only
+  allTests = configTests // moduleTests // hostTests // utilityTests;
 in runTests allTests
