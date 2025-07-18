@@ -122,7 +122,7 @@
             test-utils = pkgs.runCommand "test-utils-validation" { } ''
               cd ${./.}
               ${pkgs.nix}/bin/nix-instantiate --eval --strict --expr \
-                'import ./tests/lib/test-utils.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }' \
+                'import ./tests/lib/test-utils.nix { lib = (import ${inputs.stable-nixos} { system = "x86_64-linux"; }).lib; pkgs = import ${inputs.stable-nixos} { system = "x86_64-linux"; }; }' \
                 > $out
             '';
 
