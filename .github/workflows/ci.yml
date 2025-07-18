@@ -127,7 +127,7 @@ jobs:
 
   build-darwin:
     name: Build Darwin Configurations
-    runs-on: macos-14
+    runs-on: macos-15
     needs: discover-darwin-hosts
     if: needs.discover-darwin-hosts.outputs.hosts != '[]'
     strategy:
