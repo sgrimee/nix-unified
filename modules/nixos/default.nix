@@ -24,5 +24,6 @@
     ./sound.nix
     ./time.nix
     ./touchpad.nix
+    ./vscode.nix
   ];
 }
