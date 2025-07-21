@@ -23,11 +23,29 @@ jobs:
       - name: Install just
         run: nix profile install nixpkgs#just
 
+      - name: Check disk space
+        run: df -h
+
       - name: Run unit tests
         run: just test-verbose
 
-      - name: Check flake
-        run: just check
+      - name: Garbage collect after tests
+        run: |
+          nix-collect-garbage -d
+          nix store gc
+          df -h
+
+      - name: Check flake (minimal evaluation)
+        run: |
+          # Only check flake structure, don't build everything
+          echo "Checking flake metadata..."
+          nix flake metadata
+          echo "Checking flake outputs structure..."
+          nix flake show --quiet
+          # Quick syntax validation without full evaluation
+          echo "Validating flake syntax..."
+          nix eval .#nixosConfigurations --apply 'builtins.attrNames' --quiet
+          nix eval .#darwinConfigurations --apply 'builtins.attrNames' --quiet || true
 
   lint:
     name: Lint Code
@@ -85,12 +103,19 @@ jobs:
     strategy:
       matrix:
         host: ${{ fromJson(needs.discover-nixos-hosts.outputs.hosts) }}
+      # Build sequentially to avoid disk space issues
+      max-parallel: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+        with:
+          # Enable more aggressive garbage collection
+          extra-conf: |
+            max-free = 1073741824
+            min-free = 268435456
 
       - name: Setup Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
@@ -98,8 +123,33 @@ jobs:
       - name: Install just
         run: nix profile install nixpkgs#just
 
+      - name: Check initial disk space
+        run: |
+          df -h
+          du -sh /nix/store || true
+
       - name: Build ${{ matrix.host }}
-        run: just build ${{ matrix.host }}
+        run: |
+          echo "Building ${{ matrix.host }}..."
+          just build ${{ matrix.host }}
+
+      - name: Cleanup build artifacts
+        if: always()
+        run: |
+          echo "Cleaning up after building ${{ matrix.host }}..."
+          # Aggressive cleanup to free disk space
+          nix-collect-garbage -d || true
+          nix store gc --max-freed 2G || true
+          nix store optimise || true
+          # Clean up any temporary files and caches
+          rm -rf /tmp/nix-* || true
+          rm -rf ~/.cache/nix || true
+          # Clear any evaluation caches
+          rm -rf ~/.cache/nix-eval-cache || true
+          echo "Disk space after cleanup:"
+          df -h
+          echo "Nix store size:"
+          du -sh /nix/store || true
 
   discover-darwin-hosts:
     name: Discover Darwin Hosts
@@ -129,12 +179,19 @@ jobs:
     strategy:
       matrix:
         host: ${{ fromJson(needs.discover-darwin-hosts.outputs.hosts) }}
+      # Build sequentially to avoid disk space issues
+      max-parallel: 1
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
+        with:
+          # Enable more aggressive garbage collection
+          extra-conf: |
+            max-free = 1073741824
+            min-free = 268435456
 
       - name: Setup Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
@@ -142,5 +199,30 @@ jobs:
       - name: Install just
         run: nix profile install nixpkgs#just
 
+      - name: Check initial disk space
+        run: |
+          df -h
+          du -sh /nix/store || true
+
       - name: Build ${{ matrix.host }}
-        run: just build ${{ matrix.host }}
+        run: |
+          echo "Building ${{ matrix.host }}..."
+          just build ${{ matrix.host }}
+
+      - name: Cleanup build artifacts
+        if: always()
+        run: |
+          echo "Cleaning up after building ${{ matrix.host }}..."
+          # Aggressive cleanup to free disk space
+          nix-collect-garbage -d || true
+          nix store gc --max-freed 2G || true
+          nix store optimise || true
+          # Clean up any temporary files and caches
+          rm -rf /tmp/nix-* || true
+          rm -rf ~/.cache/nix || true
+          # Clear any evaluation caches
+          rm -rf ~/.cache/nix-eval-cache || true
+          echo "Disk space after cleanup:"
+          df -h
+          echo "Nix store size:"
+          du -sh /nix/store || true
