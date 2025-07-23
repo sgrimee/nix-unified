@@ -216,3 +216,7 @@ just install-hooks
 ### Commit and PR Guidelines
 
 - Never mention the AI agent in commit messages and PR messages
+
+### Rebuilding Systems
+
+- When rebuilding a system, use `nixos-rebuild switch --flake .#{the_hostname} --use-remote-sudo --fast`
