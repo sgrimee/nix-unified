@@ -9,6 +9,8 @@
 
   nix.settings = {
     cores = lib.mkForce 2; # Threads per build (override global setting)
+    max-jobs =
+      lib.mkForce 1; # Prefer remote builder, but keep local as fallback
   };
 
   nix = {
@@ -18,6 +20,8 @@
       sshUser = "sgrimee";
       sshKey = "/home/sgrimee/.ssh/id_rsa";
       system = "x86_64-linux";
+      maxJobs = 8;
+      speedFactor = 100;
       supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
     }];
   };
