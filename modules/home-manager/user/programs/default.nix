@@ -2,6 +2,7 @@
   imports = [
     ./aerc.nix
     ./alacritty.nix
+    ./android-studio.nix
     ./bat.nix
     ./broot.nix
     ./btop.nix
