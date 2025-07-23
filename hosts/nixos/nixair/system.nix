@@ -10,7 +10,7 @@
   nix.settings = {
     cores = lib.mkForce 2; # Threads per build (override global setting)
     max-jobs =
-      lib.mkForce 1; # Prefer remote builder, but keep local as fallback
+      lib.mkForce 0; # Prefer remote builder, but keep local as fallback
   };
 
   nix = {
