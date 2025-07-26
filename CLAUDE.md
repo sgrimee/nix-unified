@@ -220,3 +220,11 @@ just install-hooks
 ### Rebuilding Systems
 
 - When rebuilding a system, use `nixos-rebuild switch --flake .#{the_hostname} --use-remote-sudo --fast`
+
+## Nix Configuration Best Practices
+
+- When available, prefer using a home manager program instead of just declaring a nixos package to install an application.
+
+## Darwin-Specific Guidelines
+
+- On darwin, always install GUI applications using homebrew casks
