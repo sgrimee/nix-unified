@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   wayland.windowManager.sway = {
     enable = true;
     config = {
@@ -8,12 +8,8 @@
       up = "l";
       right = "semicolon";
       menu = "exec rofi -show drun";
-      terminal = "kitty";
-      output = {
-        "Virtual-1" = {
-          mode = "1x1080@60Hz";
-        };
-      };
+      terminal = "ghostty";
+      output = { "Virtual-1" = { mode = "1x1080@60Hz"; }; };
     };
     # extraConfig = ''
     #   # output "*" bg /etc/foggy_forest.jpg fill

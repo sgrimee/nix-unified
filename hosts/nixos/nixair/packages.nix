@@ -4,12 +4,6 @@
     chromium
     firefox
     interception-tools # map Caps to Ctrl+Esc
-    mako # wayland notification daemon
-    swayidle
-    sway-launcher-desktop
-    swaylock
-    udiskie
-    wl-clipboard # wayland clipboard
 
     # linux vpn
     #networkmanager-applet
