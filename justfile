@@ -504,3 +504,20 @@ switch-dracula:
 
 switch-legion:
     @just switch-host legion
+
+# === Documentation Formatting ===
+
+# Check if uvx is available
+check-uvx:
+    @command -v uvx >/dev/null || (echo "❌ uvx not found. Install with: curl -LsSf https://astral.sh/uv/install.sh | sh" && exit 1)
+    @echo "✅ uvx is available"
+
+# Format markdown files with YAML frontmatter and GitHub Markdown support
+format-docs: check-uvx
+    @echo "📝 Formatting documentation with uvx..."
+    uvx --with mdformat-frontmatter --with mdformat-gfm mdformat specs/
+
+# Check documentation formatting without making changes
+check-docs: check-uvx
+    @echo "🔍 Checking documentation formatting..."
+    uvx --with mdformat-frontmatter --with mdformat-gfm mdformat --check specs/ && echo "✅ Documentation is properly formatted" || (echo "❌ Documentation needs formatting. Run 'just format-docs' to fix." && exit 1)

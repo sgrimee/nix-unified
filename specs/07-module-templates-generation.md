@@ -3,7 +3,7 @@ title: Module Templates and Code Generation
 status: plan
 priority: medium
 category: development
-implementation_date: null
+implementation_date:
 dependencies: [03]
 ---
 

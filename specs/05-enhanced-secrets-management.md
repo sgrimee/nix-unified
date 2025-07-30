@@ -3,7 +3,7 @@ title: Enhanced Secrets Management with Categorical Organization
 status: plan
 priority: high
 category: security
-implementation_date: null
+implementation_date:
 dependencies: []
 ---
 

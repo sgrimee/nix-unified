@@ -3,7 +3,7 @@ title: Module Dependency Management and Conflict Detection
 status: plan
 priority: high
 category: architecture
-implementation_date: null
+implementation_date:
 dependencies: [03]
 ---
 

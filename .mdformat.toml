@@ -1,9 +1,19 @@
+# mdformat configuration
+# This file is used when running mdformat directly, but we primarily use uvx
+# Commands: just format-docs, just check-docs (see justfile)
+
 # Line length limit for text content
-# Note: Tables may need manual formatting as mdformat can break table structure
 wrap = 120
 
 # End of line style
 end_of_line = "lf"
 
-# Validate markdown tables (this may help preserve table structure)
+# Extensions loaded via uvx (see justfile commands)
+# uvx --with mdformat-frontmatter --with mdformat-gfm mdformat
+extensions = [
+    "frontmatter",  # Preserves YAML frontmatter
+    "gfm",          # GitHub Flavored Markdown (tables, etc.)
+]
+
+# Validation enabled for consistency checking
 validate = true

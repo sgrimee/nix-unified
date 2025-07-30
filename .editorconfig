@@ -11,7 +11,6 @@ indent_style = space
 indent_size = 2
 
 [*.md]
-# Allow longer lines for tables and code blocks
 max_line_length = 120
 trim_trailing_whitespace = false
 

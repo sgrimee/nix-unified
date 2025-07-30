@@ -3,7 +3,7 @@ title: Centralized Package Management System
 status: plan
 priority: medium
 category: architecture
-implementation_date: null
+implementation_date:
 dependencies: [03]
 ---
 
