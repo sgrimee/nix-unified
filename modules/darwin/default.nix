@@ -1,5 +1,6 @@
 { host, inputs, user, ... }: {
   imports = [
+    ./benq-display.nix # BenQ display management tools
     ./dock.nix # configure dock
     ./environment.nix # configure environment (e.g default shell)
     ./finder.nix # configure finder

@@ -6,6 +6,8 @@
     localHostName = "SGRIMEE-M-4HJT";
   };
 
+  modules.darwin.benq-display.enable = true;
+
   nix = {
     distributedBuilds = true;
     buildMachines = [{
