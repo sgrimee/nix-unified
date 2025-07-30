@@ -35,3 +35,5 @@ secrets/keys.txt
 /result
 
 .claude/settings.local.json
+
+.opencode/

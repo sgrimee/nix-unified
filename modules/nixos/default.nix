@@ -22,6 +22,7 @@
     ./polkit.nix
     ./printing.nix
     ./sound.nix
+    ./sway.nix
     ./time.nix
     ./touchpad.nix
     ./vscode.nix
