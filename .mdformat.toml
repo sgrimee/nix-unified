@@ -1,5 +1,9 @@
 # Line length limit for text content
+# Note: Tables may need manual formatting as mdformat can break table structure
 wrap = 120
 
 # End of line style
 end_of_line = "lf"
+
+# Validate markdown tables (this may help preserve table structure)
+validate = true
