@@ -123,6 +123,17 @@ check:
     @echo "Checking flake..."
     nix flake check
 
+# Check specific host configuration (defaults to current host)
+check-host HOST=`hostname`:
+    @echo "Checking configuration for {{HOST}}..."
+    @if [[ "$OSTYPE" == "darwin"* ]]; then \
+        echo "Evaluating Darwin configuration..."; \
+        nix eval --no-warn-dirty .#darwinConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1); \
+    else \
+        echo "Evaluating NixOS configuration..."; \
+        nix eval --no-warn-dirty .#nixosConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1); \
+    fi
+
 # Show flake info
 show:
     @echo "Showing flake outputs..."
