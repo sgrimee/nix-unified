@@ -1,9 +1,22 @@
+---
+title: Enhanced Documentation with Auto-Generation
+status: plan
+priority: low
+category: documentation
+implementation_date: null
+dependencies: [03, 09]
+---
+
 # Enhanced Documentation with Auto-Generation
 
 ## Problem Statement
-While basic documentation exists, there's no systematic way to generate documentation from module configurations, understand module relationships, or maintain up-to-date reference documentation. Documentation becomes stale as the configuration evolves, and new users struggle to understand the system architecture.
+
+While basic documentation exists, there's no systematic way to generate documentation from module configurations,
+understand module relationships, or maintain up-to-date reference documentation. Documentation becomes stale as the
+configuration evolves, and new users struggle to understand the system architecture.
 
 ## Current State Analysis
+
 - Static documentation that can become outdated
 - No automatic documentation generation from code
 - Missing module dependency graphs and relationships
@@ -12,11 +25,15 @@ While basic documentation exists, there's no systematic way to generate document
 - No integration between code and documentation
 
 ## Proposed Solution
-Implement a comprehensive documentation system that automatically generates reference documentation from module configurations, creates dependency graphs, and maintains up-to-date architectural documentation with inline module documentation.
+
+Implement a comprehensive documentation system that automatically generates reference documentation from module
+configurations, creates dependency graphs, and maintains up-to-date architectural documentation with inline module
+documentation.
 
 ## Implementation Details
 
 ### 1. Inline Documentation System
+
 Enhance modules with structured documentation:
 
 ```nix
@@ -102,7 +119,8 @@ in {
 ```
 
 ### 2. Documentation Generator Implementation
-```nix
+
+````nix
 # docs/lib/generator.nix
 { lib, pkgs, ... }:
 
@@ -235,9 +253,10 @@ in {
       content = generateModuleMarkdown doc;
     }) moduleDocs;
 }
-```
+````
 
 ### 3. Dependency Graph Generation
+
 ```nix
 # docs/lib/dependency-graph.nix
 { lib, pkgs, ... }:
@@ -339,6 +358,7 @@ in {
 ```
 
 ### 4. Architecture Documentation Generator
+
 ```nix
 # docs/lib/architecture.nix
 { lib, pkgs, ... }:
@@ -409,6 +429,7 @@ in {
 ```
 
 ### 5. Documentation Build System
+
 ```nix
 # docs/build.nix
 { lib, pkgs, inputs, ... }:
@@ -538,6 +559,7 @@ in {
 ```
 
 ### 6. Interactive Documentation Features
+
 ```nix
 # docs/lib/interactive.nix
 { lib, pkgs, ... }:
@@ -598,16 +620,18 @@ in {
 ```
 
 ## Files to Create/Modify
+
 1. `docs/lib/` - Documentation generation library
-2. `docs/lib/generator.nix` - Main documentation generator
-3. `docs/lib/dependency-graph.nix` - Dependency graph generation
-4. `docs/lib/architecture.nix` - Architecture documentation
-5. `docs/lib/interactive.nix` - Interactive documentation tools
-6. `docs/build.nix` - Documentation build system
-7. `docs/templates/` - Documentation templates
-8. `justfile` - Documentation commands
+1. `docs/lib/generator.nix` - Main documentation generator
+1. `docs/lib/dependency-graph.nix` - Dependency graph generation
+1. `docs/lib/architecture.nix` - Architecture documentation
+1. `docs/lib/interactive.nix` - Interactive documentation tools
+1. `docs/build.nix` - Documentation build system
+1. `docs/templates/` - Documentation templates
+1. `justfile` - Documentation commands
 
 ## Justfile Integration
+
 ```makefile
 # Build all documentation
 build-docs:
@@ -646,6 +670,7 @@ update-docs:
 ```
 
 ## Benefits
+
 - Always up-to-date documentation generated from code
 - Visual dependency graphs show module relationships
 - Interactive tools for exploring configuration
@@ -654,16 +679,18 @@ update-docs:
 - Validation prevents documentation drift
 
 ## Implementation Steps
+
 1. Design inline documentation system for modules
-2. Implement documentation extraction and generation
-3. Create dependency graph generation
-4. Build architecture documentation generator
-5. Add interactive documentation tools
-6. Create documentation build system
-7. Add validation and quality checks
-8. Integrate with development workflow
+1. Implement documentation extraction and generation
+1. Create dependency graph generation
+1. Build architecture documentation generator
+1. Add interactive documentation tools
+1. Create documentation build system
+1. Add validation and quality checks
+1. Integrate with development workflow
 
 ## Acceptance Criteria
+
 - [ ] Module documentation is extracted automatically
 - [ ] Dependency graphs are generated correctly
 - [ ] Reference documentation is comprehensive

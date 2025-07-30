@@ -1,0 +1,35 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{nix,md}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+# Allow longer lines for tables and code blocks
+max_line_length = 120
+trim_trailing_whitespace = false
+
+[*.nix]
+max_line_length = 100
+
+[*.{yaml,yml}]
+indent_style = space
+indent_size = 2
+max_line_length = 120
+
+[*.toml]
+indent_style = space
+indent_size = 2
+
+[Makefile]
+indent_style = tab
+
+[justfile]
+indent_style = space
+indent_size = 2

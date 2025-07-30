@@ -1,9 +1,22 @@
+---
+title: Module Categories and Feature Flags
+status: plan
+priority: high
+category: architecture
+implementation_date: null
+dependencies: [01, 02]
+---
+
 # Module Categories and Feature Flags
 
 ## Problem Statement
-Current module organization requires manual imports and explicit module declarations for each host. This leads to repetitive configuration, difficult maintenance, and potential for missing required modules or including unnecessary ones.
+
+Current module organization requires manual imports and explicit module declarations for each host. This leads to
+repetitive configuration, difficult maintenance, and potential for missing required modules or including unnecessary
+ones.
 
 ## Current State Analysis
+
 - Modules are manually imported in each host configuration
 - No systematic way to group related functionality
 - Host configurations contain repetitive module imports
@@ -11,11 +24,14 @@ Current module organization requires manual imports and explicit module declarat
 - No conditional loading based on host capabilities
 
 ## Proposed Solution
-Implement a capability-based module system with feature flags that automatically imports relevant modules based on declared host capabilities and use cases.
+
+Implement a capability-based module system with feature flags that automatically imports relevant modules based on
+declared host capabilities and use cases.
 
 ## Implementation Details
 
 ### 1. Host Capability Declaration
+
 Create a standardized way for hosts to declare their capabilities:
 
 ```nix
@@ -63,6 +79,7 @@ Create a standardized way for hosts to declare their capabilities:
 ```
 
 ### 2. Module Category Structure
+
 Reorganize modules into logical categories:
 
 ```
@@ -103,6 +120,7 @@ modules/
 ```
 
 ### 3. Capability-Based Module Loader
+
 Create a smart module loader that imports modules based on capabilities:
 
 ```nix
@@ -183,6 +201,7 @@ in {
 ```
 
 ### 4. Feature Module Structure
+
 Each feature module should be self-contained with dependencies:
 
 ```nix
@@ -216,6 +235,7 @@ Each feature module should be self-contained with dependencies:
 ```
 
 ### 5. Dependency Resolution System
+
 Create a system to handle module dependencies and conflicts:
 
 ```nix
@@ -269,6 +289,7 @@ Create a system to handle module dependencies and conflicts:
 ```
 
 ### 6. Host Configuration Simplification
+
 Simplified host configuration using capabilities:
 
 ```nix
@@ -291,24 +312,27 @@ in {
 ```
 
 ## Files to Create/Modify
+
 1. `lib/capability-loader.nix` - Core capability system
-2. `lib/dependency-resolver.nix` - Dependency management
-3. `modules/core/` - Core modules directory
-4. `modules/features/` - Feature-based modules
-5. `modules/hardware/` - Hardware-specific modules
-6. `modules/roles/` - Role-based configurations
-7. `modules/environments/` - Environment modules
-8. `modules/hosts/*/capabilities.nix` - Host capability declarations
-9. `flake.nix` - Updated to use capability system
+1. `lib/dependency-resolver.nix` - Dependency management
+1. `modules/core/` - Core modules directory
+1. `modules/features/` - Feature-based modules
+1. `modules/hardware/` - Hardware-specific modules
+1. `modules/roles/` - Role-based configurations
+1. `modules/environments/` - Environment modules
+1. `modules/hosts/*/capabilities.nix` - Host capability declarations
+1. `flake.nix` - Updated to use capability system
 
 ## Migration Strategy
+
 1. **Phase 1**: Create capability structure without breaking existing configs
-2. **Phase 2**: Gradually migrate modules to new structure
-3. **Phase 3**: Update host configurations to use capabilities
-4. **Phase 4**: Remove old manual imports
-5. **Phase 5**: Add dependency validation
+1. **Phase 2**: Gradually migrate modules to new structure
+1. **Phase 3**: Update host configurations to use capabilities
+1. **Phase 4**: Remove old manual imports
+1. **Phase 5**: Add dependency validation
 
 ## Testing Strategy
+
 ```nix
 # tests/capability-tests.nix
 {
@@ -334,6 +358,7 @@ in {
 ```
 
 ## Benefits
+
 - Simplified host configuration
 - Automatic dependency resolution
 - Conflict detection
@@ -343,16 +368,18 @@ in {
 - Reduced configuration errors
 
 ## Implementation Steps
+
 1. Design capability schema and module categories
-2. Create capability loader and dependency resolver
-3. Reorganize existing modules into new structure
-4. Create capability declarations for existing hosts
-5. Update flake.nix to use capability system
-6. Add tests for capability resolution
-7. Update documentation
-8. Migrate hosts gradually
+1. Create capability loader and dependency resolver
+1. Reorganize existing modules into new structure
+1. Create capability declarations for existing hosts
+1. Update flake.nix to use capability system
+1. Add tests for capability resolution
+1. Update documentation
+1. Migrate hosts gradually
 
 ## Acceptance Criteria
+
 - [ ] Host configurations use capability declarations
 - [ ] Modules are automatically imported based on capabilities
 - [ ] Dependency resolution works correctly

@@ -1,0 +1,5 @@
+# Line length limit for text content
+wrap = 120
+
+# End of line style
+end_of_line = "lf"

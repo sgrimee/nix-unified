@@ -1,9 +1,22 @@
+---
+title: Centralized Package Management System
+status: plan
+priority: medium
+category: architecture
+implementation_date: null
+dependencies: [03]
+---
+
 # Centralized Package Management System
 
 ## Problem Statement
-Package definitions are scattered across multiple host-specific `packages.nix` files, leading to duplication, inconsistency, and difficulty managing packages across the entire system. Different hosts often have overlapping package needs but no systematic way to share and organize packages.
+
+Package definitions are scattered across multiple host-specific `packages.nix` files, leading to duplication,
+inconsistency, and difficulty managing packages across the entire system. Different hosts often have overlapping package
+needs but no systematic way to share and organize packages.
 
 ## Current State Analysis
+
 - Each host has its own `packages.nix` file
 - Significant package duplication across hosts
 - No categorization or organization of packages
@@ -12,11 +25,14 @@ Package definitions are scattered across multiple host-specific `packages.nix` f
 - Home Manager packages mixed with system packages
 
 ## Proposed Solution
-Create a centralized package management system with categorization, automatic platform filtering, and capability-based package selection that integrates with the capability system.
+
+Create a centralized package management system with categorization, automatic platform filtering, and capability-based
+package selection that integrates with the capability system.
 
 ## Implementation Details
 
 ### 1. Package Category Structure
+
 Organize packages into logical categories with metadata:
 
 ```nix
@@ -95,6 +111,7 @@ Organize packages into logical categories with metadata:
 ```
 
 ### 2. Package Categories Definition
+
 ```nix
 # packages/categories/gaming.nix
 { pkgs, lib, hostCapabilities ? {}, ... }:
@@ -156,6 +173,7 @@ Organize packages into logical categories with metadata:
 ```
 
 ### 3. Centralized Package Manager
+
 ```nix
 # packages/manager.nix
 { lib, pkgs, hostCapabilities, ... }:
@@ -286,6 +304,7 @@ in {
 ```
 
 ### 4. Host Integration
+
 ```nix
 # modules/hosts/nixair/packages.nix
 { config, lib, pkgs, ... }:
@@ -330,6 +349,7 @@ in {
 ```
 
 ### 5. Package Versioning and Channels
+
 ```nix
 # packages/versions.nix
 { lib, ... }:
@@ -377,6 +397,7 @@ in {
 ```
 
 ### 6. Package Discovery and Documentation
+
 ```nix
 # packages/discovery.nix
 { lib, ... }:
@@ -421,15 +442,17 @@ in {
 ```
 
 ## Files to Create/Modify
+
 1. `packages/` - New centralized package directory
-2. `packages/categories/` - Package category definitions
-3. `packages/manager.nix` - Core package management logic
-4. `packages/versions.nix` - Version management system
-5. `packages/discovery.nix` - Package discovery utilities
-6. `modules/hosts/*/packages.nix` - Simplified host package configs
-7. `justfile` - Package management commands
+1. `packages/categories/` - Package category definitions
+1. `packages/manager.nix` - Core package management logic
+1. `packages/versions.nix` - Version management system
+1. `packages/discovery.nix` - Package discovery utilities
+1. `modules/hosts/*/packages.nix` - Simplified host package configs
+1. `justfile` - Package management commands
 
 ## Justfile Integration
+
 ```makefile
 # List all available package categories
 list-package-categories:
@@ -449,6 +472,7 @@ package-info HOST:
 ```
 
 ## Benefits
+
 - Eliminates package duplication across hosts
 - Systematic package organization and categorization
 - Automatic platform and hardware filtering
@@ -458,16 +482,18 @@ package-info HOST:
 - Better documentation and understanding of package choices
 
 ## Implementation Steps
+
 1. Create package category structure and definitions
-2. Implement centralized package manager logic
-3. Add package validation and conflict detection
-4. Create package discovery and documentation system
-5. Update host configurations to use centralized system
-6. Add justfile commands for package management
-7. Migrate existing packages to new system
-8. Add tests for package management functionality
+1. Implement centralized package manager logic
+1. Add package validation and conflict detection
+1. Create package discovery and documentation system
+1. Update host configurations to use centralized system
+1. Add justfile commands for package management
+1. Migrate existing packages to new system
+1. Add tests for package management functionality
 
 ## Acceptance Criteria
+
 - [ ] All packages are organized into logical categories
 - [ ] Hosts use centralized package management
 - [ ] Package conflicts are detected automatically

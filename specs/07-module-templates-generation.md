@@ -1,9 +1,22 @@
+---
+title: Module Templates and Code Generation
+status: plan
+priority: medium
+category: development
+implementation_date: null
+dependencies: [03]
+---
+
 # Module Templates and Code Generation
 
 ## Problem Statement
-Creating new modules and host configurations requires manual setup with repetitive boilerplate code. There's no systematic way to generate consistent module structures, host configurations, or common patterns, leading to inconsistency and slower development when adding new functionality.
+
+Creating new modules and host configurations requires manual setup with repetitive boilerplate code. There's no
+systematic way to generate consistent module structures, host configurations, or common patterns, leading to
+inconsistency and slower development when adding new functionality.
 
 ## Current State Analysis
+
 - No templates for common module patterns
 - Manual creation of host configurations
 - Inconsistent module structure across the repository
@@ -12,11 +25,14 @@ Creating new modules and host configurations requires manual setup with repetiti
 - No guidance for new contributors on module creation
 
 ## Proposed Solution
-Implement a comprehensive template and code generation system that provides templates for common module patterns, host configurations, and development workflows, with justfile integration for easy usage.
+
+Implement a comprehensive template and code generation system that provides templates for common module patterns, host
+configurations, and development workflows, with justfile integration for easy usage.
 
 ## Implementation Details
 
 ### 1. Template Structure Organization
+
 Create a template system with different categories:
 
 ```
@@ -61,6 +77,7 @@ templates/
 ```
 
 ### 2. Template Metadata System
+
 Define template metadata and configuration:
 
 ```yaml
@@ -138,6 +155,7 @@ dependencies:
 ```
 
 ### 3. Module Template Examples
+
 ```nix
 # templates/modules/service-module/default.nix
 { config, lib, pkgs, ... }:
@@ -240,6 +258,7 @@ in {
 ```
 
 ### 4. Host Configuration Templates
+
 ```nix
 # templates/hosts/nixos-desktop/capabilities.nix
 {
@@ -286,6 +305,7 @@ in {
 ```
 
 ### 5. Template Generator Implementation
+
 ```nix
 # templates/lib/generator.nix
 { lib, pkgs, ... }:
@@ -385,6 +405,7 @@ in {
 ```
 
 ### 6. CLI Tools for Template Generation
+
 ```nix
 # templates/lib/cli-tools.nix
 { lib, pkgs, ... }:
@@ -531,16 +552,18 @@ in {
 ```
 
 ## Files to Create/Modify
+
 1. `templates/` - Complete template system
-2. `templates/modules/` - Module templates
-3. `templates/hosts/` - Host configuration templates
-4. `templates/workflows/` - Workflow templates
-5. `templates/lib/generator.nix` - Template generation logic
-6. `templates/lib/cli-tools.nix` - CLI utilities
-7. `flake.nix` - Export template system
-8. `justfile` - Template management commands
+1. `templates/modules/` - Module templates
+1. `templates/hosts/` - Host configuration templates
+1. `templates/workflows/` - Workflow templates
+1. `templates/lib/generator.nix` - Template generation logic
+1. `templates/lib/cli-tools.nix` - CLI utilities
+1. `flake.nix` - Export template system
+1. `justfile` - Template management commands
 
 ## Justfile Integration
+
 ```makefile
 # List available templates
 list-templates CATEGORY="modules":
@@ -574,6 +597,7 @@ new-service NAME:
 ```
 
 ## Development Workflow Integration
+
 ```bash
 # Example usage
 just new-service myapp
@@ -587,6 +611,7 @@ just new-module hardware/graphics hardware
 ```
 
 ## Benefits
+
 - Consistent module and host structure
 - Rapid development of new functionality
 - Reduced boilerplate and repetitive code
@@ -595,16 +620,18 @@ just new-module hardware/graphics hardware
 - Self-documenting template system
 
 ## Implementation Steps
+
 1. Design template structure and metadata system
-2. Create core module and host templates
-3. Implement template generation logic
-4. Build CLI tools and interactive wizard
-5. Add validation and error checking
-6. Create justfile integration
-7. Document template system usage
-8. Add tests for template generation
+1. Create core module and host templates
+1. Implement template generation logic
+1. Build CLI tools and interactive wizard
+1. Add validation and error checking
+1. Create justfile integration
+1. Document template system usage
+1. Add tests for template generation
 
 ## Acceptance Criteria
+
 - [ ] Template system supports modules, hosts, and workflows
 - [ ] Interactive wizard guides template creation
 - [ ] Variables are validated against schema

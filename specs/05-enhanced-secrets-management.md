@@ -1,9 +1,22 @@
+---
+title: Enhanced Secrets Management with Categorical Organization
+status: plan
+priority: high
+category: security
+implementation_date: null
+dependencies: []
+---
+
 # Enhanced Secrets Management with Categorical Organization
 
 ## Problem Statement
-While SOPS is implemented for secrets management, the current system lacks organization, categorization, and sophisticated security practices. Secrets are not categorized by type or sensitivity level, and there's no clear strategy for secret rotation, validation, or isolation.
+
+While SOPS is implemented for secrets management, the current system lacks organization, categorization, and
+sophisticated security practices. Secrets are not categorized by type or sensitivity level, and there's no clear
+strategy for secret rotation, validation, or isolation.
 
 ## Current State Analysis
+
 - SOPS is configured and working for basic secret encryption
 - Secrets are stored in a single directory without categorization
 - No secret rotation or validation strategy
@@ -12,11 +25,14 @@ While SOPS is implemented for secrets management, the current system lacks organ
 - Limited documentation on secret management practices
 
 ## Proposed Solution
-Implement a comprehensive secrets management system with categorical organization, security levels, rotation strategies, and potential isolation through a separate repository for enhanced security.
+
+Implement a comprehensive secrets management system with categorical organization, security levels, rotation strategies,
+and potential isolation through a separate repository for enhanced security.
 
 ## Implementation Details
 
 ### 1. Secret Categorization Structure
+
 Organize secrets by type, sensitivity, and scope:
 
 ```
@@ -76,6 +92,7 @@ secrets/
 ```
 
 ### 2. Secret Security Levels
+
 Define security levels with different handling requirements:
 
 ```nix
@@ -138,6 +155,7 @@ Define security levels with different handling requirements:
 ```
 
 ### 3. Secret Metadata and Validation
+
 Create a metadata system for secrets with validation:
 
 ```nix
@@ -205,6 +223,7 @@ Create a metadata system for secrets with validation:
 ```
 
 ### 4. Secret Management Commands
+
 Create comprehensive secret management utilities:
 
 ```nix
@@ -291,6 +310,7 @@ in {
 ```
 
 ### 5. Separate nix-secrets Repository Structure
+
 For critical secrets, create a separate repository:
 
 ```
@@ -309,6 +329,7 @@ nix-secrets/  (separate git repository)
 ```
 
 ### 6. Secret Access Integration
+
 ```nix
 # modules/secrets/default.nix
 { config, lib, pkgs, inputs, ... }:
@@ -363,6 +384,7 @@ in {
 ```
 
 ### 7. Secret Rotation Automation
+
 ```nix
 # modules/secrets/rotation.nix
 { config, lib, pkgs, ... }:
@@ -420,16 +442,18 @@ in {
 ```
 
 ## Files to Create/Modify
+
 1. `secrets/lib/` - Secret management library
-2. `secrets/core/`, `secrets/personal/`, etc. - Categorized secret directories
-3. `secrets/lib/metadata.nix` - Secret metadata system
-4. `secrets/lib/security-levels.nix` - Security level definitions
-5. `secrets/lib/manager.nix` - Secret management utilities
-6. `modules/secrets/` - Secret integration modules
-7. `justfile` - Secret management commands
-8. Optional: separate `nix-secrets` repository
+1. `secrets/core/`, `secrets/personal/`, etc. - Categorized secret directories
+1. `secrets/lib/metadata.nix` - Secret metadata system
+1. `secrets/lib/security-levels.nix` - Security level definitions
+1. `secrets/lib/manager.nix` - Secret management utilities
+1. `modules/secrets/` - Secret integration modules
+1. `justfile` - Secret management commands
+1. Optional: separate `nix-secrets` repository
 
 ## Justfile Integration
+
 ```makefile
 # Create new secret with metadata
 create-secret CATEGORY TYPE NAME:
@@ -460,6 +484,7 @@ audit-secrets:
 ```
 
 ## Benefits
+
 - Organized and categorized secret management
 - Security levels with appropriate handling
 - Secret rotation tracking and automation
@@ -469,16 +494,18 @@ audit-secrets:
 - Automated secret health monitoring
 
 ## Implementation Steps
+
 1. Design secret categorization and security level system
-2. Create secret metadata and validation framework
-3. Implement secret management utilities
-4. Reorganize existing secrets into new structure
-5. Add secret rotation and monitoring systems
-6. Create justfile commands for secret management
-7. Optional: Set up separate nix-secrets repository
-8. Add documentation and usage guides
+1. Create secret metadata and validation framework
+1. Implement secret management utilities
+1. Reorganize existing secrets into new structure
+1. Add secret rotation and monitoring systems
+1. Create justfile commands for secret management
+1. Optional: Set up separate nix-secrets repository
+1. Add documentation and usage guides
 
 ## Acceptance Criteria
+
 - [ ] Secrets are organized by category and security level
 - [ ] Secret metadata tracks rotation and usage
 - [ ] Validation rules prevent weak secrets
