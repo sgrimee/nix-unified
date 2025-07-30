@@ -333,6 +333,93 @@ in {
 
 ## Testing Strategy
 
+### Pre-Migration Analysis and Validation
+
+Before implementing the capability system, establish baseline functionality for all hosts:
+
+```nix
+# tests/pre-migration-analysis.nix
+{
+  # Extract current module imports for each host
+  extractCurrentModules = hostName:
+    let
+      hostConfig = import ../hosts/${hostName}/default.nix;
+      # Recursively analyze all imports to build complete module list
+      getAllImports = config: 
+        config.imports ++ (lib.flatten (map getAllImports config.imports));
+    in getAllImports hostConfig;
+    
+  # Generate baseline for each host
+  generateBaseline = {
+    nixair = extractCurrentModules "nixos/nixair";
+    dracula = extractCurrentModules "nixos/dracula"; 
+    legion = extractCurrentModules "nixos/legion";
+    darwin-host = extractCurrentModules "darwin/SGRIMEE-M-4HJT";
+  };
+  
+  # Extract current system packages for each host
+  extractCurrentPackages = hostName:
+    let
+      builtConfig = import ../flake.nix.nixosConfigurations.${hostName}.config;
+    in builtConfig.environment.systemPackages;
+    
+  # Extract current services for each host  
+  extractCurrentServices = hostName:
+    let
+      builtConfig = import ../flake.nix.nixosConfigurations.${hostName}.config;
+    in builtConfig.services;
+}
+```
+
+### Migration Validation Tests
+
+```nix
+# tests/migration-validation.nix
+{
+  # Validate feature parity after migration
+  testFeatureParity = hostName:
+    let
+      # Pre-migration state
+      preModules = baseline.${hostName}.modules;
+      prePackages = baseline.${hostName}.packages;
+      preServices = baseline.${hostName}.services;
+      
+      # Post-migration state (using capabilities)
+      capabilities = import ../modules/hosts/${hostName}/capabilities.nix;
+      postModules = capabilityLoader.generateModuleImports capabilities.hostCapabilities;
+      postConfig = buildHostConfig hostName capabilities;
+      postPackages = postConfig.environment.systemPackages;
+      postServices = postConfig.services;
+      
+    in {
+      modulesMatch = lib.setEqualityCheck preModules postModules;
+      packagesMatch = lib.setEqualityCheck prePackages postPackages;
+      servicesMatch = lib.deepEqualityCheck preServices postServices;
+      
+      # Report differences
+      missingModules = lib.subtractLists postModules preModules;
+      extraModules = lib.subtractLists preModules postModules;
+      missingPackages = lib.subtractLists postPackages prePackages;
+      extraPackages = lib.subtractLists prePackages postPackages;
+    };
+    
+  # Test all existing hosts maintain functionality
+  testAllHostsParity = lib.mapAttrs (hostName: _: testFeatureParity hostName) baseline;
+  
+  # Validate build success for all hosts
+  testBuildSuccess = lib.mapAttrs (hostName: _: 
+    let
+      result = tryBuildHost hostName;
+    in {
+      success = result.success;
+      errors = result.errors or [];
+    }
+  ) baseline;
+}
+```
+
+### Capability System Tests
+
 ```nix
 # tests/capability-tests.nix
 {
@@ -354,6 +441,55 @@ in {
     input = { ai = true; };
     expectedModules = [ "ai" "development" ];
   };
+  
+  # Test backwards compatibility
+  testBackwardsCompatibility = {
+    # Ensure old manual imports still work during transition
+    testManualImports = host: 
+      let 
+        oldConfig = import ../hosts/${host}/pre-migration-backup.nix;
+        result = tryBuild oldConfig;
+      in result.success;
+  };
+}
+```
+
+### Regression Prevention Tests
+
+```nix
+# tests/regression-tests.nix
+{
+  # Test critical functionality preservation
+  testCriticalFunctionality = hostName: {
+    # Ensure desktop environment still loads
+    desktopWorks = testDesktopEnvironment hostName;
+    
+    # Ensure development tools still available
+    devToolsWork = testDevelopmentTools hostName;
+    
+    # Ensure hardware drivers still loaded
+    hardwareWorks = testHardwareFunctionality hostName;
+    
+    # Ensure network configuration preserved
+    networkWorks = testNetworkConfiguration hostName;
+    
+    # Ensure user configuration preserved  
+    userConfigWorks = testUserConfiguration hostName;
+  };
+  
+  # Performance regression tests
+  testPerformance = hostName: {
+    buildTime = measureBuildTime hostName;
+    evaluationTime = measureEvaluationTime hostName;
+    memoryUsage = measureMemoryUsage hostName;
+  };
+  
+  # Test configuration equivalence
+  testConfigEquivalence = hostName:
+    let
+      preConfig = baseline.${hostName}.finalConfig;
+      postConfig = buildConfigWithCapabilities hostName;
+    in deepConfigComparison preConfig postConfig;
 }
 ```
 
@@ -369,22 +505,71 @@ in {
 
 ## Implementation Steps
 
-1. Design capability schema and module categories
-1. Create capability loader and dependency resolver
-1. Reorganize existing modules into new structure
-1. Create capability declarations for existing hosts
-1. Update flake.nix to use capability system
-1. Add tests for capability resolution
-1. Update documentation
-1. Migrate hosts gradually
+1. **Pre-Migration Analysis**
+   1. Run baseline extraction for all existing hosts
+   1. Document current module imports, packages, and services per host
+   1. Create configuration snapshots for rollback capability
+   1. Establish performance benchmarks (build time, evaluation time)
+
+1. **Design Phase**
+   1. Design capability schema and module categories
+   1. Map existing modules to new capability structure
+   1. Create capability declarations that match current host functionality
+
+1. **Foundation Building**
+   1. Create capability loader and dependency resolver
+   1. Reorganize existing modules into new structure (preserving all functionality)
+   1. Add comprehensive tests for capability resolution
+
+1. **Migration Phase**
+   1. Create capability declarations for existing hosts (matching baseline)
+   1. Update flake.nix to use capability system with fallback support
+   1. Migrate hosts one by one with validation at each step
+   1. Run feature parity tests after each host migration
+
+1. **Validation and Cleanup**
+   1. Run full regression test suite
+   1. Validate all hosts build successfully
+   1. Compare post-migration configuration against baseline
+   1. Remove old manual imports only after validation passes
+   1. Update documentation
+
+1. **Performance Validation**
+   1. Compare build and evaluation performance against baseline
+   1. Ensure no performance regressions introduced
 
 ## Acceptance Criteria
 
+### Functionality Preservation
+- [ ] **Pre-migration baseline established** - Complete inventory of modules, packages, and services per host
+- [ ] **100% feature parity maintained** - All hosts have identical functionality after migration
+- [ ] **No missing modules** - All previously imported modules are still included via capabilities
+- [ ] **No missing packages** - All system packages remain available after migration
+- [ ] **No missing services** - All enabled services remain active after migration
+- [ ] **Configuration equivalence verified** - Deep comparison confirms identical final configuration
+
+### Capability System Functionality  
 - [ ] Host configurations use capability declarations
 - [ ] Modules are automatically imported based on capabilities
 - [ ] Dependency resolution works correctly
 - [ ] Conflict detection prevents invalid configurations
-- [ ] All existing hosts work with new system
 - [ ] New hosts can be created with minimal configuration
 - [ ] Tests validate capability system behavior
+
+### Build and Performance Validation
+- [ ] **All existing hosts build successfully** - No build failures introduced
+- [ ] **Build time regression < 10%** - Performance maintained or improved
+- [ ] **Evaluation time regression < 10%** - Flake evaluation performance maintained
+- [ ] **Memory usage stable** - No significant memory usage increases
+
+### Testing and Quality Assurance
+- [ ] **Baseline tests pass** - Pre-migration functionality verified
+- [ ] **Migration tests pass** - Feature parity validation successful
+- [ ] **Regression tests pass** - Critical functionality preserved
+- [ ] **Capability tests pass** - New system behavior validated
+- [ ] **Integration tests pass** - End-to-end functionality verified
+
+### Documentation and Maintenance
 - [ ] Documentation explains capability system
+- [ ] Migration rollback procedures documented
+- [ ] Troubleshooting guide created for capability issues
