@@ -584,3 +584,188 @@ Before implementing the capability system, establish baseline functionality for 
 - [ ] Documentation explains capability system
 - [ ] Migration rollback procedures documented
 - [ ] Troubleshooting guide created for capability issues
+
+## Module Import Structure Analysis
+
+The following mermaid diagram illustrates the current module import structure and relationships:
+
+```mermaid
+graph TD
+    %% Main Entry Point
+    flake[flake.nix<br/>Main Entry Point]
+    
+    %% Capability System
+    capInt[lib/capability-integration.nix<br/>Capability System]
+    capLoader[lib/capability-loader.nix]
+    capSchema[lib/capability-schema.nix]
+    depResolver[lib/dependency-resolver.nix]
+    
+    %% Platform Configurations
+    nixosConf[nixosConfigurations]
+    darwinConf[darwinConfigurations]
+    
+    %% Host Discovery
+    hostDiscovery[Dynamic Host Discovery<br/>hosts/ directory scanning]
+    
+    %% Hosts
+    subgraph "NixOS Hosts"
+        nixair[nixair]
+        dracula[dracula]
+        legion[legion]
+    end
+    
+    subgraph "Darwin Hosts"
+        macHost[SGRIMEE-M-4HJT]
+    end
+    
+    %% Platform Modules
+    subgraph "Darwin Modules"
+        darwinDefault[modules/darwin/default.nix]
+        darwinDock[dock.nix]
+        darwinHomebrew[homebrew/]
+        darwinFinder[finder.nix]
+        darwinSystem[system.nix]
+        darwinFonts[fonts.nix]
+        darwinKeyboard[keyboard.nix]
+        darwinNix[nix.nix]
+        darwinOther[... 10 more modules]
+    end
+    
+    subgraph "NixOS Modules"
+        nixosDefault[modules/nixos/default.nix]
+        nixosDisplay[display.nix]
+        nixosSound[sound.nix]
+        nixosHardware[hardware.nix]
+        nixosSway[sway.nix]
+        nixosNetworking[networking.nix]
+        nixosNix[nix.nix]
+        nixosOther[... 20 more modules]
+    end
+    
+    %% Home Manager
+    subgraph "Home Manager"
+        hmDefault[modules/home-manager/default.nix]
+        hmUser[user/default.nix]
+        hmPrograms[user/programs/]
+        hmDotfiles[user/dotfiles/]
+        hmPackages[user/packages.nix]
+        hmSops[user/sops.nix]
+    end
+    
+    %% External Inputs
+    subgraph "External Inputs"
+        nixpkgs[nixpkgs stable/unstable]
+        homeManager[home-manager]
+        nixDarwin[nix-darwin]
+        nixosHw[nixos-hardware]
+        sopsNix[sops-nix]
+        macAppUtil[mac-app-util]
+    end
+    
+    %% Overlays and Utils
+    overlays[overlays/]
+    secrets[secrets/]
+    utils[utils/]
+    
+    %% Main Flow
+    flake --> capInt
+    flake --> hostDiscovery
+    flake --> nixosConf
+    flake --> darwinConf
+    
+    %% Capability System
+    capInt --> capLoader
+    capInt --> capSchema
+    capInt --> depResolver
+    
+    %% Host Discovery
+    hostDiscovery --> nixair
+    hostDiscovery --> dracula
+    hostDiscovery --> legion
+    hostDiscovery --> macHost
+    
+    %% Platform Routing
+    nixosConf --> nixair
+    nixosConf --> dracula
+    nixosConf --> legion
+    darwinConf --> macHost
+    
+    %% Host to Module Imports
+    nixair --> nixosDefault
+    dracula --> nixosDefault
+    legion --> nixosDefault
+    macHost --> darwinDefault
+    
+    %% Module Dependencies
+    darwinDefault --> darwinDock
+    darwinDefault --> darwinHomebrew
+    darwinDefault --> darwinFinder
+    darwinDefault --> darwinSystem
+    darwinDefault --> darwinFonts
+    darwinDefault --> darwinKeyboard
+    darwinDefault --> darwinNix
+    darwinDefault --> darwinOther
+    
+    nixosDefault --> nixosDisplay
+    nixosDefault --> nixosSound
+    nixosDefault --> nixosHardware
+    nixosDefault --> nixosSway
+    nixosDefault --> nixosNetworking
+    nixosDefault --> nixosNix
+    nixosDefault --> nixosOther
+    
+    %% Home Manager Integration
+    nixair --> hmDefault
+    dracula --> hmDefault
+    legion --> hmDefault
+    macHost --> hmDefault
+    
+    hmDefault --> hmUser
+    hmUser --> hmPrograms
+    hmUser --> hmDotfiles
+    hmUser --> hmPackages
+    hmUser --> hmSops
+    
+    %% External Dependencies
+    flake --> nixpkgs
+    flake --> homeManager
+    flake --> nixDarwin
+    flake --> nixosHw
+    flake --> sopsNix
+    flake --> macAppUtil
+    
+    %% Additional Resources
+    flake --> overlays
+    flake --> secrets
+    flake --> utils
+    
+    %% Styling
+    classDef flakeNode fill:#e1f5fe,stroke:#01579b,stroke-width:3px
+    classDef hostNode fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef moduleNode fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef externalNode fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef capabilityNode fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    
+    class flake flakeNode
+    class nixair,dracula,legion,macHost hostNode
+    class darwinDefault,nixosDefault,hmDefault,darwinDock,darwinHomebrew,nixosDisplay,nixosSound,hmUser moduleNode
+    class nixpkgs,homeManager,nixDarwin,nixosHw,sopsNix,macAppUtil externalNode
+    class capInt,capLoader,capSchema,depResolver capabilityNode
+```
+
+### Current Architecture Analysis
+
+**1. Dynamic Host Discovery**: The flake automatically discovers hosts from the `hosts/` directory structure, supporting both NixOS and Darwin platforms.
+
+**2. Capability System**: A sophisticated capability-based configuration system that can fall back to traditional imports for backward compatibility.
+
+**3. Platform Separation**: 
+- **Darwin modules**: macOS-specific (dock, homebrew, finder, etc.)
+- **NixOS modules**: Linux-specific (display, sound, hardware, sway, etc.)
+- **Home Manager**: User-space configuration shared across platforms
+
+**4. Modular Design**: Each platform has a `default.nix` that imports all relevant modules, making it easy to enable/disable features per host.
+
+**5. External Integration**: Clean integration with external flake inputs like nixpkgs, home-manager, nix-darwin, and specialized tools.
+
+This diagram shows how the unified flake structure dynamically discovers hosts and routes them through platform-specific module hierarchies, with the capability system providing advanced configuration management while maintaining backward compatibility.
