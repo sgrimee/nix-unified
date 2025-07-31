@@ -2,6 +2,9 @@
   system.stateVersion = "23.11";
   networking.hostName = "legion";
 
+  # Allow unfree packages (for NVIDIA drivers)
+  nixpkgs.config.allowUnfree = true;
+
   programs.ssh = {
     startAgent = true;
     enableAskPassword = true;

@@ -1,0 +1,71 @@
+# Capability Declaration for SGRIMEE-M-4HJT
+# Darwin workstation with comprehensive corporate toolset
+# Based on baseline analysis of current configuration
+
+{
+  # Core platform information
+  platform = "darwin";
+  architecture = "x86_64";
+
+  # Feature flags for major functionality groups
+  features = {
+    development = true; # Full development environment
+    desktop = true; # macOS GUI environment
+    gaming = true; # Steam and gaming applications
+    multimedia = true; # Ableton Live Suite, audio production
+    server = false; # Not a server host
+    corporate = true; # Microsoft Office, Teams, corporate tools
+    ai = false; # No AI/ML specific setup
+  };
+
+  # Hardware-specific capabilities
+  hardware = {
+    cpu = "intel"; # Intel-based Mac
+    gpu = null; # Integrated graphics
+    audio = "coreaudio"; # macOS Core Audio
+    display = {
+      hidpi = true; # Retina display support
+      multimonitor = true; # BenQ display support enabled
+    };
+    bluetooth = true; # Built-in Bluetooth
+    wifi = true; # Built-in WiFi
+    printer = true; # CUPS printing support
+  };
+
+  # Host roles and primary use cases
+  roles = [ "workstation" ];
+
+  # Environment preferences
+  environment = {
+    desktop = "macos"; # Native macOS desktop
+    shell = {
+      primary = "zsh"; # Primary shell
+      additional = [ "fish" ]; # Additional shells available
+    };
+    terminal = "ghostty"; # Preferred terminal emulator
+    windowManager = "aerospace"; # Aerospace window manager
+  };
+
+  # Service configurations
+  services = {
+    distributedBuilds = {
+      enabled = true; # Uses legion.local for Linux builds
+      role = "client"; # Client only, not a build server
+    };
+    homeAssistant = false; # No Home Assistant
+    development = {
+      docker = true; # Docker Desktop via Homebrew
+      databases = [ ]; # MongoDB Compass available but no local DBs
+    };
+  };
+
+  # Security and access control
+  security = {
+    ssh = {
+      server = false; # No SSH server
+      client = true; # SSH client enabled
+    };
+    firewall = true; # macOS firewall enabled
+    secrets = true; # SOPS secret management
+  };
+}
