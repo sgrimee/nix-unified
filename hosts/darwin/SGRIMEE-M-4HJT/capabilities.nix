@@ -26,6 +26,7 @@
     display = {
       hidpi = true; # Retina display support
       multimonitor = true; # BenQ display support enabled
+      "benq-display" = true;
     };
     bluetooth = true; # Built-in Bluetooth
     wifi = true; # Built-in WiFi

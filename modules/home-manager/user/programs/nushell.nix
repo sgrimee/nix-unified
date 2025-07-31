@@ -31,8 +31,7 @@
         append /usr/bin/env
         )
       '';
-      shellAliases = {
-      };
+      shellAliases = { };
     };
   };
 }
