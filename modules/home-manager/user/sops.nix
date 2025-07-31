@@ -1,14 +1,7 @@
-{
-  config,
-  home,
-  inputs,
-  ...
-}: let
-  user_key_file = "${config.xdg.configHome}/sops/age/keys.txt";
+{ config, home, inputs, ... }:
+let user_key_file = "${config.xdg.configHome}/sops/age/keys.txt";
 in {
-  imports = [
-    inputs.sops-nix.homeManagerModules.sops
-  ];
+  imports = [ inputs.sops-nix.homeManagerModules.sops ];
 
   sops = {
     defaultSopsFile = ../../../secrets/sgrimee.yaml;
@@ -26,9 +19,7 @@ in {
     };
   };
 
-  home.sessionVariables = {
-    SOPS_AGE_KEY_FILE = user_key_file;
-  };
+  home.sessionVariables = { SOPS_AGE_KEY_FILE = user_key_file; };
 }
 # Troubleshooting: monitor the agent logs with
 # cat ~/Library/LaunchAgents/org.nix-community.home.sops-nix.plist | grep std

@@ -1,4 +1,4 @@
-{...}: [
+{ ... }: [
   "borders"
   "node"
   "pam-reattach"

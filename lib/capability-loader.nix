@@ -59,12 +59,6 @@ in rec {
       validation = dependencyResolver.validateCapabilities resolvedCapabilities;
 
       # Abort if validation fails
-      _ = if !validation.valid then
-        throw "Capability validation failed: ${
-          lib.concatStringsSep ", " validation.errors
-        }"
-      else
-        null;
 
       # Core modules (always imported)
       coreModules = moduleMapping.coreModules.${platform} or [ ]
@@ -267,7 +261,7 @@ in rec {
     };
 
   # Helper function to generate a capability-aware host configuration
-  generateHostConfig = hostCapabilities: inputs: hostName: hostSpecificConfig:
+  generateHostConfig = hostCapabilities: inputs: hostName: _hostSpecificConfig:
     let moduleImports = generateModuleImports hostCapabilities inputs hostName;
     in {
       imports = moduleImports.imports;
@@ -318,19 +312,14 @@ in rec {
     };
 
   # Migration helper: infer capabilities from existing configuration
-  inferCapabilitiesFromHost = hostPath:
-    let
-      # This would analyze existing host configuration files
-      # and infer what capabilities should be enabled
-      # Implementation would be added during migration phase
-    in {
-      # Return inferred capability structure
-      platform = "nixos"; # or "darwin" based on analysis
-      features = { };
-      hardware = { };
-      roles = [ ];
-      environment = { };
-      services = { };
-      security = { };
-    };
+  inferCapabilitiesFromHost = _hostPath: {
+    # Return inferred capability structure
+    platform = "nixos"; # or "darwin" based on analysis
+    features = { };
+    hardware = { };
+    roles = [ ];
+    environment = { };
+    services = { };
+    security = { };
+  };
 }
