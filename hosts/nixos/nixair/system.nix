@@ -2,13 +2,18 @@
   system.stateVersion = "23.05";
   networking.hostName = "nixair";
 
-  services.custom.greetd.enable = true;
-  programs.custom.sway = {
-    enable = true;
-    waybar.enable = true;
-    rofi.enable = true;
-    i3status.enable = true;
-  };
+  # Allow unfree packages (for printer drivers)
+  nixpkgs.config.allowUnfree = true;
+
+  # Note: Sway and greetd configuration will be provided by capability system
+  # These custom options don't exist in standard NixOS - commenting out for now
+  # services.custom.greetd.enable = true;
+  # programs.custom.sway = {
+  #   enable = true;
+  #   waybar.enable = true;
+  #   rofi.enable = true;
+  #   i3status.enable = true;
+  # };
 
   programs.ssh = {
     startAgent = true;

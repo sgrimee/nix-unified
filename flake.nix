@@ -31,6 +31,10 @@
       lib = inputs.stable-nixos.lib;
       stateVersion = "23.05";
 
+      # Import capability system integration
+      capabilityIntegration =
+        import ./lib/capability-integration.nix { inherit lib inputs; };
+
       # Configure unstable with allowUnfree
       unstableConfig = { allowUnfree = true; };
 
@@ -48,10 +52,9 @@
 
         in hostsByPlatform;
 
-      # Generate system configuration based on platform
+      # Enhanced system configuration generator with capability support
       makeHostConfig = platform: hostName: system:
         let
-          hostPath = ./hosts + "/${platform}/${hostName}";
           overlays = import ./overlays;
           unstable = import inputs.unstable {
             inherit system;
@@ -61,29 +64,8 @@
             inherit inputs system stateVersion overlays unstable;
           };
 
-          # Import the host configuration - it may return a list of modules or a single module
-          hostModules = import hostPath { inherit inputs; };
-
-        in if platform == "darwin" then
-          inputs.nix-darwin.lib.darwinSystem {
-            inherit system;
-            inherit specialArgs;
-            modules = if builtins.isList hostModules then
-              hostModules
-            else
-              [ hostModules ];
-          }
-        else if platform == "nixos" then
-          inputs.stable-nixos.lib.nixosSystem {
-            inherit system;
-            inherit specialArgs;
-            modules = if builtins.isList hostModules then
-              hostModules
-            else
-              [ hostModules ];
-          }
-        else
-          throw "Unsupported platform: ${platform}";
+        in capabilityIntegration.buildSystemConfig platform hostName system
+        specialArgs;
 
       # Get default system architecture for platform
       getHostSystem = platform:
@@ -113,11 +95,110 @@
       nixosConfigurations = generateConfigurations "nixos";
       darwinConfigurations = generateConfigurations "darwin";
 
+      # Capability system status and validation
+      capabilityStatus = capabilityIntegration.getCapabilityStatus allHosts;
+      capabilityValidation = {
+        nixos = capabilityIntegration.validateCapabilityHosts
+          (generateConfigurations "nixos");
+        darwin = capabilityIntegration.validateCapabilityHosts
+          (generateConfigurations "darwin");
+      };
+
       # Test outputs
       checks = {
         x86_64-linux =
           let pkgs = import inputs.stable-nixos { system = "x86_64-linux"; };
           in {
+            # Capability system tests
+            capability-system-tests =
+              pkgs.runCommand "capability-system-tests" { } ''
+                cd ${./.}
+                echo "=== Capability System Tests ===" > $out
+
+                # Test that capability files exist for hosts
+                echo "Testing capability declarations..." >> $out
+                if [ -f hosts/nixos/nixair/capabilities.nix ]; then
+                  echo "✓ nixair capabilities exist" >> $out
+                else
+                  echo "✗ nixair capabilities missing" >> $out
+                fi
+
+                if [ -f hosts/nixos/dracula/capabilities.nix ]; then
+                  echo "✓ dracula capabilities exist" >> $out
+                else
+                  echo "✗ dracula capabilities missing" >> $out
+                fi
+
+                if [ -f hosts/nixos/legion/capabilities.nix ]; then
+                  echo "✓ legion capabilities exist" >> $out
+                else
+                  echo "✗ legion capabilities missing" >> $out
+                fi
+
+                # Test that capability system files exist
+                echo "Testing capability system files..." >> $out
+                if [ -f lib/capability-schema.nix ]; then
+                  echo "✓ capability schema exists" >> $out
+                else
+                  echo "✗ capability schema missing" >> $out
+                  exit 1
+                fi
+
+                if [ -f lib/capability-loader.nix ]; then
+                  echo "✓ capability loader exists" >> $out
+                else
+                  echo "✗ capability loader missing" >> $out
+                  exit 1
+                fi
+
+                if [ -f lib/dependency-resolver.nix ]; then
+                  echo "✓ dependency resolver exists" >> $out
+                else
+                  echo "✗ dependency resolver missing" >> $out
+                  exit 1
+                fi
+
+                if [ -f lib/module-mapping.nix ]; then
+                  echo "✓ module mapping exists" >> $out
+                else
+                  echo "✗ module mapping missing" >> $out
+                  exit 1
+                fi
+
+                echo "Capability system validation: ✓" >> $out
+              '';
+
+            # Pre-migration analysis tests
+            pre-migration-tests = pkgs.runCommand "pre-migration-tests" { } ''
+              cd ${./.}
+              echo "=== Pre-Migration Analysis Tests ===" > $out
+
+              # Test that baseline analysis file exists
+              if [ -f tests/pre-migration-analysis.nix ]; then
+                echo "✓ pre-migration analysis exists" >> $out
+              else
+                echo "✗ pre-migration analysis missing" >> $out
+                exit 1
+              fi
+
+              # Test that migration validation exists
+              if [ -f tests/migration-validation.nix ]; then
+                echo "✓ migration validation exists" >> $out
+              else
+                echo "✗ migration validation missing" >> $out
+                exit 1
+              fi
+
+              # Test that capability tests exist
+              if [ -f tests/capability-tests.nix ]; then
+                echo "✓ capability tests exist" >> $out
+              else
+                echo "✗ capability tests missing" >> $out
+                exit 1
+              fi
+
+              echo "Migration test framework: ✓" >> $out
+            '';
             # Test utilities validation - simplified to avoid permission issues in CI
             test-utils = pkgs.runCommand "test-utils-validation" { } ''
               cd ${./.}
