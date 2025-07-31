@@ -1,9 +1,9 @@
 ---
 title: Module Categories and Feature Flags
-status: plan
+status: implemented
 priority: high
 category: architecture
-implementation_date:
+implementation_date: 31/07/2025
 dependencies: [01, 02]
 ---
 
