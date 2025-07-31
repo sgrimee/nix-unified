@@ -1,5 +1,6 @@
 {
   system.stateVersion = 4;
+  system.primaryUser = "sgrimee";
   networking = {
     computerName = "SGRIMEE-M-4HJT";
     hostName = "SGRIMEE-M-4HJT";
