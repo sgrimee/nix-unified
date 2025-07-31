@@ -38,6 +38,9 @@
       # Configure unstable with allowUnfree
       unstableConfig = { allowUnfree = true; };
 
+      # Configure stable packages with allowUnfree
+      stableConfig = { allowUnfree = true; };
+
       # Dynamic host discovery functions
       discoverHosts = hostsDir:
         let
@@ -60,13 +63,24 @@
             inherit system;
             config = unstableConfig;
           };
+          # Import stable packages with allowUnfree config
+          stable = if platform == "darwin" then
+            import inputs.stable-darwin {
+              inherit system;
+              config = stableConfig;
+            }
+          else
+            import inputs.stable-nixos {
+              inherit system;
+              config = stableConfig;
+            };
           specialArgs = {
-            inherit inputs system stateVersion overlays unstable;
+            inherit inputs system stateVersion overlays unstable stable;
+            pkgs = stable; # Set pkgs to stable with allowUnfree
           };
 
         in capabilityIntegration.buildSystemConfig platform hostName system
         specialArgs;
-
       # Get default system architecture for platform
       getHostSystem = platform:
         let
