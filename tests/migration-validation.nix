@@ -10,7 +10,6 @@ let
   preAnalysis = import ./pre-migration-analysis.nix { inherit lib pkgs; };
 
   # Import flake for configuration access
-  flake = builtins.getFlake (toString ../.);
 
   # Helper to safely build a configuration
   safeBuild = config:
@@ -61,8 +60,8 @@ let
   # Compare service configurations
   compareServices = pre: post:
     let
-      preEnabled = lib.filterAttrs (name: svc: svc.enabled or false) pre;
-      postEnabled = lib.filterAttrs (name: svc:
+      preEnabled = lib.filterAttrs (_name: svc: svc.enabled or false) pre;
+      postEnabled = lib.filterAttrs (_name: svc:
         if builtins.isAttrs svc && svc ? enable then svc.enable else false)
         post;
 
@@ -83,9 +82,9 @@ let
     let
       # Extract key configuration sections for comparison
       extractKeyConfig = config: {
-        services = lib.mapAttrs (name: svc: svc.enable or false)
+        services = lib.mapAttrs (_name: svc: svc.enable or false)
           (config.services or { });
-        programs = lib.mapAttrs (name: prog: prog.enable or false)
+        programs = lib.mapAttrs (_name: prog: prog.enable or false)
           (config.programs or { });
         hardware = {
           opengl = config.hardware.opengl.enable or false;
@@ -326,10 +325,10 @@ in rec {
   # Detailed failure analysis
   failureAnalysis = {
     parityFailures =
-      lib.filterAttrs (hostName: result: !(result.overallParity or false))
+      lib.filterAttrs (_hostName: result: !(result.overallParity or false))
       (testFeatureParity.nixos // testFeatureParity.darwin);
 
-    buildFailures = lib.filterAttrs (hostName: result: !result.success)
+    buildFailures = lib.filterAttrs (_hostName: result: !result.success)
       (testBuildSuccess.nixos // testBuildSuccess.darwin);
   };
 

@@ -11,9 +11,9 @@
       cleanup = "zap";
       upgrade = true;
     };
-    brews = import ./brews.nix {};
-    casks = import ./casks.nix {};
-    taps = import ./taps.nix {};
-    masApps = import ./mas.nix {};
+    brews = import ./brews.nix { };
+    casks = import ./casks.nix { };
+    taps = import ./taps.nix { };
+    masApps = import ./mas.nix { };
   };
 }

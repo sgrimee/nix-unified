@@ -134,6 +134,10 @@
         nixos = [ ../modules/nixos/display.nix ];
         darwin = [ ];
       };
+      "benq-display" = {
+        nixos = [ ];
+        darwin = [ ../modules/darwin/benq-display.nix ];
+      };
     };
 
     connectivity = {

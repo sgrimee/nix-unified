@@ -261,7 +261,7 @@
   };
 
   # Validation function for capability declarations
-  validateCapabilities = capabilities:
+  validateCapabilities = _capabilities:
     let
       errors = [ ];
       # Add validation logic here
@@ -271,11 +271,8 @@
     };
 
   # Helper function to extract capabilities from existing host config
-  inferCapabilitiesFromConfig = hostConfig:
-    let
-      # Analyze imports, packages, services to infer capabilities
-      # This will be used during migration to create capability declarations
-    in {
+  inferCapabilitiesFromConfig = _hostConfig:
+    {
       # Return inferred capability structure
     };
 }

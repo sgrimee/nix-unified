@@ -206,7 +206,7 @@ in {
       resolveFeatureDependencies = caps:
         let
           enabledFeatures =
-            lib.filterAttrs (name: enabled: enabled) caps.features;
+            lib.filterAttrs (_name: enabled: enabled) caps.features;
           requiredFeatures = lib.flatten (lib.mapAttrsToList (featureName: _:
             if capabilityDependencies ? ${featureName} then
               capabilityDependencies.${featureName}.requires or [ ]
@@ -392,7 +392,6 @@ in {
   # Helper function to suggest capabilities based on common patterns
   suggestCapabilities = baseCapabilities:
     let
-      platform = baseCapabilities.platform;
 
       suggestions = lib.flatten [
         # Role-based suggestions

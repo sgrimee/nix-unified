@@ -9,7 +9,7 @@ let
 
   # Generate host configuration using capability system
   # Falls back to traditional import if capabilities.nix doesn't exist
-  makeCapabilityHostConfig = platform: hostName: system: specialArgs:
+  makeCapabilityHostConfig = platform: hostName: _system: _specialArgs:
     let
       hostPath = ../hosts + "/${platform}/${hostName}";
       capabilitiesPath = hostPath + "/capabilities.nix";
@@ -117,7 +117,7 @@ in {
   validateCapabilityHosts = configurations:
     let
       capabilityHosts = lib.filterAttrs
-        (hostName: config: config._capabilityInfo.usingCapabilities or false)
+        (_hostName: config: config._capabilityInfo.usingCapabilities or false)
         configurations;
 
       validationResults = lib.mapAttrs (hostName: config:
@@ -139,8 +139,9 @@ in {
       validationResults = validationResults;
       totalCapabilityHosts = lib.length (lib.attrNames capabilityHosts);
       successfulBuilds = lib.length
-        (lib.filterAttrs (name: result: result.buildSuccess) validationResults);
+        (lib.filterAttrs (_name: result: result.buildSuccess)
+          validationResults);
       failedBuilds =
-        lib.filterAttrs (name: result: !result.buildSuccess) validationResults;
+        lib.filterAttrs (_name: result: !result.buildSuccess) validationResults;
     };
 }

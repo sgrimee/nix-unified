@@ -7,7 +7,6 @@
 let
   capabilityLoader = import ../lib/capability-loader.nix { inherit lib; };
   dependencyResolver = import ../lib/dependency-resolver.nix { inherit lib; };
-  capabilitySchema = import ../lib/capability-schema.nix { inherit lib; };
   moduleMapping = import ../lib/module-mapping.nix { inherit lib; };
 
 in rec {

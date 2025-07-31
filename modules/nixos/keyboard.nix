@@ -1,4 +1,5 @@
-{pkgs, ...}: {
+{ pkgs, ... }:
+{
   # Disabled now in favor of kanata
 
   # Map CapsLock to Esc on single press and Ctrl on when used with multiple keys.

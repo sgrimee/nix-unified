@@ -1,9 +1,4 @@
-{
-  inputs,
-  lib,
-  pkgs,
-  ...
-}: {
+{ inputs, lib, pkgs, ... }: {
   nix = {
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -49,12 +44,12 @@
       ];
 
       # Performance optimizations
-      max-jobs = "auto";                    # Use all available cores
-      cores = 0;                           # Use all cores per job  
-      max-substitution-jobs = 32;          # Parallel downloads
-      connect-timeout = 5;                 # Faster timeout
-      download-buffer-size = 134217728;    # 128MB download buffer
-      
+      max-jobs = "auto"; # Use all available cores
+      cores = 0; # Use all cores per job
+      max-substitution-jobs = 32; # Parallel downloads
+      connect-timeout = 5; # Faster timeout
+      download-buffer-size = 134217728; # 128MB download buffer
+
       # trusted-users = ["root" "@admins"];
       builders-use-substitutes = true;
     };

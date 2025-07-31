@@ -30,12 +30,12 @@ let
   extractEnabledServices = hostConfig:
     let
       services = hostConfig.config.services;
-      enabledServices = lib.filterAttrs (name: service:
+      enabledServices = lib.filterAttrs (_name: service:
         if builtins.isAttrs service && service ? enable then
           service.enable
         else
           false) services;
-    in lib.mapAttrs (name: service: {
+    in lib.mapAttrs (_name: service: {
       enabled = service.enable;
       config = builtins.removeAttrs service [ "enable" ];
     }) enabledServices;
@@ -55,7 +55,7 @@ let
     let users = hostConfig.config.users or { };
     in {
       defaultUserShell = users.defaultUserShell or null;
-      users = lib.mapAttrs (name: user: {
+      users = lib.mapAttrs (_name: user: {
         isNormalUser = user.isNormalUser or false;
         extraGroups = user.extraGroups or [ ];
         shell = user.shell or null;
@@ -179,20 +179,20 @@ in rec {
     # Get all unique module imports across all hosts
     getAllModuleImports = let
       nixosImports = lib.flatten
-        (lib.mapAttrsToList (name: host: host.moduleImports or [ ])
+        (lib.mapAttrsToList (_name: host: host.moduleImports or [ ])
           baseline.nixos);
       darwinImports = lib.flatten
-        (lib.mapAttrsToList (name: host: host.moduleImports or [ ])
+        (lib.mapAttrsToList (_name: host: host.moduleImports or [ ])
           baseline.darwin);
     in lib.unique (nixosImports ++ darwinImports);
 
     # Get common packages across all hosts
     getCommonPackages = let
       allPackages = lib.flatten [
-        (lib.mapAttrsToList (name: host:
+        (lib.mapAttrsToList (_name: host:
           map (pkg: pkg.pname or (builtins.toString pkg))
           (host.systemPackages or [ ])) baseline.nixos)
-        (lib.mapAttrsToList (name: host:
+        (lib.mapAttrsToList (_name: host:
           map (pkg: pkg.pname or (builtins.toString pkg))
           (host.systemPackages or [ ])) baseline.darwin)
       ];
@@ -202,7 +202,7 @@ in rec {
     identifyCapabilityPatterns = {
       # Desktop environment patterns
       desktopEnvironments = lib.unique (lib.flatten [
-        (lib.mapAttrsToList (name: host:
+        (lib.mapAttrsToList (_name: host:
           if host.desktopEnvironment != null then
             [ host.desktopEnvironment ]
           else
@@ -210,12 +210,12 @@ in rec {
       ]);
 
       # Gaming patterns
-      gamingHosts = lib.filterAttrs (name: host:
+      gamingHosts = lib.filterAttrs (_name: host:
         host.gaming.steam or false || host.gaming.gamemode or false)
         baseline.nixos;
 
       # Development patterns
-      developmentHosts = lib.filterAttrs (name: host:
+      developmentHosts = lib.filterAttrs (_name: host:
         host.developmentTools.git or false
         || host.developmentTools.docker or false
         || host.developmentTools.vscode or false)
@@ -224,13 +224,13 @@ in rec {
       # Hardware patterns
       hardwarePatterns = {
         nvidia =
-          lib.filterAttrs (name: host: host.hardwareConfig.nvidia or false)
+          lib.filterAttrs (_name: host: host.hardwareConfig.nvidia or false)
           baseline.nixos;
         bluetooth =
-          lib.filterAttrs (name: host: host.hardwareConfig.bluetooth or false)
+          lib.filterAttrs (_name: host: host.hardwareConfig.bluetooth or false)
           baseline.nixos;
         opengl =
-          lib.filterAttrs (name: host: host.hardwareConfig.opengl or false)
+          lib.filterAttrs (_name: host: host.hardwareConfig.opengl or false)
           baseline.nixos;
       };
     };
@@ -241,18 +241,18 @@ in rec {
     # Check that all hosts build successfully
     allHostsBuild = let
       nixosBuilds =
-        lib.mapAttrsToList (name: host: host.buildSuccess) baseline.nixos;
+        lib.mapAttrsToList (_name: host: host.buildSuccess) baseline.nixos;
       darwinBuilds =
-        lib.mapAttrsToList (name: host: host.buildSuccess) baseline.darwin;
+        lib.mapAttrsToList (_name: host: host.buildSuccess) baseline.darwin;
       allBuilds = nixosBuilds ++ darwinBuilds;
     in lib.all (x: x) allBuilds;
 
     # Get build failures
     buildFailures = let
       nixosFailures =
-        lib.filterAttrs (name: host: !host.buildSuccess) baseline.nixos;
+        lib.filterAttrs (_name: host: !host.buildSuccess) baseline.nixos;
       darwinFailures =
-        lib.filterAttrs (name: host: !host.buildSuccess) baseline.darwin;
+        lib.filterAttrs (_name: host: !host.buildSuccess) baseline.darwin;
     in {
       nixos = nixosFailures;
       darwin = darwinFailures;
