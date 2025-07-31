@@ -252,6 +252,11 @@
         darwin = [ ];
         homeManager = [ ];
       };
+      aerospace = {
+        nixos = [ ];
+        darwin = [ ../modules/darwin/window-manager.nix ];
+        homeManager = [ ];
+      };
     };
   };
 

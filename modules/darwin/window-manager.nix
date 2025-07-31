@@ -1,6 +1,9 @@
 # Window Manager Module - AeroSpace + JankyBorders
 # Combined configuration for tiling window management and window borders
-{
+{ pkgs, ... }: {
+  # Add aerospace CLI to system packages
+  environment.systemPackages = with pkgs; [ aerospace ];
+
   services = {
     # AeroSpace tiling window manager
     aerospace = {
