@@ -506,28 +506,33 @@ Before implementing the capability system, establish baseline functionality for 
 ## Implementation Steps
 
 1. **Pre-Migration Analysis**
+
    1. Run baseline extraction for all existing hosts
    1. Document current module imports, packages, and services per host
    1. Create configuration snapshots for rollback capability
    1. Establish performance benchmarks (build time, evaluation time)
 
 1. **Design Phase**
+
    1. Design capability schema and module categories
    1. Map existing modules to new capability structure
    1. Create capability declarations that match current host functionality
 
 1. **Foundation Building**
+
    1. Create capability loader and dependency resolver
    1. Reorganize existing modules into new structure (preserving all functionality)
    1. Add comprehensive tests for capability resolution
 
 1. **Migration Phase**
+
    1. Create capability declarations for existing hosts (matching baseline)
    1. Update flake.nix to use capability system with fallback support
    1. Migrate hosts one by one with validation at each step
    1. Run feature parity tests after each host migration
 
 1. **Validation and Cleanup**
+
    1. Run full regression test suite
    1. Validate all hosts build successfully
    1. Compare post-migration configuration against baseline
@@ -535,12 +540,14 @@ Before implementing the capability system, establish baseline functionality for 
    1. Update documentation
 
 1. **Performance Validation**
+
    1. Compare build and evaluation performance against baseline
    1. Ensure no performance regressions introduced
 
 ## Acceptance Criteria
 
 ### Functionality Preservation
+
 - [ ] **Pre-migration baseline established** - Complete inventory of modules, packages, and services per host
 - [ ] **100% feature parity maintained** - All hosts have identical functionality after migration
 - [ ] **No missing modules** - All previously imported modules are still included via capabilities
@@ -548,7 +555,8 @@ Before implementing the capability system, establish baseline functionality for 
 - [ ] **No missing services** - All enabled services remain active after migration
 - [ ] **Configuration equivalence verified** - Deep comparison confirms identical final configuration
 
-### Capability System Functionality  
+### Capability System Functionality
+
 - [ ] Host configurations use capability declarations
 - [ ] Modules are automatically imported based on capabilities
 - [ ] Dependency resolution works correctly
@@ -557,12 +565,14 @@ Before implementing the capability system, establish baseline functionality for 
 - [ ] Tests validate capability system behavior
 
 ### Build and Performance Validation
+
 - [ ] **All existing hosts build successfully** - No build failures introduced
 - [ ] **Build time regression < 10%** - Performance maintained or improved
 - [ ] **Evaluation time regression < 10%** - Flake evaluation performance maintained
 - [ ] **Memory usage stable** - No significant memory usage increases
 
 ### Testing and Quality Assurance
+
 - [ ] **Baseline tests pass** - Pre-migration functionality verified
 - [ ] **Migration tests pass** - Feature parity validation successful
 - [ ] **Regression tests pass** - Critical functionality preserved
@@ -570,6 +580,7 @@ Before implementing the capability system, establish baseline functionality for 
 - [ ] **Integration tests pass** - End-to-end functionality verified
 
 ### Documentation and Maintenance
+
 - [ ] Documentation explains capability system
 - [ ] Migration rollback procedures documented
 - [ ] Troubleshooting guide created for capability issues
