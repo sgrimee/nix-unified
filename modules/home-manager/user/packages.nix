@@ -39,7 +39,7 @@
       qemu
       ripgrep
       rustscan
-      unstable.superfile
+      # unstable.superfile
       sops
       ssh-to-age
       tldr
