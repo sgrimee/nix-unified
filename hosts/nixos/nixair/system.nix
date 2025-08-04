@@ -5,6 +5,10 @@
   # Allow unfree packages (for printer drivers)
   nixpkgs.config.allowUnfree = true;
 
+  # Allow insecure broadcom-sta package for older WiFi hardware
+  nixpkgs.config.permittedInsecurePackages =
+    [ "broadcom-sta-6.30.223.271-57-6.12.39" ];
+
   # Note: Sway and greetd configuration will be provided by capability system
   # These custom options don't exist in standard NixOS - commenting out for now
   # services.custom.greetd.enable = true;

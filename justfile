@@ -198,6 +198,24 @@ scan-secrets-staged:
     @echo "Scanning staged files for secrets..."
     nix run nixpkgs#gitleaks -- detect --source . --config .gitleaks.toml --staged --verbose
 
+# === Package Management ===
+
+# List all available package categories
+list-package-categories:
+    nix eval .#packageCategories --json | jq '.[] | {name, description, size}'
+
+# Search for packages
+search-packages TERM:
+    nix eval .#searchPackages --apply "f: f \"{{TERM}}\"" --json | jq
+
+# Validate package combination for host
+validate-packages HOST:
+    nix eval .#hostConfigs.{{HOST}}.packageValidation --json
+
+# Show package info for host  
+package-info HOST:
+    nix eval .#hostConfigs.{{HOST}}.packageInfo --json | jq
+
 # === Maintenance ===
 
 # Garbage collect old generations and store paths

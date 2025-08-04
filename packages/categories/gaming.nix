@@ -1,0 +1,38 @@
+# packages/categories/gaming.nix
+{ pkgs, lib, hostCapabilities ? { }, ... }:
+
+{
+  # Core gaming packages
+  core = with pkgs; [ steam lutris discord gamemode lunar-client ];
+
+  # Gaming utilities
+  utilities = with pkgs; [ mangohud goverlay protontricks ];
+
+  # Emulation
+  emulation = with pkgs; [ retroarch dolphin-emu pcsx2 ];
+
+  # Platform-specific gaming
+  platformSpecific = {
+    linux = with pkgs; [ gamemode gamescope ];
+
+    darwin = with pkgs;
+      [
+        # macOS gaming tools
+      ];
+  };
+
+  # GPU-specific packages
+  gpuSpecific = {
+    nvidia = with pkgs; [ nvidia-vaapi-driver ];
+
+    amd = with pkgs; [ amdvlk ];
+  };
+
+  metadata = {
+    description = "Gaming applications and utilities";
+    conflicts = [ "minimal" "server" ];
+    requires = [ "multimedia" ];
+    size = "xlarge";
+    priority = "medium";
+  };
+}

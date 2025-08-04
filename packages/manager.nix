@@ -1,0 +1,133 @@
+# packages/manager.nix
+{ lib, pkgs, hostCapabilities, ... }:
+
+let
+  # Import all package categories
+  categories = {
+    core = import ./categories/core.nix { inherit pkgs lib hostCapabilities; };
+    development = import ./categories/development.nix {
+      inherit pkgs lib hostCapabilities;
+    };
+    gaming =
+      import ./categories/gaming.nix { inherit pkgs lib hostCapabilities; };
+    multimedia =
+      import ./categories/multimedia.nix { inherit pkgs lib hostCapabilities; };
+    productivity = import ./categories/productivity.nix {
+      inherit pkgs lib hostCapabilities;
+    };
+    security =
+      import ./categories/security.nix { inherit pkgs lib hostCapabilities; };
+    system =
+      import ./categories/system.nix { inherit pkgs lib hostCapabilities; };
+  };
+
+  # Platform detection
+  currentPlatform = if pkgs.stdenv.isLinux then
+    "linux"
+  else if pkgs.stdenv.isDarwin then
+    "darwin"
+  else
+    "unknown";
+
+  # GPU detection from capabilities
+  currentGpu = hostCapabilities.hardware.gpu or "integrated";
+
+in {
+  # Export categories for external access
+  inherit categories;
+
+  # Generate package list based on capabilities
+  generatePackages = requestedCategories:
+    let
+      # Get packages for each requested category
+      categoryPackages = map (category:
+        if categories ? ${category} then
+          let
+            cat = categories.${category};
+            # Core packages (always included)
+          in (cat.core or [ ]) ++
+
+          # Platform-specific packages
+          (cat.platformSpecific.${currentPlatform} or [ ]) ++
+
+          # GPU-specific packages  
+          (cat.gpuSpecific.${currentGpu} or [ ]) ++
+
+          # Language packages (if development category)
+          (if category == "development" then
+            lib.flatten (lib.attrValues (cat.languages or { }))
+          else
+            [ ]) ++
+
+          # Utility packages
+          (cat.utilities or [ ]) ++ (cat.editors or [ ])
+        else
+          [ ]) requestedCategories;
+
+    in lib.unique (lib.flatten categoryPackages);
+
+  # Validate package combinations
+  validatePackages = requestedCategories:
+    let
+      # Check for conflicts
+      conflicts = lib.flatten (map (category:
+        if categories ? ${category} then
+          let
+            categoryMeta = categories.${category}.metadata or { };
+            conflictsWith = categoryMeta.conflicts or [ ];
+          in lib.intersectLists requestedCategories conflictsWith
+        else
+          [ ]) requestedCategories);
+
+      # Check requirements
+      missingRequirements = lib.flatten (map (category:
+        if categories ? ${category} then
+          let
+            categoryMeta = categories.${category}.metadata or { };
+            requires = categoryMeta.requires or [ ];
+          in lib.subtractLists requestedCategories requires
+        else
+          [ ]) requestedCategories);
+
+    in {
+      valid = conflicts == [ ] && missingRequirements == [ ];
+      conflicts = conflicts;
+      missingRequirements = missingRequirements;
+    };
+
+  # Get package metadata
+  getPackageInfo = requestedCategories:
+    let
+      totalSize = lib.foldl' (acc: category:
+        if categories ? ${category} then
+          let
+            size = categories.${category}.metadata.size or "medium";
+            sizeValue = {
+              small = 1;
+              medium = 3;
+              large = 5;
+              xlarge = 10;
+            }.${size} or 3;
+          in acc + sizeValue
+        else
+          acc) 0 requestedCategories;
+
+    in {
+      estimatedSize = if totalSize < 5 then
+        "small"
+      else if totalSize < 15 then
+        "medium"
+      else if totalSize < 25 then
+        "large"
+      else
+        "xlarge";
+
+      categories = map (category:
+        if categories ? ${category} then {
+          name = category;
+          description = categories.${category}.metadata.description or "";
+          size = categories.${category}.metadata.size or "medium";
+        } else
+          null) requestedCategories;
+    };
+}

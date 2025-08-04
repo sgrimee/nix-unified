@@ -1,17 +1,27 @@
-{ pkgs, ... }: {
-  home.packages = with pkgs; [
-    # packages for this host
-    chromium
-    firefox
-    interception-tools # map Caps to Ctrl+Esc
-    lunar-client # minecraft
+# modules/hosts/dracula/packages.nix
+{ config, lib, pkgs, ... }:
 
-    # linux vpn
-    #networkmanager-applet
-    # networkmanagerapplet
-    # networkmanager-l2tp
-    # networkmanager-vpnc
-    # strongswan
-    # xl2tpd
+let
+  capabilities = import ./capabilities.nix;
+  packageManager = import ../../../packages/manager.nix {
+    inherit lib pkgs;
+    hostCapabilities = capabilities;
+  };
+
+  # Define package categories for this host
+  requestedCategories =
+    [ "core" "development" "gaming" "multimedia" "productivity" "system" ];
+
+  # Generate package list
+  validation = packageManager.validatePackages requestedCategories;
+  systemPackages = if validation.valid then
+    packageManager.generatePackages requestedCategories
+  else
+    throw "Invalid package combination: ${toString validation.conflicts}";
+
+in {
+  # System packages with host-specific overrides
+  home.packages = systemPackages ++ [
+    # Any host-specific packages that don't fit categories
   ];
 }
