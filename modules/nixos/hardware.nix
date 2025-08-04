@@ -11,7 +11,8 @@
   # Enable bluetooth
   hardware.bluetooth.enable = true;
 
-  # Allow insecure broadcom-sta package for older WiFi hardware
-  nixpkgs.config.permittedInsecurePackages =
-    [ "broadcom-sta-6.30.223.271-57-6.12.39" ];
+  # Allow any version of insecure broadcom-sta package for older WiFi hardware
+  # Using allowInsecurePredicate to match any broadcom-sta version
+  nixpkgs.config.allowInsecurePredicate = pkg:
+    builtins.match "broadcom-sta-.*" (pkg.pname or pkg.name or "") != null;
 }

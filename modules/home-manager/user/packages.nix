@@ -6,7 +6,6 @@
       age
       alejandra
       carapace
-      unstable.claude-code
       coreutils-full
       curl
       du-dust
@@ -15,6 +14,7 @@
       # ghostty # marked broken
       gitleaks
       glow # CLI markdown viewer
+      go
       gping
       hamlib_4
       home-manager
@@ -31,6 +31,7 @@
       neofetch
       nil
       nixpkgs-fmt
+      nodejs
       openssh
       pat
       poppler # pdf preview
@@ -46,6 +47,7 @@
       unrar
       unzip
       unstable.vscode-langservers-extracted
+      uv
       wakeonlan
       wget
       yazi # also installed as user program
