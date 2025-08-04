@@ -7,7 +7,7 @@
     ./console.nix
     ./display.nix
     ./environment.nix
-    ./fonts.nix
+    # ./fonts.nix # REMOVED - now using unified home-manager fonts configuration
     ./greetd.nix
     ./hardware.nix
     ./i18n.nix

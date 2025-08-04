@@ -4,7 +4,7 @@
     ./dock.nix # configure dock
     ./environment.nix # configure environment (e.g default shell)
     ./finder.nix # configure finder
-    ./fonts.nix # install fonts (e.g. NerdFonts)
+    # ./fonts.nix # REMOVED - now using unified home-manager fonts configuration
     ./homebrew # install homebrew apps and configure homebrew itsef
     ./window-manager.nix # window manager (aerospace + jankyborders)
     ./keyboard.nix # settings for key repeat etc
