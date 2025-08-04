@@ -1,6 +1,9 @@
 {
   system.stateVersion = 4;
   system.primaryUser = "sgrimee";
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
   networking = {
     computerName = "SGRIMEE-M-4HJT";
     hostName = "SGRIMEE-M-4HJT";

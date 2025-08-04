@@ -228,3 +228,4 @@ just install-hooks
 ## Darwin-Specific Guidelines
 
 - On darwin, always install GUI applications using homebrew casks
+- When creating new specs, allways use the `00-spec-template.md` to ensure consistency.

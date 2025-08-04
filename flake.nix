@@ -76,7 +76,6 @@
             };
           specialArgs = {
             inherit inputs system stateVersion overlays unstable stable;
-            pkgs = stable; # Set pkgs to stable with allowUnfree
           };
 
         in capabilityIntegration.buildSystemConfig platform hostName system
@@ -104,6 +103,16 @@
           }) hosts;
         in lib.listToAttrs configs;
 
+      # Import package manager
+      packageManager = import ./packages/manager.nix {
+        inherit lib;
+        pkgs = inputs.stable-nixos.pkgs; # Use a default pkgs for discovery
+        hostCapabilities = { }; # Empty for general queries
+      };
+
+      # Import package discovery tools
+      packageDiscovery = import ./packages/discovery.nix { inherit lib; };
+
     in {
       # Generate configurations using dynamic host discovery
       nixosConfigurations = generateConfigurations "nixos";
@@ -117,6 +126,12 @@
         darwin = capabilityIntegration.validateCapabilityHosts
           (generateConfigurations "darwin");
       };
+
+      # Package management outputs
+      packageCategories =
+        packageDiscovery.generatePackageDocs packageManager.categories;
+      searchPackages = term:
+        packageDiscovery.searchPackages term packageManager.categories;
 
       # Test outputs
       checks = {
