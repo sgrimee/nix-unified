@@ -1,6 +1,7 @@
 { inputs, stateVersion, system, unstable, ... }: {
   imports = [
     ./dotfiles # copy dotfiles into home
+    ./fonts.nix # unified fonts configuration for both Darwin and NixOS
     ./k8s-dev.nix
     ./packages.nix
     ./programs # install and configure applications using home-manager
