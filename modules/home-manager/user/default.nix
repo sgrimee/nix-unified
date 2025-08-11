@@ -42,6 +42,7 @@
       x = "exit";
       yt-dl-audio = "yt-dlp -x --audio-format mp3";
       yt-dl-video = "yt-dlp -f bestvideo+bestaudio/best --recode mp4";
+      claude = "$HOME/.claude/local/claude";
     };
   };
 
