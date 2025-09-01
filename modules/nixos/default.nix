@@ -4,6 +4,7 @@
 
   imports = [
     ./authorized_keys.nix
+    ./claude-alias.nix
     ./console.nix
     ./display.nix
     ./environment.nix
@@ -22,6 +23,7 @@
     ./polkit.nix
     ./printing.nix
     ./sound.nix
+    ./strongswan.nix
     ./sway.nix
     ./time.nix
     ./touchpad.nix
