@@ -6,11 +6,10 @@
     interception-tools # map Caps to Ctrl+Esc
 
     # linux vpn
-    #networkmanager-applet
-    # networkmanagerapplet
-    # networkmanager-l2tp
+    networkmanagerapplet
+    networkmanager-l2tp
     # networkmanager-vpnc
-    # strongswan
-    # xl2tpd
+    strongswan
+    xl2tpd
   ];
 }

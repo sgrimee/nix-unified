@@ -15,6 +15,12 @@
     enableAskPassword = true;
   };
 
+  # Enable StrongSwan VPN client for Meraki firewall
+  services.strongswan-meraki = {
+    enable = true;
+    debug = true; # Maximum debug logging for troubleshooting
+  };
+
   nix.settings = {
     cores = lib.mkForce 2; # Threads per build (override global setting)
     max-jobs =

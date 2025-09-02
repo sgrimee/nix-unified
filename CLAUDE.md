@@ -228,3 +228,9 @@ just install-hooks
 ## Darwin-Specific Guidelines
 
 - On darwin, always install GUI applications using homebrew casks
+
+## OpenCode Operational Guidelines
+
+- Never run `just switch`, `nixos-rebuild switch`, `darwin-rebuild switch`, or any other system switching commands - these require sudo access which is not available
+- Always tell the user to run these commands themselves when system switching is needed
+- You can use `nix build` to test configurations and verify they compile correctly without switching
