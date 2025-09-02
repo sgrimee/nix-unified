@@ -4,7 +4,6 @@
     ./k8s-dev.nix
     ./packages.nix
     ./programs # install and configure applications using home-manager
-    ./sops.nix
   ];
 
   home = {

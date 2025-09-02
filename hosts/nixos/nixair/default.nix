@@ -17,6 +17,9 @@ in [
   nixos-hardware.nixosModules.apple-macbook-air-4
   nixos-hardware.nixosModules.common-pc-ssd
 
+  # secrets management
+  ../../../modules/nixos/sops.nix
+
   # system
   (import ../../../modules/nixos { inherit inputs host user; })
 
