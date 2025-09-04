@@ -42,6 +42,7 @@
       # unstable.superfile
       sops
       ssh-to-age
+      tcpdump
       tldr
       trippy # cmd 'trip'
       unrar
