@@ -4,8 +4,6 @@
   "ableton-live-suite"
   "alfred"
   "arc"
-  "android-studio"
-  "android-commandlinetools"
   "arturia-software-center"
   "balenaetcher"
   "bambu-studio"

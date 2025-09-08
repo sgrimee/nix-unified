@@ -4,8 +4,6 @@ in {
   home-manager.users.${user} = {
     imports = [ ./packages.nix ];
 
-    programs.android-studio.enable = true;
-
     home = {
       sessionVariables = {
         HOMEBREW_CASK_OPTS = "--no-quarantine";
