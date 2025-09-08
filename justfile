@@ -82,11 +82,10 @@ check-derivations HOST:
 # Switch to configuration for current host
 switch:
     @echo "Switching to current host configuration..."
-    @if [[ "$OSTYPE" == "darwin"* ]]; then \
-        sudo darwin-rebuild switch --flake .; \
-    else \
-        sudo nixos-rebuild switch --flake .; \
-    fi
+    @case "$$OSTYPE" in \
+        darwin*) sudo darwin-rebuild switch --flake . ;; \
+        *) sudo nixos-rebuild switch --flake . ;; \
+    esac
 
 # Switch to specific host configuration
 switch-host HOST:
@@ -100,11 +99,10 @@ switch-host HOST:
 # Dry run - show what would be built/changed
 dry-run:
     @echo "Dry run for current host..."
-    @if [[ "$OSTYPE" == "darwin"* ]]; then \
-        darwin-rebuild build --dry-run --flake .; \
-    else \
-        sudo nixos-rebuild dry-run --flake .; \
-    fi
+    @case "$$OSTYPE" in \
+        darwin*) darwin-rebuild build --dry-run --flake . ;; \
+        *) sudo nixos-rebuild dry-run --flake . ;; \
+    esac
 
 # === Flake Management ===
 
@@ -126,13 +124,14 @@ check:
 # Check specific host configuration (defaults to current host)
 check-host HOST=`hostname`:
     @echo "Checking configuration for {{HOST}}..."
-    @if [[ "$OSTYPE" == "darwin"* ]]; then \
-        echo "Evaluating Darwin configuration..."; \
-        nix eval --no-warn-dirty .#darwinConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1); \
-    else \
-        echo "Evaluating NixOS configuration..."; \
-        nix eval --no-warn-dirty .#nixosConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1); \
-    fi
+    @case "$$OSTYPE" in \
+        darwin*) \
+            echo "Evaluating Darwin configuration..."; \
+            nix eval --no-warn-dirty .#darwinConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1) ;; \
+        *) \
+            echo "Evaluating NixOS configuration..."; \
+            nix eval --no-warn-dirty .#nixosConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1) ;; \
+    esac
 
 # Show flake info
 show:
@@ -201,20 +200,18 @@ clear-cache:
 # Show system generations
 generations:
     @echo "System generations:"
-    @if [[ "$OSTYPE" == "darwin"* ]]; then \
-        darwin-rebuild --list-generations; \
-    else \
-        sudo nix-env --profile /nix/var/nix/profiles/system --list-generations; \
-    fi
+    @case "$$OSTYPE" in \
+        darwin*) darwin-rebuild --list-generations ;; \
+        *) sudo nix-env --profile /nix/var/nix/profiles/system --list-generations ;; \
+    esac
 
 # Delete old generations (keep last N)
 clean-generations N="5":
     @echo "Cleaning old generations (keeping last {{N}})..."
-    @if [[ "$OSTYPE" == "darwin"* ]]; then \
-        sudo nix-collect-garbage --delete-generations +{{N}}; \
-    else \
-        sudo nix-collect-garbage -d --delete-generations +{{N}}; \
-    fi
+    @case "$$OSTYPE" in \
+        darwin*) sudo nix-collect-garbage --delete-generations +{{N}} ;; \
+        *) sudo nix-collect-garbage -d --delete-generations +{{N}} ;; \
+    esac
 
 # Optimize nix store
 optimize:
@@ -308,21 +305,22 @@ list-hosts-by-platform PLATFORM:
     fi
 
 # Copy configuration from existing host to new host
-copy-host SOURCE TARGET:
-    @echo "Copying host configuration from {{SOURCE}} to {{TARGET}}"
-    @SOURCE_PLATFORM=""; \
-    TARGET_PLATFORM=""; \
-    if [ -d "hosts/nixos/{{SOURCE}}" ]; then SOURCE_PLATFORM="nixos"; fi; \
-    if [ -d "hosts/darwin/{{SOURCE}}" ]; then SOURCE_PLATFORM="darwin"; fi; \
-    if [ -z "$SOURCE_PLATFORM" ]; then echo "Error: Source host {{SOURCE}} not found"; exit 1; fi; \
-    echo "Source platform: $SOURCE_PLATFORM"; \
-    read -p "Target platform (nixos/darwin) [default: $SOURCE_PLATFORM]: " TARGET_PLATFORM; \
-    TARGET_PLATFORM=$${TARGET_PLATFORM:-$SOURCE_PLATFORM}; \
-    if [ "$TARGET_PLATFORM" != "nixos" ] && [ "$TARGET_PLATFORM" != "darwin" ]; then echo "Error: Invalid target platform"; exit 1; fi; \
-    if [ -d "hosts/$TARGET_PLATFORM/{{TARGET}}" ]; then echo "Error: Target host {{TARGET}} already exists"; exit 1; fi; \
-    mkdir -p "hosts/$TARGET_PLATFORM/{{TARGET}}"; \
-    cp -r "hosts/$SOURCE_PLATFORM/{{SOURCE}}"/* "hosts/$TARGET_PLATFORM/{{TARGET}}/"; \
-    sed -i '' 's/{{SOURCE}}/{{TARGET}}/g' "hosts/$TARGET_PLATFORM/{{TARGET}}"/*.nix; \
+copy-host SOURCE TARGET PLATFORM="":
+    #!/bin/sh
+    echo "Copying host configuration from {{SOURCE}} to {{TARGET}}"
+    SOURCE_PLATFORM=""
+    if [ -d "hosts/nixos/{{SOURCE}}" ]; then SOURCE_PLATFORM="nixos"; fi
+    if [ -d "hosts/darwin/{{SOURCE}}" ]; then SOURCE_PLATFORM="darwin"; fi
+    if [ -z "$SOURCE_PLATFORM" ]; then echo "Error: Source host {{SOURCE}} not found"; exit 1; fi
+    echo "Source platform: $SOURCE_PLATFORM"
+    TARGET_PLATFORM="{{PLATFORM}}"
+    if [ -z "$TARGET_PLATFORM" ]; then TARGET_PLATFORM="$SOURCE_PLATFORM"; fi
+    if [ "$TARGET_PLATFORM" != "nixos" ] && [ "$TARGET_PLATFORM" != "darwin" ]; then echo "Error: Invalid target platform '$TARGET_PLATFORM'. Use 'nixos' or 'darwin'"; exit 1; fi
+    if [ -d "hosts/$TARGET_PLATFORM/{{TARGET}}" ]; then echo "Error: Target host {{TARGET}} already exists in $TARGET_PLATFORM"; exit 1; fi
+    echo "Target platform: $TARGET_PLATFORM"
+    mkdir -p "hosts/$TARGET_PLATFORM/{{TARGET}}"
+    cp -r "hosts/$SOURCE_PLATFORM/{{SOURCE}}"/* "hosts/$TARGET_PLATFORM/{{TARGET}}/"
+    find "hosts/$TARGET_PLATFORM/{{TARGET}}" -name "*.nix" -exec sed -i '' 's/{{SOURCE}}/{{TARGET}}/g' {} \;
     echo "Host {{TARGET}} created as copy of {{SOURCE}} on $TARGET_PLATFORM platform"
 
 # Validate host configuration
