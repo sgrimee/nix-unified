@@ -53,8 +53,8 @@
   # Service configurations
   services = {
     distributedBuilds = {
-      enabled = false; # Powerful enough for local builds
-      role = "client"; # Client if needed
+      enabled = true; # Now serves as build server (faster than legion)
+      role = "server"; # Primary build server
     };
     homeAssistant = false; # No Home Assistant
     development = {

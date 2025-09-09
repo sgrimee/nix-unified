@@ -53,8 +53,8 @@
   # Service configurations
   services = {
     distributedBuilds = {
-      enabled = true; # Serves as build server for other hosts
-      role = "server"; # Primary build server
+      enabled = true; # Secondary build server (lower priority than cirice)
+      role = "server"; # Secondary build server
     };
     homeAssistant = true; # HomeAssistant user support enabled
     development = {

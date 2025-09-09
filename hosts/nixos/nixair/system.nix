@@ -39,14 +39,25 @@
 
   nix = {
     distributedBuilds = true;
-    buildMachines = [{
-      hostName = "legion.local";
-      sshUser = "sgrimee";
-      sshKey = "/home/sgrimee/.ssh/id_rsa";
-      system = "x86_64-linux";
-      maxJobs = 8;
-      speedFactor = 100;
-      supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
-    }];
+    buildMachines = [
+      {
+        hostName = "cirice.local";
+        sshUser = "sgrimee";
+        sshKey = "/home/sgrimee/.ssh/id_rsa";
+        system = "x86_64-linux";
+        maxJobs = 8;
+        speedFactor = 100; # High priority - fastest build server
+        supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
+      }
+      {
+        hostName = "legion.local";
+        sshUser = "sgrimee";
+        sshKey = "/home/sgrimee/.ssh/id_rsa";
+        system = "x86_64-linux";
+        maxJobs = 8;
+        speedFactor = 50; # Lower priority fallback
+        supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
+      }
+    ];
   };
 }
