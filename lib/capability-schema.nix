@@ -257,6 +257,12 @@
         default = true;
         description = "Enable SOPS secret management";
       };
+      # VPN support
+      vpn = {
+        type = lib.types.bool;
+        default = false;
+        description = "Enable VPN client (StrongSwan L2TP/IPSec)";
+      };
     };
   };
 

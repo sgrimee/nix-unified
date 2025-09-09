@@ -217,6 +217,11 @@ in rec {
           ++ (moduleMapping.securityModules.secrets.homeManager or [ ])
         else
           [ ])
+        # VPN support
+        (if resolvedCapabilities.security.vpn or false then
+          moduleMapping.securityModules.vpn.${platform} or [ ]
+        else
+          [ ])
       ];
 
       # Special modules that require arguments

@@ -1,8 +1,8 @@
 { config, lib, pkgs, inputs, ... }:
 with lib; {
   options = {
-    services.strongswan-meraki = {
-      enable = mkEnableOption "L2TP/IPsec VPN client for Meraki firewall";
+    services.strongswan-senningerberg = {
+      enable = mkEnableOption "L2TP/IPsec VPN client for Senningerberg";
 
       debug = mkOption {
         type = types.bool;
@@ -13,22 +13,22 @@ with lib; {
       serverAddress = mkOption {
         type = types.str;
         default = "83.222.34.153";
-        description = "Meraki firewall IP address";
+        description = "Senningerberg VPN server IP address";
       };
     };
   };
 
-  config = mkIf config.services.strongswan-meraki.enable {
+  config = mkIf config.services.strongswan-senningerberg.enable {
     # Enable and configure StrongSwan service
     services.strongswan = {
       enable = true;
 
-      secrets = [ "/etc/ipsec.d/meraki.secrets" ];
+      secrets = [ "/etc/ipsec.d/senningerberg.secrets" ];
 
       ca = { };
 
       connections = {
-        meraki-l2tp = {
+        senningerberg-l2tp = {
           # L2TP/IPsec configuration
           keyexchange = "ikev1";
           auto = "add";
@@ -42,8 +42,8 @@ with lib; {
           leftprotoport = "17/1701";
           left = "%defaultroute";
 
-          # Remote (Meraki) configuration
-          right = config.services.strongswan-meraki.serverAddress;
+          # Remote (Senningerberg) configuration
+          right = config.services.strongswan-senningerberg.serverAddress;
           rightprotoport = "17/1701";
 
           # Crypto and connection settings
@@ -66,7 +66,7 @@ with lib; {
       # StrongSwan setup configuration
       setup = {
         # Debug configuration
-        charondebug = if config.services.strongswan-meraki.debug then
+        charondebug = if config.services.strongswan-senningerberg.debug then
           "ike 4, knl 4, net 4, asn 4, enc 4, lib 4, esp 4, tls 4, tnc 4, imc 4, imv 4, pts 4"
         else
           "ike 1, knl 1";
@@ -95,8 +95,8 @@ with lib; {
     };
 
     # Create xl2tpd configuration file at runtime using SOPS
-    systemd.services.meraki-xl2tpd-config = {
-      description = "Generate Meraki xl2tpd config with SOPS";
+    systemd.services.senningerberg-xl2tpd-config = {
+      description = "Generate Senningerberg xl2tpd config with SOPS";
       wantedBy = [ "xl2tpd.service" ];
       before = [ "xl2tpd.service" ];
       serviceConfig = {
@@ -104,27 +104,27 @@ with lib; {
         RemainAfterExit = true;
         ExecStart = pkgs.writeShellScript "create-xl2tpd-config" ''
           mkdir -p /etc/xl2tpd
-          USERNAME="$(cat /run/secrets/meraki/l2tp_username)"
+          USERNAME="$(cat /run/secrets/senningerberg/l2tp_username)"
 
           cat > /etc/xl2tpd/xl2tpd.conf << EOF
           [global]
           ; Let strongSwan handle IPSec
           ipsec saref = no
-          ${lib.optionalString config.services.strongswan-meraki.debug ''
+          ${lib.optionalString config.services.strongswan-senningerberg.debug ''
             debug avp = yes
             debug network = yes
             debug packet = yes
             debug state = yes
             debug tunnel = yes''}
 
-          [lac meraki]
-          lns = ${config.services.strongswan-meraki.serverAddress}
+          [lac senningerberg]
+          lns = ${config.services.strongswan-senningerberg.serverAddress}
           require chap = no
           require pap = yes
           require authentication = yes
           name = $USERNAME
           ppp debug = ${
-            if config.services.strongswan-meraki.debug then "yes" else "no"
+            if config.services.strongswan-senningerberg.debug then "yes" else "no"
           }
           pppoptfile = /etc/ppp/options.l2tpd
           length bit = yes
@@ -138,8 +138,8 @@ with lib; {
     systemd.tmpfiles.rules = [ "d /run/xl2tpd 0755 root root -" ];
 
     # Create PPP options file at runtime using SOPS
-    systemd.services.meraki-ppp-options = {
-      description = "Generate Meraki PPP options with SOPS";
+    systemd.services.senningerberg-ppp-options = {
+      description = "Generate Senningerberg PPP options with SOPS";
       wantedBy = [ "xl2tpd.service" ];
       before = [ "xl2tpd.service" ];
       serviceConfig = {
@@ -147,7 +147,7 @@ with lib; {
         RemainAfterExit = true;
         ExecStart = pkgs.writeShellScript "create-ppp-options" ''
           mkdir -p /etc/ppp
-          USERNAME="$(cat /run/secrets/meraki/l2tp_username)"
+          USERNAME="$(cat /run/secrets/senningerberg/l2tp_username)"
 
           cat > /etc/ppp/options.l2tpd << EOF
           ipcp-accept-local
@@ -175,8 +175,8 @@ with lib; {
     };
 
     # Create PPP ip-up script for routing
-    systemd.services.meraki-ppp-ipup = {
-      description = "Generate Meraki PPP ip-up script";
+    systemd.services.senningerberg-ppp-ipup = {
+      description = "Generate Senningerberg PPP ip-up script";
       wantedBy = [ "xl2tpd.service" ];
       before = [ "xl2tpd.service" ];
       serviceConfig = {
@@ -201,8 +201,8 @@ with lib; {
     };
 
     # Create PPP secrets files at runtime using SOPS
-    systemd.services.meraki-ppp-secrets = {
-      description = "Generate Meraki PPP secrets with SOPS";
+    systemd.services.senningerberg-ppp-secrets = {
+      description = "Generate Senningerberg PPP secrets with SOPS";
       wantedBy = [ "xl2tpd.service" ];
       before = [ "xl2tpd.service" ];
       serviceConfig = {
@@ -210,8 +210,8 @@ with lib; {
         RemainAfterExit = true;
         ExecStart = pkgs.writeShellScript "create-ppp-secrets" ''
           mkdir -p /etc/ppp
-          USERNAME="$(cat /run/secrets/meraki/l2tp_username)"
-          PASSWORD="$(cat /run/secrets/meraki/l2tp_password)"
+          USERNAME="$(cat /run/secrets/senningerberg/l2tp_username)"
+          PASSWORD="$(cat /run/secrets/senningerberg/l2tp_password)"
 
           # Create PAP secrets file
           cat > /etc/ppp/pap-secrets << EOF
@@ -231,8 +231,8 @@ with lib; {
     };
 
     # Create the IPSec secrets file at runtime using SOPS
-    systemd.services.meraki-ipsec-secrets = {
-      description = "Generate Meraki IPsec secrets with SOPS";
+    systemd.services.senningerberg-ipsec-secrets = {
+      description = "Generate Senningerberg IPsec secrets with SOPS";
       wantedBy = [ "strongswan.service" ];
       before = [ "strongswan.service" ];
       serviceConfig = {
@@ -240,11 +240,11 @@ with lib; {
         RemainAfterExit = true;
         ExecStart = pkgs.writeShellScript "create-ipsec-secrets" ''
           mkdir -p /etc/ipsec.d
-          cat > /etc/ipsec.d/meraki.secrets << EOF
+          cat > /etc/ipsec.d/senningerberg.secrets << EOF
           # IPSec secrets for L2TP/IPSec VPN
-          %any ${config.services.strongswan-meraki.serverAddress} : PSK "$(cat /run/secrets/meraki/ipsec_psk)"
+          %any ${config.services.strongswan-senningerberg.serverAddress} : PSK "$(cat /run/secrets/senningerberg/ipsec_psk)"
           EOF
-          chmod 600 /etc/ipsec.d/meraki.secrets
+          chmod 600 /etc/ipsec.d/senningerberg.secrets
         '';
       };
     };
@@ -259,9 +259,9 @@ with lib; {
     };
 
     # Create systemd service to maintain route to VPN server
-    systemd.services.meraki-server-route =
-      lib.mkIf config.services.strongswan-meraki.enable {
-        description = "Maintain route to Meraki VPN server";
+    systemd.services.senningerberg-server-route =
+      lib.mkIf config.services.strongswan-senningerberg.enable {
+        description = "Maintain route to Senningerberg VPN server";
         after = [ "network.target" ];
         wantedBy = [ "multi-user.target" ];
         serviceConfig = {
@@ -275,8 +275,8 @@ with lib; {
             DEFAULT_IFACE=$(ip route | grep '^default' | grep -v ppp | head -1 | awk '{print $5}')
 
             if [ -n "$DEFAULT_GW" ] && [ -n "$DEFAULT_IFACE" ]; then
-              ip route add ${config.services.strongswan-meraki.serverAddress}/32 via $DEFAULT_GW dev $DEFAULT_IFACE metric 1
-              logger "Added route to VPN server ${config.services.strongswan-meraki.serverAddress} via $DEFAULT_GW dev $DEFAULT_IFACE"
+              ip route add ${config.services.strongswan-senningerberg.serverAddress}/32 via $DEFAULT_GW dev $DEFAULT_IFACE metric 1
+              logger "Added route to VPN server ${config.services.strongswan-senningerberg.serverAddress} via $DEFAULT_GW dev $DEFAULT_IFACE"
             fi
           '';
         };
@@ -299,26 +299,26 @@ with lib; {
       xl2tpd
       ppp
 
-      (writeShellScriptBin "meraki-vpn-up" ''
+      (writeShellScriptBin "senningerberg-vpn-up" ''
         echo "Starting L2TP/IPSec VPN connection..."
         sudo systemctl start strongswan
         sudo systemctl start xl2tpd
         sleep 2
-        sudo ipsec up meraki-l2tp
+        sudo ipsec up senningerberg-l2tp
         sleep 3
-        sudo xl2tpd-control -c /run/xl2tpd/control connect-lac meraki
-        echo "VPN connection initiated. Check status with: meraki-vpn-status"
+        sudo xl2tpd-control -c /run/xl2tpd/control connect-lac senningerberg
+        echo "VPN connection initiated. Check status with: senningerberg-vpn-status"
       '')
 
-      (writeShellScriptBin "meraki-vpn-down" ''
+      (writeShellScriptBin "senningerberg-vpn-down" ''
         echo "Stopping L2TP/IPSec VPN connection..."
-        sudo xl2tpd-control -c /run/xl2tpd/control disconnect-lac meraki 2>/dev/null || true
-        sudo ipsec down meraki-l2tp
+        sudo xl2tpd-control -c /run/xl2tpd/control disconnect-lac senningerberg 2>/dev/null || true
+        sudo ipsec down senningerberg-l2tp
         sudo systemctl stop xl2tpd
         echo "VPN connection stopped."
       '')
 
-      (writeShellScriptBin "meraki-vpn-status" ''
+      (writeShellScriptBin "senningerberg-vpn-status" ''
         echo "=== StrongSwan IPSec Status ==="
         sudo ipsec status
         echo ""
@@ -332,7 +332,7 @@ with lib; {
         ip route | grep ppp || echo "No VPN routes found"
       '')
 
-      (writeShellScriptBin "meraki-vpn-logs" ''
+      (writeShellScriptBin "senningerberg-vpn-logs" ''
         echo "=== Recent StrongSwan logs ==="
         journalctl -u strongswan -n 25 --no-pager
         echo ""
@@ -342,8 +342,8 @@ with lib; {
     ];
 
     # Systemd service to ensure proper startup order
-    systemd.services.strongswan-meraki-setup = {
-      description = "Meraki VPN Setup";
+    systemd.services.strongswan-senningerberg-setup = {
+      description = "Senningerberg VPN Setup";
       after = [ "network.target" "strongswan.service" ];
       wants = [ "strongswan.service" ];
       serviceConfig = {
@@ -353,7 +353,7 @@ with lib; {
       script = ''
         # Wait for StrongSwan to be ready
         sleep 2
-        echo "Meraki VPN configuration ready"
+        echo "Senningerberg VPN configuration ready"
       '';
       wantedBy = [ "multi-user.target" ];
     };

@@ -5,9 +5,9 @@
   # Allow unfree packages (for printer drivers)
   nixpkgs.config.allowUnfree = true;
 
-  # Allow insecure broadcom-sta package for older WiFi hardware
-  nixpkgs.config.permittedInsecurePackages =
-    [ "broadcom-sta-6.30.223.271-57-6.12.39" ];
+  # Allow insecure broadcom-sta package for older WiFi hardware (all versions)
+  nixpkgs.config.allowInsecurePredicate = pkg: 
+    lib.hasPrefix "broadcom-sta-" (lib.getName pkg);
 
   # Note: Sway and greetd configuration will be provided by capability system
   # These custom options don't exist in standard NixOS - commenting out for now
@@ -24,8 +24,8 @@
     enableAskPassword = true;
   };
 
-  # Enable StrongSwan VPN client for Meraki firewall
-  services.strongswan-meraki = {
+  # Enable StrongSwan VPN client for Senningerberg
+  services.strongswan-senningerberg = {
     enable = true;
     debug = true; # Maximum debug logging for troubleshooting
   };

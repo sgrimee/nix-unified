@@ -324,6 +324,11 @@
       darwin = [ ];
       homeManager = [ ];
     };
+
+    vpn = {
+      nixos = [ ../modules/nixos/strongswan.nix ];
+      darwin = [ ];
+    };
   };
 
   # Special module helpers for modules that require arguments

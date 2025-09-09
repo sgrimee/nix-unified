@@ -67,5 +67,6 @@
     };
     firewall = true; # Firewall enabled
     secrets = true; # SOPS secret management
+    vpn = true; # StrongSwan L2TP/IPSec VPN client
   };
 }
