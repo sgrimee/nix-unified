@@ -70,7 +70,7 @@
 
     corporate = {
       nixos = [ ];
-      darwin = [ ../modules/darwin/homebrew ];
+      darwin = [ ];
       homeManager = [ ];
     };
 
@@ -83,38 +83,15 @@
 
   # Hardware-specific module mappings - only existing modules
   hardwareModules = {
-    cpu = {
-      intel = {
-        nixos = [ ];
-        darwin = [ ];
-      };
-      amd = {
-        nixos = [ ];
-        darwin = [ ];
-      };
-      apple = {
-        nixos = [ ];
-        darwin = [ ];
-      };
-    };
+    # CPU modules not implemented yet - will add when specific CPU optimizations are needed
+    cpu = { };
 
     gpu = {
       nvidia = {
         nixos = [ ../modules/nixos/nvidia.nix ];
         darwin = [ ];
       };
-      amd = {
-        nixos = [ ];
-        darwin = [ ];
-      };
-      intel = {
-        nixos = [ ];
-        darwin = [ ];
-      };
-      apple = {
-        nixos = [ ];
-        darwin = [ ];
-      };
+      # Other GPU types (amd, intel, apple) not implemented yet
     };
 
     audio = {
@@ -126,10 +103,7 @@
         nixos = [ ../modules/nixos/sound.nix ];
         darwin = [ ];
       };
-      coreaudio = {
-        nixos = [ ];
-        darwin = [ ];
-      };
+      # coreaudio not implemented yet for Darwin
     };
 
     display = {
@@ -148,10 +122,7 @@
     };
 
     connectivity = {
-      bluetooth = {
-        nixos = [ ];
-        darwin = [ ];
-      };
+      # bluetooth modules not implemented yet
       wifi = {
         nixos = [ ../modules/nixos/iwd.nix ];
         darwin = [ ];
@@ -164,7 +135,7 @@
 
     keyboard = {
       advanced = {
-        nixos = [ ../modules/nixos/kanata.nix ];
+        nixos = [ ../modules/nixos/kanata.nix ../modules/nixos/kanata-config.nix ];
         darwin = [ ];
       };
     };
@@ -292,7 +263,7 @@
     };
 
     homeAssistant = {
-      nixos = [ ];
+      nixos = [ ../modules/nixos/homeassistant-user.nix ];
       darwin = [ ];
     };
 
@@ -334,7 +305,7 @@
     };
 
     secrets = {
-      nixos = [ ];
+      nixos = [ ../modules/nixos/sops.nix ];
       darwin = [ ];
       homeManager = [ ];
     };

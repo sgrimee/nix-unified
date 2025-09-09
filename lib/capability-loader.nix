@@ -58,7 +58,8 @@ in rec {
       # Validate resolved capabilities
       validation = dependencyResolver.validateCapabilities resolvedCapabilities;
 
-      # Abort if validation fails
+      # Validate that capabilities have corresponding module mappings
+      mappingValidation = validateCapabilityMappings resolvedCapabilities platform;
 
       # Core modules (always imported)
       coreModules = moduleMapping.coreModules.${platform} or [ ]
@@ -252,6 +253,7 @@ in rec {
         platform = platform;
         resolvedCapabilities = resolvedCapabilities;
         validation = validation;
+        mappingValidation = mappingValidation;
         moduleBreakdown = {
           core = coreModules;
           features = featureModules;
@@ -327,4 +329,72 @@ in rec {
     services = { };
     security = { };
   };
+
+  # Validate that capability declarations have corresponding module mappings
+  validateCapabilityMappings = capabilities: platform:
+    let
+      warnings = lib.flatten [
+        # Check feature mappings
+        (lib.mapAttrsToList (featureName: enabled:
+          if enabled && !(moduleMapping.featureModules ? ${featureName}) then
+            "Warning: Feature '${featureName}' has no module mapping"
+          else
+            [ ]) capabilities.features)
+
+        # Check hardware mappings
+        (let
+          hardware = capabilities.hardware;
+        in lib.flatten [
+          (if hardware.cpu != null
+          && !(moduleMapping.hardwareModules.cpu ? ${hardware.cpu}) then
+            [ "Warning: CPU '${hardware.cpu}' has no module mapping" ]
+          else
+            [ ])
+          (if hardware.gpu != null
+          && !(moduleMapping.hardwareModules.gpu ? ${hardware.gpu}) then
+            [ "Warning: GPU '${hardware.gpu}' has no module mapping" ]
+          else
+            [ ])
+          (if hardware.audio != null
+          && !(moduleMapping.hardwareModules.audio ? ${hardware.audio}) then
+            [ "Warning: Audio '${hardware.audio}' has no module mapping" ]
+          else
+            [ ])
+        ])
+
+        # Check environment mappings
+        (let
+          env = capabilities.environment;
+        in lib.flatten [
+          (if env.desktop != null
+          && !(moduleMapping.environmentModules.desktop ? ${env.desktop}) then
+            [ "Warning: Desktop '${env.desktop}' has no module mapping" ]
+          else
+            [ ])
+          (if env.shell.primary != null
+          && !(moduleMapping.environmentModules.shell ? ${env.shell.primary}) then
+            [ "Warning: Shell '${env.shell.primary}' has no module mapping" ]
+          else
+            [ ])
+          (if env.terminal != null
+          && !(moduleMapping.environmentModules.terminal ? ${env.terminal}) then
+            [ "Warning: Terminal '${env.terminal}' has no module mapping" ]
+          else
+            [ ])
+        ])
+
+        # Check role mappings
+        (map (role:
+          if !(moduleMapping.roleModules ? ${role}) then
+            "Warning: Role '${role}' has no module mapping"
+          else
+            [ ]) capabilities.roles)
+      ];
+
+      validWarnings = lib.filter (w: w != [ ] && builtins.isString w) warnings;
+
+    in {
+      valid = validWarnings == [ ];
+      warnings = validWarnings;
+    };
 }
