@@ -70,7 +70,12 @@ with lib;
     i3status = { enable = mkEnableOption "i3status status bar for sway"; };
   };
 
-  config = mkIf config.programs.custom.sway.enable {
+  config = mkMerge [
+    {
+      # Enable sway by default when this module is imported
+      programs.custom.sway.enable = mkDefault true;
+    }
+    (mkIf config.programs.custom.sway.enable {
     programs.sway = {
       enable = true;
       package = config.programs.custom.sway.package;
@@ -130,5 +135,6 @@ with lib;
       programs.i3status =
         mkIf config.programs.custom.sway.i3status.enable { enable = true; };
     }];
-  };
+    })
+  ];
 }

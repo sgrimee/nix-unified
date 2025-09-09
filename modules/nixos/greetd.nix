@@ -19,7 +19,12 @@ with lib;
     };
   };
 
-  config = mkIf config.services.custom.greetd.enable {
+  config = mkMerge [
+    {
+      # Enable greetd by default when this module is imported
+      services.custom.greetd.enable = mkDefault true;
+    }
+    (mkIf config.services.custom.greetd.enable {
     services.greetd = {
       enable = true;
       settings = {
@@ -35,5 +40,6 @@ with lib;
 
     environment.etc."greetd/environments".text =
       concatStringsSep "\n" config.services.custom.greetd.environments;
-  };
+    })
+  ];
 }

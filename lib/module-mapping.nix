@@ -204,7 +204,7 @@
         homeManager = [ ];
       };
       sway = {
-        nixos = [ ../modules/nixos/sway.nix ];
+        nixos = [ ../modules/nixos/sway.nix ../modules/nixos/greetd.nix ];
         darwin = [ ];
         homeManager = [ ];
       };

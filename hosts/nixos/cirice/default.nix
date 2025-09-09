@@ -7,7 +7,6 @@ in [
   ./boot.nix
   ./x-keyboard.nix
   ./system.nix
-  ../../../modules/nixos/x-gnome.nix
 
   nixos-hardware.nixosModules.framework-amd-ai-300-series
 
