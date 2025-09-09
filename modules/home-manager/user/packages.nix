@@ -31,7 +31,6 @@
       neofetch
       nil
       nixpkgs-fmt
-      nodejs
       openssh
       pat
       poppler # pdf preview

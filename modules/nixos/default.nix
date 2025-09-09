@@ -4,7 +4,6 @@
 
   imports = [
     ./authorized_keys.nix
-    ./claude-alias.nix
     ./console.nix
     ./display.nix
     ./environment.nix

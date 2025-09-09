@@ -24,7 +24,7 @@ in {
       #   };
       # };
 
-      sessionPath = [ "/home/sgrimee/.opencode/bin" ];
+      sessionPath = [ ];
       shellAliases = { };
     };
 

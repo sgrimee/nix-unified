@@ -1,7 +1,6 @@
 { host, inputs, user, ... }: {
   imports = [
     ./benq-display.nix # BenQ display management tools
-    ./claude-alias.nix # claude CLI alias
     ./dock.nix # configure dock
     ./environment.nix # configure environment (e.g default shell)
     ./finder.nix # configure finder

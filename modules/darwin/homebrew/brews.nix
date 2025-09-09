@@ -1,8 +1,7 @@
 {...}: [
   "borders"
-  "node"
+  "node"  # managed by modules/home-manager/user/programs/node.nix
   "pam-reattach"
   "sgrimee/tap/webex-tui"
-  "sst/tap/opencode"
   "uv"
 ]
