@@ -30,6 +30,9 @@
     bluetooth = true; # Built-in Bluetooth
     wifi = true; # Built-in WiFi
     printer = true; # CUPS printing support
+    keyboard = {
+      advanced = true; # Kanata keyboard remapping with home row mods
+    };
   };
 
   # Host roles and primary use cases

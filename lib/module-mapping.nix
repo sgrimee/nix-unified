@@ -9,7 +9,13 @@
   coreModules = {
     nixos = [
       ../modules/nixos/networking.nix
-      # Other core modules don't exist yet - will be added incrementally
+      ../modules/nixos/console.nix
+      ../modules/nixos/environment.nix
+      ../modules/nixos/hardware.nix
+      ../modules/nixos/i18n.nix
+      ../modules/nixos/nix.nix
+      ../modules/nixos/time.nix
+      ../modules/nixos/polkit.nix
     ];
 
     darwin = [
@@ -28,7 +34,7 @@
   featureModules = {
     # Most feature modules don't exist yet - commenting out until they're created
     development = {
-      nixos = [ ];
+      nixos = [ ../modules/nixos/nix-ld.nix ../modules/nixos/vscode.nix ];
       darwin = [ ];
       homeManager = [ ];
     };
@@ -37,6 +43,7 @@
       nixos = [
         ../modules/nixos/display.nix
         ../modules/nixos/fonts.nix
+        ../modules/nixos/mounts.nix
         # Add more as they exist
       ];
       darwin = [ ];
@@ -146,11 +153,18 @@
         darwin = [ ];
       };
       wifi = {
-        nixos = [ ];
+        nixos = [ ../modules/nixos/iwd.nix ];
         darwin = [ ];
       };
       printer = {
         nixos = [ ../modules/nixos/printing.nix ];
+        darwin = [ ];
+      };
+    };
+
+    keyboard = {
+      advanced = {
+        nixos = [ ../modules/nixos/kanata.nix ];
         darwin = [ ];
       };
     };

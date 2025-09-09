@@ -15,7 +15,7 @@
     multimedia = true; # Media players and codecs
     server = false; # Not a server host
     corporate = false; # No corporate tools
-    ai = true; # AI/ML specific setup (modern hardware with dedicated NPU)
+    ai = false; # No specialized AI/ML setup needed
   };
 
   # Hardware-specific capabilities
@@ -30,6 +30,9 @@
     bluetooth = true; # Built-in Bluetooth
     wifi = true; # Built-in WiFi
     printer = true; # CUPS printing support
+    keyboard = {
+      advanced = true; # Kanata keyboard remapping with home row mods
+    };
   };
 
   # Host roles and primary use cases
