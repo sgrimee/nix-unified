@@ -18,10 +18,10 @@ This is a unified Nix configuration repository that manages both NixOS (Linux) a
 ### Host Configurations
 
 The flake uses automatic host discovery from directory structure:
-- **NixOS systems**: Discovered from `hosts/nixos/` (nixair, dracula, legion)
+- **NixOS systems**: Discovered from `hosts/nixos/` (nixair, dracula, legion, cirice)
 - **Darwin systems**: Discovered from `hosts/darwin/` (SGRIMEE-M-4HJT)
 
-Each host directory contains system.nix, home.nix, packages.nix, and default.nix as the entry point.
+Each host directory contains system.nix, home.nix, packages.nix, capabilities.nix (for capability-based configuration), and default.nix as the entry point.
 
 ## Common Commands
 
@@ -107,11 +107,12 @@ just copy-host source-host target-host
 ## Module Structure
 
 - **darwin/**: macOS-specific modules (homebrew, dock, finder, etc.)
-- **nixos/**: Linux-specific modules (display, sound, hardware, etc.)
+- **nixos/**: Linux-specific modules (display, sound, hardware, etc.)  
 - **home-manager/**: User-specific configurations and dotfiles
-- **hosts/**: Per-host customizations
+- **hosts/**: Per-host customizations with capability-based configuration
+- **packages/**: Centralized package management with categories (core, development, gaming, multimedia, productivity, security, system)
 
-The configuration uses a modular approach where each host imports platform-specific modules plus its own customizations.
+The configuration uses a sophisticated capability-based approach where modules are automatically imported based on host capability declarations in `capabilities.nix`. This eliminates manual module imports and provides intelligent configuration based on hardware and feature requirements.
 
 ## Testing
 
@@ -120,18 +121,26 @@ The configuration uses a modular approach where each host imports platform-speci
 The repository includes comprehensive unit tests for configuration validation:
 
 **Test Structure:**
-- `tests/default.nix` - Main test runner
+- `tests/default.nix` - Main test runner with comprehensive coverage
 - `tests/config-validation.nix` - Configuration validation tests
 - `tests/module-tests.nix` - Module import and structure tests  
 - `tests/host-tests.nix` - Host-specific configuration tests
+- `tests/capability-tests.nix` - Capability system validation
+- `tests/package-management.nix` - Package system tests
 - `tests/utility-tests.nix` - Utility function tests
 
 **Running Tests:**
 ```bash
-just test              # Run all tests
-just test-linux        # Linux-specific tests
-just test-darwin       # Darwin-specific tests
-just test-verbose      # Verbose test output
+just test                    # Basic validation (syntax + flake check)
+just test-comprehensive      # Full enhanced test suite for CI/releases  
+just test-verbose           # Core tests with detailed output
+just test-properties        # Property-based tests (module combinations)
+just test-platform-compatibility  # Cross-platform compatibility tests
+just test-performance       # Performance regression tests
+just test-integration       # Module interaction tests
+just test-scenarios         # Real-world scenario tests
+just test-linux            # Linux-specific configuration tests
+just test-darwin           # Darwin-specific configuration tests
 ```
 
 Tests are automatically run via `nix flake check` and integrated into the flake's `checks` output.
@@ -154,21 +163,31 @@ The `justfile` provides common development tasks:
 - `just gc` - Garbage collect old generations
 - `just optimize` - Optimize Nix store
 
+**Package Management:**
+- `just list-package-categories` - List available package categories
+- `just search-packages <term>` - Search for packages across categories
+- `just validate-packages <host>` - Validate package combinations for host
+- `just package-info <host>` - Show package information for host
+
 **Development:**
 - `just fmt` - Format Nix files
 - `just lint` - Lint and auto-fix dead code with deadnix
 - `just lint-check` - Check for dead code without fixing (for CI)
 - `just dev` - Enter development shell
+- `just analyze-performance` - Analyze build performance
+- `just format-docs` - Format markdown documentation
 
 ## CI/CD
 
 The repository includes GitHub Actions workflows:
 
 **`.github/workflows/ci.yml`:**
-- **test**: Runs unit tests and flake validation
+- **test**: Runs comprehensive test suite with enhanced coverage
 - **lint**: Checks for dead code and formatting
-- **build-nixos**: Builds all NixOS configurations (nixair, dracula, legion)
+- **build-nixos**: Builds all NixOS configurations (nixair, dracula, legion, cirice)
 - **build-darwin**: Builds Darwin configuration (SGRIMEE-M-4HJT)
+
+The CI uses dynamic host discovery and automatically adapts when new hosts are added.
 
 The CI automatically runs on pushes to main and pull requests.
 

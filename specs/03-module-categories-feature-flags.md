@@ -3,7 +3,7 @@ title: Module Categories and Feature Flags
 status: implemented
 priority: high
 category: architecture
-implementation_date: 31/07/2025
+implementation_date: 2025-01-30
 dependencies: [01, 02]
 ---
 
