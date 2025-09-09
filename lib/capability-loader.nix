@@ -110,6 +110,14 @@ in rec {
           moduleMapping.hardwareModules.connectivity.printer.${platform} or [ ]
         else
           [ ])
+
+        # Keyboard modules
+        (if resolvedCapabilities.hardware ? keyboard
+        && resolvedCapabilities.hardware.keyboard ? advanced
+        && resolvedCapabilities.hardware.keyboard.advanced then
+          moduleMapping.hardwareModules.keyboard.advanced.${platform} or [ ]
+        else
+          [ ])
       ];
 
       # Role-based modules

@@ -1,4 +1,18 @@
-{ config, lib, pkgs, ... }: {
+{ config, lib, pkgs, hostCapabilities ? {}, ... }:
+
+let
+  # Extract keyboard devices from host capabilities
+  keyboardDevices = 
+    if hostCapabilities ? hardware 
+    && hostCapabilities.hardware ? keyboard 
+    && hostCapabilities.hardware.keyboard ? devices
+    then hostCapabilities.hardware.keyboard.devices
+    else [ "/dev/input/by-path/platform-i8042-serio-0-event-kbd" ]; # fallback
+in
+
+{
+
+  config = {
   # Enable the uinput module
   boot.kernelModules = [ "uinput" ];
 
@@ -22,14 +36,7 @@
     enable = true;
     keyboards = {
       internalKeyboard = {
-        devices = [
-          # Replace the paths below with the appropriate device paths for your setup.
-          # Use `ls /dev/input/by-path/` to find your keyboard devices.
-          # "/dev/input/by-path/platform-i8042-serio-0-event-kbd"
-          # "/dev/input/by-path/pci-0000:00:14.0-usb-0:3:1.0-event-kbd"
-          # "/dev/input/by-path/pci-0000:00:1a.7-usb-0:1.2:1.0-event-kbd"
-          "/dev/input/by-path/pci-0000:00:1a.7-usbv2-0:1.2:1.0-event-kbd"
-        ];
+        devices = keyboardDevices;
         extraDefCfg = "process-unmapped-keys yes";
         config = ''
           ;; home row-mods
@@ -69,5 +76,6 @@
         '';
       };
     };
+  };
   };
 }

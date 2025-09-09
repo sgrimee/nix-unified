@@ -135,7 +135,7 @@
 
     keyboard = {
       advanced = {
-        nixos = [ ../modules/nixos/kanata.nix ../modules/nixos/kanata-config.nix ];
+        nixos = [ ../modules/nixos/kanata.nix ];
         darwin = [ ];
       };
     };
