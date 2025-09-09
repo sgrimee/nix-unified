@@ -81,10 +81,15 @@ check-derivations HOST:
 
 # Switch to configuration for current host
 switch:
-    @echo "Switching to current host configuration..."
-    @case "$$OSTYPE" in \
-        darwin*) sudo darwin-rebuild switch --flake . ;; \
-        *) sudo nixos-rebuild switch --flake . ;; \
+    #!/usr/bin/env bash
+    echo "Switching to current host configuration..."
+    case "$(uname -s)" in
+        Darwin) 
+            sudo darwin-rebuild switch --flake . 
+            ;;
+        *) 
+            sudo nixos-rebuild switch --flake . 
+            ;;
     esac
 
 # Switch to specific host configuration
@@ -98,10 +103,15 @@ switch-host HOST:
 
 # Dry run - show what would be built/changed
 dry-run:
-    @echo "Dry run for current host..."
-    @case "$$OSTYPE" in \
-        darwin*) darwin-rebuild build --dry-run --flake . ;; \
-        *) sudo nixos-rebuild dry-run --flake . ;; \
+    #!/usr/bin/env bash
+    echo "Dry run for current host..."
+    case "$(uname -s)" in
+        Darwin) 
+            darwin-rebuild build --dry-run --flake . 
+            ;;
+        *) 
+            sudo nixos-rebuild dry-run --flake . 
+            ;;
     esac
 
 # === Flake Management ===
@@ -123,14 +133,17 @@ check:
 
 # Check specific host configuration (defaults to current host)
 check-host HOST=`hostname`:
-    @echo "Checking configuration for {{HOST}}..."
-    @case "$$OSTYPE" in \
-        darwin*) \
-            echo "Evaluating Darwin configuration..."; \
-            nix eval --no-warn-dirty .#darwinConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1) ;; \
-        *) \
-            echo "Evaluating NixOS configuration..."; \
-            nix eval --no-warn-dirty .#nixosConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1) ;; \
+    #!/usr/bin/env bash
+    echo "Checking configuration for {{HOST}}..."
+    case "$(uname -s)" in
+        Darwin)
+            echo "Evaluating Darwin configuration..."
+            nix eval --no-warn-dirty .#darwinConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1)
+            ;;
+        *)
+            echo "Evaluating NixOS configuration..."
+            nix eval --no-warn-dirty .#nixosConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1)
+            ;;
     esac
 
 # Show flake info
@@ -199,18 +212,28 @@ clear-cache:
 
 # Show system generations
 generations:
-    @echo "System generations:"
-    @case "$$OSTYPE" in \
-        darwin*) darwin-rebuild --list-generations ;; \
-        *) sudo nix-env --profile /nix/var/nix/profiles/system --list-generations ;; \
+    #!/usr/bin/env bash
+    echo "System generations:"
+    case "$(uname -s)" in
+        Darwin) 
+            darwin-rebuild --list-generations 
+            ;;
+        *) 
+            sudo nix-env --profile /nix/var/nix/profiles/system --list-generations 
+            ;;
     esac
 
 # Delete old generations (keep last N)
 clean-generations N="5":
-    @echo "Cleaning old generations (keeping last {{N}})..."
-    @case "$$OSTYPE" in \
-        darwin*) sudo nix-collect-garbage --delete-generations +{{N}} ;; \
-        *) sudo nix-collect-garbage -d --delete-generations +{{N}} ;; \
+    #!/usr/bin/env bash
+    echo "Cleaning old generations (keeping last {{N}})..."
+    case "$(uname -s)" in
+        Darwin) 
+            sudo nix-collect-garbage --delete-generations +{{N}} 
+            ;;
+        *) 
+            sudo nix-collect-garbage -d --delete-generations +{{N}} 
+            ;;
     esac
 
 # Optimize nix store
