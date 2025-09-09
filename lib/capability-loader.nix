@@ -59,7 +59,8 @@ in rec {
       validation = dependencyResolver.validateCapabilities resolvedCapabilities;
 
       # Validate that capabilities have corresponding module mappings
-      mappingValidation = validateCapabilityMappings resolvedCapabilities platform;
+      mappingValidation =
+        validateCapabilityMappings resolvedCapabilities platform;
 
       # Core modules (always imported)
       coreModules = moduleMapping.coreModules.${platform} or [ ]
@@ -339,7 +340,7 @@ in rec {
   };
 
   # Validate that capability declarations have corresponding module mappings
-  validateCapabilityMappings = capabilities: platform:
+  validateCapabilityMappings = capabilities:
     let
       warnings = lib.flatten [
         # Check feature mappings
@@ -350,8 +351,7 @@ in rec {
             [ ]) capabilities.features)
 
         # Check hardware mappings
-        (let
-          hardware = capabilities.hardware;
+        (let hardware = capabilities.hardware;
         in lib.flatten [
           (if hardware.cpu != null
           && !(moduleMapping.hardwareModules.cpu ? ${hardware.cpu}) then
@@ -371,8 +371,7 @@ in rec {
         ])
 
         # Check environment mappings
-        (let
-          env = capabilities.environment;
+        (let env = capabilities.environment;
         in lib.flatten [
           (if env.desktop != null
           && !(moduleMapping.environmentModules.desktop ? ${env.desktop}) then
@@ -380,7 +379,8 @@ in rec {
           else
             [ ])
           (if env.shell.primary != null
-          && !(moduleMapping.environmentModules.shell ? ${env.shell.primary}) then
+          && !(moduleMapping.environmentModules.shell
+            ? ${env.shell.primary}) then
             [ "Warning: Shell '${env.shell.primary}' has no module mapping" ]
           else
             [ ])

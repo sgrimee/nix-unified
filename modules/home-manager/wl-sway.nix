@@ -24,24 +24,25 @@
           background = "#323232";
           inactiveWorkspace = {
             border = "#32323200";
-            background = "#32323200"; 
+            background = "#32323200";
             text = "#5c5c5c";
           };
         };
       }];
-      keybindings = let
-        modifier = "Mod4";
-      in {
+      keybindings = {
         # Volume controls
         "XF86AudioMute" = "exec pactl set-sink-mute @DEFAULT_SINK@ toggle";
-        "XF86AudioLowerVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ -5%";
-        "XF86AudioRaiseVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ +5%";
-        "XF86AudioMicMute" = "exec pactl set-source-mute @DEFAULT_SOURCE@ toggle";
-        
+        "XF86AudioLowerVolume" =
+          "exec pactl set-sink-volume @DEFAULT_SINK@ -5%";
+        "XF86AudioRaiseVolume" =
+          "exec pactl set-sink-volume @DEFAULT_SINK@ +5%";
+        "XF86AudioMicMute" =
+          "exec pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+
         # Brightness controls
         "XF86MonBrightnessDown" = "exec brightnessctl set 5%-";
         "XF86MonBrightnessUp" = "exec brightnessctl set 5%+";
-        
+
         # Screenshot
         "Print" = "exec grim";
       };
