@@ -19,4 +19,7 @@
       workstation = true;
     };
   };
+
+  # Open firewall for avahi (mDNS)
+  networking.firewall.allowedUDPPorts = [ 5353 ];
 }

@@ -304,7 +304,7 @@
   securityModules = {
     ssh = {
       server = {
-        nixos = [ ];
+        nixos = [ ../modules/nixos/openssh.nix ../modules/nixos/authorized_keys.nix ];
         darwin = [ ];
       };
       client = {
