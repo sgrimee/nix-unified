@@ -21,6 +21,7 @@ with lib;
         wl-clipboard
         mako
         udiskie
+        wmenu
       ];
       description = "Extra packages to install with sway";
     };
@@ -76,65 +77,65 @@ with lib;
       programs.custom.sway.enable = mkDefault true;
     }
     (mkIf config.programs.custom.sway.enable {
-    programs.sway = {
-      enable = true;
-      package = config.programs.custom.sway.package;
-      wrapperFeatures.gtk = true;
-    };
-
-    environment.systemPackages = config.programs.custom.sway.extraPackages;
-
-    # Enable required services for Wayland
-    services.dbus.enable = true;
-    xdg.portal = {
-      enable = true;
-      wlr.enable = true;
-      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    };
-
-    # Enable graphics drivers
-    hardware.graphics.enable = true;
-
-    # Security wrapper for swaylock
-    security.pam.services.swaylock = { };
-
-    # Sway ecosystem programs configuration (home-manager)
-    home-manager.sharedModules = [{
-      programs.waybar = mkIf config.programs.custom.sway.waybar.enable {
+      programs.sway = {
         enable = true;
-        settings = {
-          mainBar = {
-            layer = "top";
-            position = "top";
-            height = config.programs.custom.sway.waybar.height;
-            output = config.programs.custom.sway.waybar.outputs;
-            modules-left = config.programs.custom.sway.waybar.modulesLeft;
-            modules-center = config.programs.custom.sway.waybar.modulesCenter;
-            modules-right = config.programs.custom.sway.waybar.modulesRight;
-
-            "sway/workspaces" = {
-              disable-scroll = true;
-              all-outputs = true;
-            };
-
-            "custom/hello-from-waybar" = {
-              format = "hello {}";
-              max-length = 40;
-              interval = "once";
-              exec = pkgs.writeShellScript "hello-from-waybar" ''
-                echo "from within waybar"
-              '';
-            };
-          } // config.programs.custom.sway.waybar.customModules;
-        };
+        package = config.programs.custom.sway.package;
+        wrapperFeatures.gtk = true;
       };
 
-      programs.rofi =
-        mkIf config.programs.custom.sway.rofi.enable { enable = true; };
+      environment.systemPackages = config.programs.custom.sway.extraPackages;
 
-      programs.i3status =
-        mkIf config.programs.custom.sway.i3status.enable { enable = true; };
-    }];
+      # Enable required services for Wayland
+      services.dbus.enable = true;
+      xdg.portal = {
+        enable = true;
+        wlr.enable = true;
+        extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      };
+
+      # Enable graphics drivers
+      hardware.graphics.enable = true;
+
+      # Security wrapper for swaylock
+      security.pam.services.swaylock = { };
+
+      # Sway ecosystem programs configuration (home-manager)
+      home-manager.sharedModules = [{
+        programs.waybar = mkIf config.programs.custom.sway.waybar.enable {
+          enable = true;
+          settings = {
+            mainBar = {
+              layer = "top";
+              position = "top";
+              height = config.programs.custom.sway.waybar.height;
+              output = config.programs.custom.sway.waybar.outputs;
+              modules-left = config.programs.custom.sway.waybar.modulesLeft;
+              modules-center = config.programs.custom.sway.waybar.modulesCenter;
+              modules-right = config.programs.custom.sway.waybar.modulesRight;
+
+              "sway/workspaces" = {
+                disable-scroll = true;
+                all-outputs = true;
+              };
+
+              "custom/hello-from-waybar" = {
+                format = "hello {}";
+                max-length = 40;
+                interval = "once";
+                exec = pkgs.writeShellScript "hello-from-waybar" ''
+                  echo "from within waybar"
+                '';
+              };
+            } // config.programs.custom.sway.waybar.customModules;
+          };
+        };
+
+        programs.rofi =
+          mkIf config.programs.custom.sway.rofi.enable { enable = true; };
+
+        programs.i3status =
+          mkIf config.programs.custom.sway.i3status.enable { enable = true; };
+      }];
     })
   ];
 }

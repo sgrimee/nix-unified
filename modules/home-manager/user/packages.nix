@@ -50,7 +50,6 @@
       uv
       wakeonlan
       wget
-      wmenu
       yazi # also installed as user program
       zellij
       zip
