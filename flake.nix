@@ -63,19 +63,21 @@
             inherit system;
             config = unstableConfig;
           };
-          # Import stable packages with allowUnfree config
+          # Import stable packages with allowUnfree config and overlays
           stable = if platform == "darwin" then
             import inputs.stable-darwin {
-              inherit system;
+              inherit system overlays;
               config = stableConfig;
             }
           else
             import inputs.stable-nixos {
-              inherit system;
+              inherit system overlays;
               config = stableConfig;
             };
           specialArgs = {
-            inherit inputs system stateVersion overlays unstable stable;
+            inherit inputs system stateVersion overlays unstable;
+            pkgs = stable; # Make sure pkgs uses our overlays
+            stable = stable;
           };
 
         in capabilityIntegration.buildSystemConfig platform hostName system

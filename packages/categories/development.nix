@@ -3,7 +3,14 @@
 
 {
   # Core development tools
-  core = with pkgs; [ git gh direnv just sonar-scanner-cli ];
+  core = with pkgs; [
+    git
+    gh
+    direnv
+    just
+    sonar-scanner-cli
+    update-coding-agents
+  ];
 
   # Language-specific packages
   languages = {
