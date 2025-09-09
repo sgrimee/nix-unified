@@ -11,7 +11,7 @@
       du-dust
       unstable.fish
       ffmpegthumbnailer
-      # ghostty # marked broken
+      # ghostty # configured as home-manager program in some hosts
       gitleaks
       glow # CLI markdown viewer
       go
@@ -50,6 +50,7 @@
       uv
       wakeonlan
       wget
+      wmenu
       yazi # also installed as user program
       zellij
       zip

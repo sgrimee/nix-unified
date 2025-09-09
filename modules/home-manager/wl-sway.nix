@@ -1,35 +1,59 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
+  # Enable ghostty terminal since sway config uses it
+  programs.ghostty = {
+    enable = lib.mkDefault true;
+    package = lib.mkDefault pkgs.ghostty;
+  };
+
   wayland.windowManager.sway = {
     enable = true;
     config = {
-      modifier = "Mod1";
+      modifier = "Mod4";
       left = "j";
       down = "k";
       up = "l";
       right = "semicolon";
-      menu = "exec rofi -show drun";
+      menu = "wmenu-run";
       terminal = "ghostty";
-      output = { "Virtual-1" = { mode = "1x1080@60Hz"; }; };
+      # Remove hardcoded output - let sway auto-detect
+      bars = [{
+        position = "top";
+        statusCommand = "while date +'%Y-%m-%d %X'; do sleep 1; done";
+        colors = {
+          statusline = "#ffffff";
+          background = "#323232";
+          inactiveWorkspace = {
+            border = "#32323200";
+            background = "#32323200"; 
+            text = "#5c5c5c";
+          };
+        };
+      }];
+      keybindings = let
+        modifier = "Mod4";
+      in {
+        # Volume controls
+        "XF86AudioMute" = "exec pactl set-sink-mute @DEFAULT_SINK@ toggle";
+        "XF86AudioLowerVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ -5%";
+        "XF86AudioRaiseVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ +5%";
+        "XF86AudioMicMute" = "exec pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+        
+        # Brightness controls
+        "XF86MonBrightnessDown" = "exec brightnessctl set 5%-";
+        "XF86MonBrightnessUp" = "exec brightnessctl set 5%+";
+        
+        # Screenshot
+        "Print" = "exec grim";
+      };
     };
-    # extraConfig = ''
-    #   # output "*" bg /etc/foggy_forest.jpg fill
-
-    #   # trackpad
-    #   input type:touchpad {
-    #     dwt enabled
-    #     tap enabled
-    #     natural_scroll enabled
-    #     middle_emulation enabled
-    #   }
-
-    #   # Brightness
-    #   bindsym XF86MonBrightnessDown exec light -U 10
-    #   bindsym XF86MonBrightnessUp exec light -A 10
-
-    #   # Volume
-    #   bindsym XF86AudioRaiseVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ +1%'
-    #   bindsym XF86AudioLowerVolume exec 'pactl set-sink-volume @DEFAULT_SINK@ -1%'
-    #   bindsym XF86AudioMute exec 'pactl set-sink-mute @DEFAULT_SINK@ toggle'
-    # '';
+    extraConfig = ''
+      # trackpad
+      input type:touchpad {
+        dwt enabled
+        tap enabled
+        natural_scroll enabled
+        middle_emulation enabled
+      }
+    '';
   };
 }
