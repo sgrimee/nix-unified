@@ -1,4 +1,4 @@
-{ inputs, stateVersion, system, unstable, ... }: {
+{ inputs, stateVersion, system, unstable, pkgs, ... }: {
   imports = [
     ./dotfiles # copy dotfiles into home
     ./fonts.nix # unified fonts configuration for both Darwin and NixOS
@@ -21,12 +21,18 @@
       EDITOR = "hx";
     };
 
-    # sessionPath goes to the very end of the list
-    sessionPath = [
-      "$HOME/.cargo/bin"
-      "$HOME/.local/bin"
-      "/etc/profiles/per-user/$USER/bin"
-    ];
+    # sessionPath - Homebrew paths prioritized on Darwin
+    sessionPath =
+      # Prioritize Homebrew on Darwin
+      (pkgs.lib.optionals pkgs.stdenv.isDarwin [
+        "/opt/homebrew/bin"
+        "/opt/homebrew/sbin"
+        "/usr/local/bin"
+      ]) ++ [
+        "$HOME/.cargo/bin"
+        "$HOME/.local/bin"
+        "/etc/profiles/per-user/$USER/bin"
+      ];
 
     shellAliases = {
       cw = "cargo watch -q -c -x check";

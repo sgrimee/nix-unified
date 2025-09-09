@@ -17,13 +17,6 @@
       python3Packages.virtualenv
       ruff
     ];
-
-    javascript = with pkgs; [
-      nodejs
-      nodePackages.npm
-      nodePackages.yarn
-      nodePackages.typescript
-    ];
   };
 
   # IDE and editors
@@ -31,11 +24,21 @@
 
   # Platform-specific development tools
   platformSpecific = {
-    linux = with pkgs; [ gdb valgrind strace ];
+    linux = with pkgs; [
+      gdb
+      valgrind
+      strace
+      # JavaScript/Node.js tools (Linux only - Darwin uses Homebrew)
+      nodejs
+      nodePackages.npm
+      nodePackages.yarn
+      nodePackages.typescript
+    ];
 
     darwin = with pkgs;
       [
         # macOS-specific dev tools
+        # Note: Node.js/npm managed by Homebrew on Darwin
       ];
   };
 
