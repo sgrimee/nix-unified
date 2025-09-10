@@ -9,7 +9,20 @@ let
   capabilityLoader = import ../lib/capability-loader.nix { inherit lib; };
   preAnalysis = import ./pre-migration-analysis.nix { inherit lib pkgs; };
 
-  # Import flake for configuration access
+  # Discover hosts directly from filesystem instead of using flake
+  discoverHosts = hostsDir:
+    let
+      platforms = builtins.attrNames (builtins.readDir hostsDir);
+      hostsByPlatform = lib.genAttrs platforms (platform:
+        let platformDir = hostsDir + "/${platform}";
+        in if builtins.pathExists platformDir then
+          builtins.attrNames (builtins.readDir platformDir)
+        else
+          [ ]);
+    in hostsByPlatform;
+
+  allHosts =
+    if builtins.pathExists ../hosts then discoverHosts ../hosts else { };
 
   # Helper to safely build a configuration
   safeBuild = config:

@@ -350,78 +350,116 @@ in rec {
   };
 
   # Test specific host capability declarations
-  testHostCapabilities = {
-    # Test each host's capability declaration
-    nixair = let
-      capabilities = import ../hosts/nixos/nixair/capabilities.nix;
-      validation = capabilityLoader.validateCapabilityDeclaration capabilities;
-      moduleGen = capabilityLoader.generateModuleImports capabilities;
+  testHostCapabilities = let
+    # Dynamically discover hosts from directory structure
+    discoverHosts = hostsDir:
+      let
+        platforms = builtins.attrNames (builtins.readDir hostsDir);
+        hostsByPlatform = lib.genAttrs platforms (platform:
+          let platformDir = hostsDir + "/${platform}";
+          in if builtins.pathExists platformDir then
+            builtins.attrNames (builtins.readDir platformDir)
+          else
+            [ ]);
+      in hostsByPlatform;
 
-    in {
-      hostName = "nixair";
-      platform = capabilities.platform;
-      valid = validation.valid;
-      errors = validation.errors;
-      moduleCount = lib.length moduleGen.imports;
-      hasSwayModules =
-        lib.any (mod: lib.hasInfix "sway" (builtins.toString mod))
-        moduleGen.imports;
-    };
+    allHosts =
+      if builtins.pathExists ../hosts then discoverHosts ../hosts else { };
 
-    dracula = let
-      capabilities = import ../hosts/nixos/dracula/capabilities.nix;
-      validation = capabilityLoader.validateCapabilityDeclaration capabilities;
-      moduleGen = capabilityLoader.generateModuleImports capabilities;
+    # Test a single host's capability declaration with error handling
+    testHostCapability = platform: hostName:
+      let
+        capabilityPath = ../hosts/${platform}/${hostName}/capabilities.nix;
+        capabilityExists = builtins.pathExists capabilityPath;
 
-    in {
-      hostName = "dracula";
-      platform = capabilities.platform;
-      valid = validation.valid;
-      errors = validation.errors;
-      moduleCount = lib.length moduleGen.imports;
-      hasGnomeModules =
-        lib.any (mod: lib.hasInfix "gnome" (builtins.toString mod))
-        moduleGen.imports;
-    };
+        testResult = if !capabilityExists then {
+          hostName = hostName;
+          platform = platform;
+          capabilityFileExists = false;
+          valid = false;
+          errors = [ "Capability file not found: ${capabilityPath}" ];
+        } else
+          builtins.tryEval (let
+            capabilities = import capabilityPath;
+            validation =
+              capabilityLoader.validateCapabilityDeclaration capabilities;
+            moduleGenResult = builtins.tryEval
+              (capabilityLoader.generateModuleImports capabilities);
 
-    legion = let
-      capabilities = import ../hosts/nixos/legion/capabilities.nix;
-      validation = capabilityLoader.validateCapabilityDeclaration capabilities;
-      moduleGen = capabilityLoader.generateModuleImports capabilities;
+          in {
+            hostName = hostName;
+            platform = capabilities.platform;
+            capabilityFileExists = true;
+            valid = validation.valid;
+            errors = validation.errors;
+            moduleGenSuccess = moduleGenResult.success;
+            moduleCount = if moduleGenResult.success then
+              lib.length moduleGenResult.value.imports
+            else
+              0;
+            # Platform-specific module checks
+            hasSwayModules =
+              if moduleGenResult.success && platform == "nixos" then
+                lib.any (mod: lib.hasInfix "sway" (builtins.toString mod))
+                moduleGenResult.value.imports
+              else
+                false;
+            hasGnomeModules =
+              if moduleGenResult.success && platform == "nixos" then
+                lib.any (mod: lib.hasInfix "gnome" (builtins.toString mod))
+                moduleGenResult.value.imports
+              else
+                false;
+            hasNvidiaModules =
+              if moduleGenResult.success && platform == "nixos" then
+                lib.any (mod: lib.hasInfix "nvidia" (builtins.toString mod))
+                moduleGenResult.value.imports
+              else
+                false;
+            hasHomeAssistant =
+              if moduleGenResult.success && platform == "nixos" then
+                lib.any
+                (mod: lib.hasInfix "homeassistant" (builtins.toString mod))
+                moduleGenResult.value.imports
+              else
+                false;
+            hasDarwinModules =
+              if moduleGenResult.success && platform == "darwin" then
+                lib.any (mod: lib.hasInfix "darwin" (builtins.toString mod))
+                moduleGenResult.value.imports
+              else
+                false;
+            hasHomebrewModules =
+              if moduleGenResult.success && platform == "darwin" then
+                lib.any (mod: lib.hasInfix "homebrew" (builtins.toString mod))
+                moduleGenResult.value.imports
+              else
+                false;
+          });
+      in if testResult.success or true then
+        testResult.value or testResult
+      else {
+        hostName = hostName;
+        platform = platform;
+        capabilityFileExists = capabilityExists;
+        valid = false;
+        errors = [
+          "Failed to evaluate capability file: ${
+            testResult.value or "unknown error"
+          }"
+        ];
+      };
 
-    in {
-      hostName = "legion";
-      platform = capabilities.platform;
-      valid = validation.valid;
-      errors = validation.errors;
-      moduleCount = lib.length moduleGen.imports;
-      hasNvidiaModules =
-        lib.any (mod: lib.hasInfix "nvidia" (builtins.toString mod))
-        moduleGen.imports;
-      hasHomeAssistant =
-        lib.any (mod: lib.hasInfix "homeassistant" (builtins.toString mod))
-        moduleGen.imports;
-    };
+    # Generate tests for all discovered hosts
+    generateHostTests = platform: hosts:
+      lib.listToAttrs (map (hostName: {
+        name = hostName;
+        value = testHostCapability platform hostName;
+      }) hosts);
 
-    "SGRIMEE-M-4HJT" = let
-      capabilities = import ../hosts/darwin/SGRIMEE-M-4HJT/capabilities.nix;
-      validation = capabilityLoader.validateCapabilityDeclaration capabilities;
-      moduleGen = capabilityLoader.generateModuleImports capabilities;
+    allHostTests = lib.mapAttrs generateHostTests allHosts;
 
-    in {
-      hostName = "SGRIMEE-M-4HJT";
-      platform = capabilities.platform;
-      valid = validation.valid;
-      errors = validation.errors;
-      moduleCount = lib.length moduleGen.imports;
-      hasDarwinModules =
-        lib.any (mod: lib.hasInfix "darwin" (builtins.toString mod))
-        moduleGen.imports;
-      hasHomebrewModules =
-        lib.any (mod: lib.hasInfix "homebrew" (builtins.toString mod))
-        moduleGen.imports;
-    };
-  };
+  in allHostTests;
 
   # Test module mapping accuracy
   testModuleMapping = {

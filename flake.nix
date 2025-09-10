@@ -145,24 +145,35 @@
                 cd ${./.}
                 echo "=== Capability System Tests ===" > $out
 
-                # Test that capability files exist for hosts
+                # Test that capability files exist for hosts (dynamically discovered)
                 echo "Testing capability declarations..." >> $out
-                if [ -f hosts/nixos/nixair/capabilities.nix ]; then
-                  echo "✓ nixair capabilities exist" >> $out
-                else
-                  echo "✗ nixair capabilities missing" >> $out
+
+                # Discover and test all NixOS hosts
+                if [ -d hosts/nixos ]; then
+                  for host_dir in hosts/nixos/*/; do
+                    if [ -d "$host_dir" ]; then
+                      host=$(basename "$host_dir")
+                      if [ -f "hosts/nixos/$host/capabilities.nix" ]; then
+                        echo "✓ $host capabilities exist" >> $out
+                      else
+                        echo "✗ $host capabilities missing" >> $out
+                      fi
+                    fi
+                  done
                 fi
 
-                if [ -f hosts/nixos/dracula/capabilities.nix ]; then
-                  echo "✓ dracula capabilities exist" >> $out
-                else
-                  echo "✗ dracula capabilities missing" >> $out
-                fi
-
-                if [ -f hosts/nixos/legion/capabilities.nix ]; then
-                  echo "✓ legion capabilities exist" >> $out
-                else
-                  echo "✗ legion capabilities missing" >> $out
+                # Discover and test all Darwin hosts  
+                if [ -d hosts/darwin ]; then
+                  for host_dir in hosts/darwin/*/; do
+                    if [ -d "$host_dir" ]; then
+                      host=$(basename "$host_dir")
+                      if [ -f "hosts/darwin/$host/capabilities.nix" ]; then
+                        echo "✓ $host capabilities exist" >> $out
+                      else
+                        echo "✗ $host capabilities missing" >> $out
+                      fi
+                    fi
+                  done
                 fi
 
                 # Test that capability system files exist
