@@ -16,6 +16,7 @@
     server = false; # Not a server host
     corporate = false; # No corporate tools
     ai = false; # No specialized AI/ML setup needed
+    ham = true; # Amateur radio tooling enabled
   };
 
   # Hardware-specific capabilities

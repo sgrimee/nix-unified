@@ -70,6 +70,13 @@
         default = false;
         description = "AI/ML frameworks and GPU compute";
       };
+
+      # Amateur radio / ham
+      ham = {
+        type = lib.types.bool;
+        default = false;
+        description = "Amateur (ham) radio tools";
+      };
     };
 
     # Hardware-specific capabilities
