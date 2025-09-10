@@ -12,13 +12,13 @@ default:
 # - test-linux/test-darwin: Platform-specific configuration validation
 
 # Run basic validation tests (lightweight - syntax + flake validation)
-test:
+test *ARGS:
     @echo "🧪 Running Basic Validation Tests"
     @echo "================================="
     @echo "📝 Running core unit tests..."
     just test-basic
     @echo "🔍 Running flake validation..."
-    just check
+    just check {{ARGS}}
     @echo ""
     @echo "🎉 Basic validation completed successfully!"
 
@@ -127,9 +127,9 @@ update-input INPUT:
     nix flake lock --update-input {{INPUT}}
 
 # Check flake for errors
-check:
+check *ARGS:
     @echo "Checking flake..."
-    nix flake check
+    nix flake check {{ARGS}}
 
 # Check specific host configuration (defaults to current host)
 check-host HOST=`hostname`:
