@@ -1,4 +1,4 @@
-{
+{lib, ...}: {
   system.stateVersion = "23.05";
   networking.hostName = "cirice";
   # allowUnfree now handled centrally in flake
@@ -12,11 +12,12 @@
   services.strongswan-senningerberg = {
     enable = true;
     debug = true; # Maximum debug logging for troubleshooting
+    autoStart = false; # Don't start at boot to prevent blocking
   };
 
   # Single Monitor Looking Glass Configuration
   # AMD Ryzen AI 9 HX 370 w/ Radeon 890M - Single Framework Display
-  # Hardware: AMD Strix Radeon 890M (1002:150e) with audio (1002:1640)  
+  # Hardware: AMD Strix Radeon 890M (1002:150e) with audio (1002:1640)
   # Setup: Shared GPU between Linux host and Windows VM via Looking Glass
   virtualization.windowsGpuPassthrough = {
     enable = true;
@@ -25,15 +26,35 @@
     # PCI IDs for AMD Radeon 890M and its audio controller
     # Display: AMD/ATI Strix [Radeon 880M / 890M] [1002:150e]
     # Audio: AMD/ATI Rembrandt Radeon HD Audio Controller [1002:1640]
-    vfioIds = [ "1002:150e" "1002:1640" ];
+    vfioIds = ["1002:150e" "1002:1640"];
 
     # Looking Glass optimized for single monitor setup
     lookingGlass = {
       enable = true;
-      shmSize =
-        "1G"; # Large buffer for high-res Framework display with 46GB RAM
+      shmSize = "1G"; # Large buffer for high-res Framework display with 46GB RAM
     };
 
     vmUser = "sgrimee";
+  };
+
+  # Safe boot specialisation without VFIO for troubleshooting
+  specialisation.safe-boot = {
+    inheritParentConfig = true;
+    configuration = {
+      # Disable GPU passthrough completely
+      virtualization.windowsGpuPassthrough.enable = lib.mkForce false;
+
+      # Override boot parameters to remove VFIO
+      boot.kernelParams = lib.mkForce [
+        "loglevel=4"
+        "lsm=landlock,yama,bpf"
+        #"systemd.log_level=debug"
+        #"systemd.log_target=console"
+        # "udev.log_level=debug"
+      ];
+
+      # Ensure normal GPU driver loads
+      services.xserver.videoDrivers = lib.mkDefault ["amdgpu"];
+    };
   };
 }

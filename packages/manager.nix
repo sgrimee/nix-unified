@@ -22,6 +22,7 @@ let
     fonts = import ./categories/fonts.nix { inherit pkgs lib hostCapabilities; };
     k8s = import ./categories/k8s.nix { inherit pkgs lib hostCapabilities; };
     vpn = import ./categories/vpn.nix { inherit pkgs lib hostCapabilities; };
+    ham = import ./categories/ham.nix { inherit pkgs lib hostCapabilities; };
   };
 
   # Platform detection
@@ -38,6 +39,22 @@ let
 in {
   # Export categories for external access
   inherit categories;
+
+  # Auto category derivation helper
+  deriveCategories = { explicit ? [], options ? { } }:
+    let mapper = import ./auto-category-mapping.nix {
+          inherit lib hostCapabilities;
+          explicitRequested = explicit;
+          options = options;
+        };
+    in mapper;
+
+  autoGenerateCategories = { explicit ? [], options ? { } }:
+    (import ./auto-category-mapping.nix {
+      inherit lib hostCapabilities;
+      explicitRequested = explicit;
+      options = options;
+    }).categories;
 
   # Generate package list based on capabilities
   generatePackages = requestedCategories:

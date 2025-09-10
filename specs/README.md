@@ -38,6 +38,7 @@ numbering scheme preserves implementation order and allows for future additions.
 | [02](02-enhanced-test-coverage-implementation.md) | Enhanced Test Coverage and CI Matrix Strategy                  | High     | Development  | 2025-01-30          |
 | [03](03-module-categories-feature-flags.md)      | Module Categories and Feature Flags                           | High     | Architecture | 2025-01-30          |
 | [04](04-centralized-package-management.md)       | Centralized Package Management System                         | Medium   | Architecture | 2025-01-30          |
+| [11](11-auto-category-mapping-ham.md)            | Auto Category Mapping & Ham Capability                        | Medium   | Architecture | 2025-09-10          |
 
 ### Planned Features 📋
 
@@ -103,9 +104,9 @@ graph TD
 
 ### Status Overview
 
-- ✅ **Implemented**: 4 specifications (40%)
-- 📋 **Planned**: 6 specifications (60%)
-- 🚧 **In Progress**: 0 specifications (0%)
+- ✅ **Implemented**: 5 specifications (45%)
+- 📋 **Planned**: 6 specifications (55%)
+- 🚧 **In Progress**: 0 specifications (0%) 
 
 ### Priority Breakdown
 
@@ -115,7 +116,7 @@ graph TD
 
 ### Category Distribution
 
-- **Architecture**: 4 specifications
+- **Architecture**: 5 specifications
 - **Development**: 3 specifications
 - **Infrastructure**: 1 specification
 - **Security**: 1 specification

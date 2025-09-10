@@ -110,9 +110,36 @@ just copy-host source-host target-host
 - **nixos/**: Linux-specific modules (display, sound, hardware, etc.)  
 - **home-manager/**: User-specific configurations and dotfiles
 - **hosts/**: Per-host customizations with capability-based configuration
-- **packages/**: Centralized package management with categories (core, development, gaming, multimedia, productivity, security, system)
+- **packages/**: Centralized package management with categories (core, development, gaming, multimedia, productivity, security, system, fonts, k8s, vpn, ham)
 
 The configuration uses a sophisticated capability-based approach where modules are automatically imported based on host capability declarations in `capabilities.nix`. This eliminates manual module imports and provides intelligent configuration based on hardware and feature requirements.
+
+## Automatic Package Categories
+
+The repository includes an automatic category derivation system (`packages/auto-category-mapping.nix`).
+
+Usage example (enabled first on host `cirice` only):
+```
+let
+  capabilities = import ./capabilities.nix;
+  packageManager = import ../../../packages/manager.nix { inherit lib pkgs; hostCapabilities = capabilities; };
+  auto = packageManager.deriveCategories {
+    explicit = [ ];
+    options = { enable = true; exclude = [ ]; force = [ ]; };
+  };
+  requestedCategories = auto.categories;
+  validation = packageManager.validatePackages requestedCategories;
+  systemPackages = if validation.valid then packageManager.generatePackages requestedCategories else throw "Invalid combination";
+in { home.packages = systemPackages; }
+```
+
+Features:
+- Deterministic ordered derivation with provenance trace.
+- Supports overrides: `exclude`, `force`, `explicit`.
+- Soft warnings for contradictory categories (gaming without feature, vpn w/out flag, k8s missing docker+development).
+- New capability flag: `features.ham` adds `ham` category when true.
+
+Rollout: staged; only migrate hosts intentionally. Keep non-migrated hosts on manual `requestedCategories`.
 
 ## Testing
 
@@ -254,3 +281,4 @@ just install-hooks
 - Never run `just switch`, `nixos-rebuild switch`, `darwin-rebuild switch`, or any other system switching commands - these require sudo access which is not available
 - Always tell the user to run these commands themselves when system switching is needed
 - You can use `nix build` to test configurations and verify they compile correctly without switching
+- When you make changes to the nixos config, always run 'just check-host' when your changes are done to catch issues.

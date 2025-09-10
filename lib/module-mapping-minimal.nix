@@ -200,7 +200,7 @@
         homeManager = [ ];
       };
       sway = {
-        nixos = [ ../modules/nixos/sway.nix ];
+        nixos = [ ];
         darwin = [ ];
         homeManager = [ ];
       };
@@ -244,7 +244,7 @@
 
     windowManager = {
       sway = {
-        nixos = [ ../modules/nixos/sway.nix ];
+        nixos = [ ];
         darwin = [ ];
         homeManager = [ ];
       };

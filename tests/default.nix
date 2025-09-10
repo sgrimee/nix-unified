@@ -38,6 +38,11 @@ let
     pkgs = pkgsWithOverlays;
   };
 
+  autoCategoryMappingTests = import ./auto-category-mapping.nix {
+    inherit lib;
+    pkgs = pkgsWithOverlays;
+  };
+
   # ===== INTEGRATION TESTS =====  
   # Test that configurations actually work together
   integrationTests = import ./integration-tests.nix {
@@ -76,7 +81,7 @@ let
   # Organize tests by category for better maintainability and understanding
 
   unitTests = basicConfigTests // moduleTests // hostTests // utilityTests;
-  systemTests = packageManagementTests;
+  systemTests = packageManagementTests // autoCategoryMappingTests;
   integrationTestSuite = integrationTests;
   consistencyTests = hostCapabilityConsistencyTests;
   propertyTests = capabilityPropertyTests;

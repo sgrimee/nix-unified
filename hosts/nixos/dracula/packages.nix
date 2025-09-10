@@ -8,7 +8,7 @@ let
     hostCapabilities = capabilities;
   };
 
-  # Define package categories for this host
+  # Define package categories for this host (manual; gaming retained because features.gaming=true)
   requestedCategories =
     [ "core" "development" "gaming" "multimedia" "productivity" "system" "security" "fonts" "k8s" ];
 

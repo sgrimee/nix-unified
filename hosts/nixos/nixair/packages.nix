@@ -8,7 +8,7 @@ let
     hostCapabilities = capabilities;
   };
 
-  # Define package categories for this host
+  # Define package categories for this host (manual for now, removed gaming if present)
   requestedCategories = [ "core" "development" "productivity" "system" "security" "fonts" "multimedia" "k8s" "vpn" ];
 
   # Generate package list
