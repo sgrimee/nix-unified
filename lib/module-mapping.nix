@@ -321,6 +321,14 @@
     };
   };
 
+  # Virtualization module mappings
+  virtualizationModules = {
+    windowsGpuPassthrough = {
+      nixos = [ ../modules/nixos/virtualization/windows-gpu-passthrough.nix ];
+      darwin = [ ];
+    };
+  };
+
   # Special module helpers for modules that require arguments
   specialModules = {
     homeManager = {

@@ -234,13 +234,22 @@ in rec {
           [ ])
       ];
 
+      # Virtualization modules
+      virtualizationModules = lib.flatten [
+        # Windows GPU Passthrough
+        (if resolvedCapabilities.virtualization.windowsGpuPassthrough or false then
+          moduleMapping.virtualizationModules.windowsGpuPassthrough.${platform} or [ ]
+        else
+          [ ])
+      ];
+
       # Special modules that require arguments
       specialModules = createSpecialModules hostCapabilities inputs hostName;
 
       # Combine all modules
       allModules = coreModules ++ featureModules ++ hardwareModules
         ++ roleModules ++ environmentModules ++ serviceModules
-        ++ securityModules ++ specialModules;
+        ++ securityModules ++ virtualizationModules ++ specialModules;
 
       # Remove duplicates and sort
       # Note: Special modules (functions) can't be sorted with paths, so we separate them
@@ -271,6 +280,7 @@ in rec {
           environment = environmentModules;
           services = serviceModules;
           security = securityModules;
+          virtualization = virtualizationModules;
         };
         totalModules = lib.length uniqueModules;
       };

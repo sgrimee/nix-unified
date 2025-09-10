@@ -121,6 +121,67 @@ in rec {
         resolved.features.development or false; # Should be auto-enabled by ai
       validation = dependencyResolver.validateCapabilities resolved;
     };
+
+    # Test virtualization capabilities
+    virtualizationFeatures = let
+      input = {
+        platform = "nixos";
+        architecture = "x86_64";
+        features = {
+          development = true;
+          desktop = true;
+        };
+        hardware = {
+          cpu = "amd";
+          gpu = "amd";
+          audio = "pipewire";
+          display = {
+            hidpi = true;
+            multimonitor = true;
+          };
+          bluetooth = true;
+          wifi = true;
+        };
+        roles = [ "workstation" ];
+        environment = {
+          desktop = "sway";
+          shell = {
+            primary = "zsh";
+            additional = [ ];
+          };
+          terminal = "alacritty";
+        };
+        services = {
+          distributedBuilds = {
+            enabled = false;
+            role = "client";
+          };
+        };
+        security = {
+          ssh = {
+            server = false;
+            client = true;
+          };
+          firewall = true;
+          secrets = true;
+        };
+        virtualization = { windowsGpuPassthrough = true; };
+      };
+
+      result = capabilityLoader.generateModuleImports input;
+
+    in {
+      input = input;
+      success = result ? imports;
+      moduleCount = if result ? imports then lib.length result.imports else 0;
+      hasVirtualizationModules =
+        lib.any (mod: lib.hasInfix "virtualization" (builtins.toString mod))
+        (result.imports or [ ]);
+      hasGpuPassthroughModule = lib.any
+        (mod: lib.hasInfix "windows-gpu-passthrough" (builtins.toString mod))
+        (result.imports or [ ]);
+      debug = result.debug or null;
+    };
   };
 
   # Test conflict detection
@@ -435,6 +496,20 @@ in rec {
                 moduleGenResult.value.imports
               else
                 false;
+            hasVirtualizationModules =
+              if moduleGenResult.success && platform == "nixos" then
+                lib.any
+                (mod: lib.hasInfix "virtualization" (builtins.toString mod))
+                moduleGenResult.value.imports
+              else
+                false;
+            hasGpuPassthroughModule =
+              if moduleGenResult.success && platform == "nixos" then
+                lib.any (mod:
+                  lib.hasInfix "windows-gpu-passthrough"
+                  (builtins.toString mod)) moduleGenResult.value.imports
+              else
+                false;
           });
       in if testResult.success or true then
         testResult.value or testResult
@@ -491,6 +566,9 @@ in rec {
           "kde"
           "macos"
         ];
+
+      allVirtualizationMapped = moduleMapping.virtualizationModules
+        ? windowsGpuPassthrough;
     };
   };
 
@@ -499,6 +577,7 @@ in rec {
     allTests = [
       testCapabilityResolution.basicFeatures.success
       testCapabilityResolution.dependencyResolution.success
+      testCapabilityResolution.virtualizationFeatures.success
       testConflictDetection.featureConflicts.testPassed
       testConflictDetection.roleConflicts.testPassed
       testConflictDetection.platformConflicts.testPassed
@@ -507,6 +586,7 @@ in rec {
       testHostCapabilities.nixair.valid
       testHostCapabilities.dracula.valid
       testHostCapabilities.legion.valid
+      testHostCapabilities.cirice.valid
       testHostCapabilities."SGRIMEE-M-4HJT".valid
     ];
 

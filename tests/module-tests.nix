@@ -41,6 +41,18 @@
     expected = true;
   };
 
+  # Test virtualization modules
+  testVirtualizationDirectoryExists = {
+    expr = builtins.pathExists ../modules/nixos/virtualization;
+    expected = true;
+  };
+
+  testWindowsGpuPassthroughModuleExists = {
+    expr = builtins.pathExists
+      ../modules/nixos/virtualization/windows-gpu-passthrough.nix;
+    expected = true;
+  };
+
   # Test overlays structure
   testOverlaysExists = {
     expr = builtins.pathExists ../overlays/default.nix;

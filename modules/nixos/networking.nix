@@ -3,6 +3,10 @@
   networking.networkmanager.enable = true;
   networking.useDHCP = lib.mkDefault true;
 
+  # Disable systemd-networkd-wait-online only when using NetworkManager
+  # When systemd-networkd is enabled (e.g., for VM bridges), allow wait-online to function
+  systemd.services.systemd-networkd-wait-online.enable = lib.mkDefault false;
+
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];

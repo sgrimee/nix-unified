@@ -25,7 +25,7 @@
     audio = "pipewire"; # Modern audio system
     display = {
       hidpi = true; # High resolution Framework display
-      multimonitor = true; # Supports external monitors
+      multimonitor = false; # Single monitor setup with Looking Glass
     };
     bluetooth = true; # Built-in Bluetooth
     wifi = true; # Built-in WiFi
@@ -64,6 +64,12 @@
       docker = true; # Enable Docker for development
       databases = [ "postgresql" "sqlite" ]; # Common databases
     };
+  };
+
+  # Virtualization capabilities
+  virtualization = {
+    windowsGpuPassthrough =
+      true; # GPU passthrough with Looking Glass for Windows VMs
   };
 
   # Security and access control
