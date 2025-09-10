@@ -1,57 +1,11 @@
 { inputs, pkgs, system, unstable, ... }: {
+  # Reduced after migration of most packages into categorized package system.
   home.packages = with pkgs;
     [
-      # common packages, found in ~/.nix-profile/bin
-      _1password-cli
-      age
-      alejandra
-      carapace
-      coreutils-full
-      curl
-      du-dust
-      unstable.fish
-      ffmpegthumbnailer
-      # ghostty # configured as home-manager program in some hosts
-      gitleaks
-      glow # CLI markdown viewer
-      go
-      gping
-      hamlib_4
-      home-manager
-      htop
-      # inetutils # disabled due to ping DUP issue
-      unstable.joshuto
-      just
-      killall
-      lazygit
-      less
-      inputs.mactelnet.packages.${system}.mactelnet
-      mdformat
-      mpv
-      neofetch
-      nil
-      nixpkgs-fmt
-      openssh
-      pat
-      poppler # pdf preview
-      progress
-      qemu
-      ripgrep
-      rustscan
-      # unstable.superfile
-      sops
-      ssh-to-age
-      tcpdump
-      tldr
-      trippy # cmd 'trip'
-      unrar
-      unzip
-      unstable.vscode-langservers-extracted
-      uv
-      wakeonlan
-      wget
-      yazi # also installed as user program
-      zellij
-      zip
+      unstable.fish             # prefer unstable variant (category provides stable fish via none yet)
+      hamlib_4                  # radio/ham tooling (left uncategorized intentionally)
+      inputs.mactelnet.packages.${system}.mactelnet # external input package
+      unstable.joshuto          # prefer unstable version (dev category has stable)
+      unstable.vscode-langservers-extracted # language servers (keep unstable)
     ] ++ lib.optionals pkgs.stdenv.isLinux [ ethtool unstable.qdmr spotifyd ];
 }

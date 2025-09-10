@@ -2,10 +2,16 @@
 { pkgs, lib, hostCapabilities ? { }, ... }:
 
 {
-  core = with pkgs;
-    [
-      # security packages
-    ];
+  core = with pkgs; [
+    age
+    sops
+    ssh-to-age
+    gitleaks
+    rustscan
+    tcpdump
+    _1password-cli
+    trippy # network path analysis tool
+  ];
 
   metadata = {
     description = "Security packages";

@@ -2,10 +2,15 @@
 { pkgs, lib, hostCapabilities ? { }, ... }:
 
 {
-  core = with pkgs;
-    [
-      # productivity packages
-    ];
+  core = with pkgs; [
+    glow # markdown viewer
+    neofetch
+    progress
+    tldr
+    yazi
+    zellij
+    gping
+  ];
 
   browsers = with pkgs; [ chromium firefox ];
 

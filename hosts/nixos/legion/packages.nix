@@ -9,7 +9,7 @@ let
   };
 
   # Define package categories for this host
-  requestedCategories = [ "core" "development" "productivity" "system" ];
+  requestedCategories = [ "core" "development" "productivity" "system" "security" "fonts" "k8s" "multimedia" ];
 
   # Generate package list
   validation = packageManager.validatePackages requestedCategories;
