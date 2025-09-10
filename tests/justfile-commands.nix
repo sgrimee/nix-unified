@@ -207,8 +207,6 @@ in lib.listToAttrs (generateCommandTests ++ generateSyntaxTests) // {
       testCommands =
         lib.filter (cmd: lib.hasPrefix "test-" cmd) discoveredRecipes;
       # Build commands should contain 'build'  
-      buildCommands =
-        lib.filter (cmd: lib.hasInfix "build" cmd) discoveredRecipes;
       # All test commands should follow convention
       testConventionValid =
         lib.all (cmd: lib.hasPrefix "test-" cmd) testCommands;

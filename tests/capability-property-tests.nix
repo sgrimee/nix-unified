@@ -6,16 +6,6 @@
 
 let
   # Import capability system components (with error handling)
-  safeImport = path: fallback:
-    if builtins.pathExists path then
-      builtins.tryEval (import path { inherit lib; })
-    else {
-      success = false;
-      value = fallback;
-    };
-
-  capabilitySchema = safeImport ../lib/capability-schema.nix { };
-  dependencyResolver = safeImport ../lib/dependency-resolver.nix { };
 
   # Define test capability combinations to validate
   testCombinations = [

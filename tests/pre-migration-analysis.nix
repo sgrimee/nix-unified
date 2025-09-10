@@ -24,7 +24,7 @@ let
   safeEval = config: builtins.tryEval config;
 
   # Mock host configurations for analysis (simplified for testing)
-  mockHostConfigurations = lib.mapAttrs (platform: hosts:
+  mockHostConfigurations = lib.mapAttrs (_platform: hosts:
     lib.listToAttrs (map (hostName: {
       name = hostName;
       value = {

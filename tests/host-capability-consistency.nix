@@ -29,17 +29,6 @@ let
       homePath = hostDir + "/home.nix";
 
       # Safely import and analyze configuration files
-      analyzeFile = filePath:
-        if builtins.pathExists filePath then
-          builtins.tryEval (import filePath)
-        else {
-          success = false;
-          value = { };
-        };
-
-      systemConfig = analyzeFile systemPath;
-      packagesConfig = analyzeFile packagesPath;
-      homeConfig = analyzeFile homePath;
 
       # Extract configuration hints from file content (simple text analysis)
       extractHints = filePath:
@@ -246,8 +235,6 @@ let
     ];
 
     consistentHosts = lib.filter (result: result.overallConsistent) allResults;
-    inconsistentHosts =
-      lib.filter (result: !result.overallConsistent) allResults;
 
   in {
     testAllHostsHaveCapabilities = {

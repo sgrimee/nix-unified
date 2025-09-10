@@ -3,9 +3,6 @@
 # Tests fundamental configuration patterns and structure integrity
 let
   # Test configuration structure patterns used across the codebase
-  testConfigPattern = pattern: expected:
-    let result = builtins.tryEval pattern;
-    in result.success && (result.value == expected);
 
   # Discover hosts for validation
   discoverHosts = hostsDir:
