@@ -10,6 +10,8 @@
     pat
     poppler
     unrar
+    wev  # Wayland event viewer for identifying keypresses
+    kbd  # Console keyboard utilities (showkey, loadkeys, etc.)
   ];
 
   metadata = {
