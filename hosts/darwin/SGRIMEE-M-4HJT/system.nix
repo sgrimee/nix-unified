@@ -20,6 +20,8 @@
         sshKey = "/Users/sgrimee/.ssh/id_ed25519";
         system = "x86_64-linux";
         supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
+        publicHostKey =
+          "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUxsMUt4UEpXWFdHNnZOTTBEMVJkRllOWGx6UnNtaEVvclhjaVV4cER6M3ggcm9vdEBjaXJpY2UK";
       }
       {
         hostName = "legion.local";
@@ -29,6 +31,8 @@
         sshKey = "/Users/sgrimee/.ssh/id_ed25519";
         system = "x86_64-linux";
         supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
+        publicHostKey =
+          "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSVBydlBka3VmUFNoMEFJWi9mSWh0V25rd3NqV2x6anQ5RWpEK2J5bDY4Z0sgcm9vdEBuaXhvcwo=";
       }
     ];
   };

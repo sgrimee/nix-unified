@@ -10,6 +10,7 @@ default:
 # - test: Lightweight basic validation (syntax, core modules, flake check)
 # - test-verbose: All tests with verbose output
 # - test-linux/test-darwin: Platform-specific configuration validation
+# - test-remote-builders: Verify remote build machines are working
 
 # Run basic validation tests (lightweight - syntax + flake validation)
 test *ARGS:
@@ -39,6 +40,18 @@ test-darwin:
     @echo "🔍 Evaluating Darwin configuration..."
     @nix eval .#darwinConfigurations.SGRIMEE-M-4HJT.config.system.stateVersion --no-warn-dirty && echo "✅ SGRIMEE-M-4HJT configuration valid"
     @echo "🎉 Darwin configuration validated successfully!"
+
+# Test remote build machines connectivity and functionality
+test-remote-builders:
+    @echo "🧪 Testing Remote Build Machines"
+    @echo "================================"
+    @echo "🔗 Testing connection to cirice.local..."
+    @nix store info --store ssh://sgrimee@cirice.local > /dev/null && echo "✅ cirice.local connection successful"
+    @echo "🔗 Testing connection to legion.local..."
+    @nix store info --store ssh://sgrimee@legion.local > /dev/null && echo "✅ legion.local connection successful"
+    @echo "🔨 Testing remote build capability..."
+    @nix build nixpkgs#hello --max-jobs 0 --no-link && echo "✅ Remote build test successful"
+    @echo "🎉 All remote builders are working correctly!"
 
 # Run basic core tests only (syntax, module loading, config validation - internal use)
 test-basic:
