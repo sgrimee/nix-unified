@@ -5,7 +5,6 @@
       unstable.fish             # prefer unstable variant (category provides stable fish via none yet)
       hamlib_4                  # radio/ham tooling (left uncategorized intentionally)
       inputs.mactelnet.packages.${system}.mactelnet # external input package
-      unstable.joshuto          # prefer unstable version (dev category has stable)
       unstable.vscode-langservers-extracted # language servers (keep unstable)
     ] ++ lib.optionals pkgs.stdenv.isLinux [ ethtool unstable.qdmr spotifyd ];
 }
