@@ -10,6 +10,12 @@ with lib; {
         description = "Enable maximum debug logging";
       };
 
+      autoStart = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Whether to start VPN services automatically at boot";
+      };
+
       serverAddress = mkOption {
         type = types.str;
         default = "83.222.34.153";
@@ -83,11 +89,19 @@ with lib; {
       };
     };
 
+    # Override strongswan service to prevent auto-start unless configured
+    systemd.services.strongswan.wantedBy = lib.mkForce (
+      if config.services.strongswan-senningerberg.autoStart then [ "multi-user.target" ] else [ ]
+    );
+
     # Enable xl2tpd service (we'll override the config)
     services.xl2tpd.enable = true;
 
     # Override xl2tpd systemd service to use our config
     systemd.services.xl2tpd = {
+      wantedBy = lib.mkForce (
+        if config.services.strongswan-senningerberg.autoStart then [ "multi-user.target" ] else [ ]
+      );
       serviceConfig = {
         ExecStart = lib.mkForce
           "${pkgs.xl2tpd}/bin/xl2tpd -D -c /etc/xl2tpd/xl2tpd.conf -s /etc/xl2tpd/l2tp-secrets -p /run/xl2tpd/pid -C /run/xl2tpd/control";
@@ -97,7 +111,7 @@ with lib; {
     # Create xl2tpd configuration file at runtime using SOPS
     systemd.services.senningerberg-xl2tpd-config = {
       description = "Generate Senningerberg xl2tpd config with SOPS";
-      wantedBy = [ "xl2tpd.service" ];
+      wantedBy = lib.mkIf config.services.strongswan-senningerberg.autoStart [ "xl2tpd.service" ];
       before = [ "xl2tpd.service" ];
       serviceConfig = {
         Type = "oneshot";
@@ -263,7 +277,7 @@ with lib; {
       lib.mkIf config.services.strongswan-senningerberg.enable {
         description = "Maintain route to Senningerberg VPN server";
         after = [ "network.target" ];
-        wantedBy = [ "multi-user.target" ];
+        wantedBy = lib.mkIf config.services.strongswan-senningerberg.autoStart [ "multi-user.target" ];
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
@@ -355,7 +369,7 @@ with lib; {
         sleep 2
         echo "Senningerberg VPN configuration ready"
       '';
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = lib.mkIf config.services.strongswan-senningerberg.autoStart [ "multi-user.target" ];
     };
   };
 }
