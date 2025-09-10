@@ -2,11 +2,15 @@
 { pkgs, lib, hostCapabilities ? { }, ... }:
 
 {
-  core = with pkgs;
-    [
-      # system packages
-      interception-tools
-    ];
+  core = with pkgs; [
+    interception-tools
+    qemu
+    wakeonlan
+    du-dust
+    pat
+    poppler
+    unrar
+  ];
 
   metadata = {
     description = "System packages";

@@ -19,6 +19,9 @@ let
       import ./categories/security.nix { inherit pkgs lib hostCapabilities; };
     system =
       import ./categories/system.nix { inherit pkgs lib hostCapabilities; };
+    fonts = import ./categories/fonts.nix { inherit pkgs lib hostCapabilities; };
+    k8s = import ./categories/k8s.nix { inherit pkgs lib hostCapabilities; };
+    vpn = import ./categories/vpn.nix { inherit pkgs lib hostCapabilities; };
   };
 
   # Platform detection
@@ -60,7 +63,7 @@ in {
             [ ]) ++
 
           # Utility packages
-          (cat.utilities or [ ]) ++ (cat.editors or [ ])
+          (cat.utilities or [ ]) ++ (cat.editors or [ ]) ++ (cat.browsers or [ ])
         else
           [ ]) requestedCategories;
 

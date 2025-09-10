@@ -10,6 +10,13 @@
     just
     sonar-scanner-cli
     update-coding-agents
+    go
+    ripgrep
+    lazygit
+    mdformat
+    uv
+    carapace
+    joshuto
   ];
 
   # Language-specific packages

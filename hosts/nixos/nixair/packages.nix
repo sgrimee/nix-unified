@@ -9,7 +9,7 @@ let
   };
 
   # Define package categories for this host
-  requestedCategories = [ "core" "development" "productivity" "system" ];
+  requestedCategories = [ "core" "development" "productivity" "system" "security" "fonts" "multimedia" "k8s" "vpn" ];
 
   # Generate package list
   validation = packageManager.validatePackages requestedCategories;
@@ -21,16 +21,6 @@ let
 in {
   # System packages with host-specific overrides
   home.packages = systemPackages ++ [
-    # Host-specific packages from main branch (VPN support)
-    pkgs.chromium
-    pkgs.firefox
-    pkgs.interception-tools # map Caps to Ctrl+Esc
-    
-    # Linux VPN packages
-    pkgs.networkmanagerapplet
-    pkgs.networkmanager-l2tp
-    # pkgs.networkmanager-vpnc
-    pkgs.strongswan
-    pkgs.xl2tpd
+    # All previous manual packages now provided by categories (browsers, interception tools, vpn)
   ];
 }

@@ -2,10 +2,10 @@
 { pkgs, lib, hostCapabilities ? { }, ... }:
 
 {
-  core = with pkgs;
-    [
-      # multimedia packages
-    ];
+  core = with pkgs; [
+    mpv
+    ffmpegthumbnailer
+  ];
 
   metadata = {
     description = "Multimedia packages";
