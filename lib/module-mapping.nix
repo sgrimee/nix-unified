@@ -34,7 +34,11 @@
   featureModules = {
     # Most feature modules don't exist yet - commenting out until they're created
     development = {
-      nixos = [ ../modules/nixos/nix-ld.nix ../modules/nixos/vscode.nix ];
+      nixos = [
+        ../modules/nixos/nix-ld.nix
+        ../modules/nixos/vscode.nix
+        ../modules/nixos/development/rust.nix
+      ];
       darwin = [ ];
       homeManager = [ ];
     };
@@ -289,7 +293,8 @@
   securityModules = {
     ssh = {
       server = {
-        nixos = [ ../modules/nixos/openssh.nix ../modules/nixos/authorized_keys.nix ];
+        nixos =
+          [ ../modules/nixos/openssh.nix ../modules/nixos/authorized_keys.nix ];
         darwin = [ ];
       };
       client = {

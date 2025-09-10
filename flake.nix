@@ -76,7 +76,6 @@
             };
           specialArgs = {
             inherit inputs system stateVersion overlays unstable;
-            pkgs = stable; # Make sure pkgs uses our overlays
             stable = stable;
           };
 

@@ -3,8 +3,6 @@
   networking.hostName = "dracula";
 
   # Allow unfree packages (for printer drivers)
-  nixpkgs.config.allowUnfree = true;
-
   # Allow insecure broadcom-sta package for older WiFi hardware
   nixpkgs.config.permittedInsecurePackages =
     [ "broadcom-sta-6.30.223.271-57-6.12.39" ];

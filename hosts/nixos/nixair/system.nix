@@ -3,10 +3,8 @@
   networking.hostName = "nixair";
 
   # Allow unfree packages (for printer drivers)
-  nixpkgs.config.allowUnfree = true;
-
   # Allow insecure broadcom-sta package for older WiFi hardware (all versions)
-  nixpkgs.config.allowInsecurePredicate = pkg: 
+  nixpkgs.config.allowInsecurePredicate = pkg:
     lib.hasPrefix "broadcom-sta-" (lib.getName pkg);
 
   # Note: Sway and greetd configuration will be provided by capability system

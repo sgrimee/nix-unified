@@ -43,15 +43,6 @@
     };
   };
 
-  nixpkgs.config = {
-    allowUnfree = true;
-
-    # Applies to all Rust packages using buildRustPackage
-    cargoBuildType = "release";
-    cargoParallelBuilding = true;
-    cargoBuildJobs = "$NIX_BUILD_CORES"; # Use all allocated cores
-  };
-
-  # add custom overlays
-  nixpkgs.overlays = import ../../overlays;
+  # nixpkgs config now handled centrally in flake
+  # Rust-specific config moved to modules/nixos/development/rust.nix
 }

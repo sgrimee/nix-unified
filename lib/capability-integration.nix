@@ -88,7 +88,15 @@ in {
       builtSystem = systemBuilder {
         inherit system;
         inherit specialArgs;
-        modules = configInfo.modules;
+        modules = configInfo.modules ++ [
+          # Central nixpkgs configuration
+          {
+            nixpkgs = {
+              overlays = import ../overlays;
+              config.allowUnfree = true;
+            };
+          }
+        ];
       };
 
     in builtSystem // {

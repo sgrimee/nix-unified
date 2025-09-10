@@ -55,10 +55,6 @@
     };
   };
 
-  # Ignored when nixpkgs.pkgs is set, but should not be the case here.
-  nixpkgs.config.allowUnfree = true;
-
-  # add custom overlays
-  nixpkgs.overlays = import ../../overlays;
+  # nixpkgs config now handled centrally in flake
 
 }
