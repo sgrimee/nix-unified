@@ -15,7 +15,15 @@ in {
     shell = pkgs.zsh;
   };
   home-manager.users.${user} = {
-    imports = [ ./packages.nix ./programs ./spotifyd.nix ];
+    imports = [
+      ./packages.nix
+      ./programs
+      ./spotifyd.nix
+      ../../../modules/home-manager/wl-sway.nix
+    ];
+
+    # Configure Sway modifier to use Alt key instead of Super/Windows
+    sway-config.modifier = "Mod1";
 
     home = {
       # file = {
