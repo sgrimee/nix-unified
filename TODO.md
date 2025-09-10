@@ -1,3 +1,3 @@
 # Things to do to this nix config
 
-- fix the libvirtd warning:  Obsolete nvram variable is set while firmware metadata files found. Note that the nvram config file variable is going to be ignored.
+- [x] fix the libvirtd warning: (Removed explicit OVMF packages; rely on metadata. Clean per-VM nvram entries manually if still present.)
