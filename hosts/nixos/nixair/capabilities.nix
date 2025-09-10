@@ -32,8 +32,12 @@
     printer = true; # CUPS printing support
     keyboard = {
       advanced = true; # Kanata keyboard remapping with home row mods
-      devices = [ "/dev/input/by-path/pci-0000:00:1a.7-usbv2-0:1.2:1.0-event-kbd" ];
+      devices =
+        [ "/dev/input/by-path/pci-0000:00:1a.7-usbv2-0:1.2:1.0-event-kbd" ];
     };
+    # Resource capabilities for Nix configuration
+    large-ram = false; # Limited memory, use smaller download buffers
+    large-disk = false; # Limited storage, keep default settings
   };
 
   # Host roles and primary use cases

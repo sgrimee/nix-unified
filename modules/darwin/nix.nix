@@ -1,4 +1,14 @@
-{ inputs, lib, pkgs, ... }: {
+{ inputs, lib, pkgs, config, hostCapabilities ? { }, ... }:
+let
+  # Host-specific buffer sizes based on capabilities
+  bufferSize = if (hostCapabilities.hardware.large-ram or false) then
+    524288000 # 500MiB for high memory hosts
+  else
+    52428800; # 50MiB for default/low memory hosts
+
+  # Keep options enabled only for hosts with large disk capability
+  enableKeepOptions = hostCapabilities.hardware.large-disk or false;
+in {
   nix = {
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -24,6 +34,15 @@
       # see https://github.com/NixOS/nix/issues/11002
       sandbox = false;
 
+      experimental-features = [ "nix-command" "flakes" ];
+
+      # Per-host download buffer size
+      download-buffer-size = bufferSize;
+
+      # Per-host keep options
+      keep-outputs = enableKeepOptions;
+      keep-derivations = enableKeepOptions;
+
       # use faster caches
       substituters = [
         "https://cache.nixos.org/"
@@ -48,7 +67,6 @@
       cores = 0; # Use all cores per job
       max-substitution-jobs = 32; # Parallel downloads
       connect-timeout = 5; # Faster timeout
-      download-buffer-size = 134217728; # 128MB download buffer
 
       # trusted-users = ["root" "@admins"];
       builders-use-substitutes = true;

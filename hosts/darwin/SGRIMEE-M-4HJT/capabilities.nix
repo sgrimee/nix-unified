@@ -31,6 +31,9 @@
     bluetooth = true; # Built-in Bluetooth
     wifi = true; # Built-in WiFi
     printer = true; # CUPS printing support
+    # Resource capabilities for Nix configuration
+    large-ram = true; # High memory system, use larger download buffers
+    large-disk = false; # Standard SSD storage, keep default settings
   };
 
   # Host roles and primary use cases

@@ -1,4 +1,14 @@
-{ inputs, pkgs, ... }: {
+{ inputs, pkgs, config, lib, hostCapabilities ? { }, ... }:
+let
+  # Host-specific buffer sizes based on capabilities
+  bufferSize = if (hostCapabilities.hardware.large-ram or false) then
+    524288000 # 500MiB for high memory hosts
+  else
+    52428800; # 50MiB for default/low memory hosts
+
+  # Keep options enabled only for hosts with large disk capability
+  enableKeepOptions = hostCapabilities.hardware.large-disk or false;
+in {
   nix = {
     package = pkgs.nixVersions.stable;
 
@@ -9,8 +19,16 @@
     settings = {
       # automatically hotlink duplicate files
       auto-optimise-store = true;
-      download-buffer-size = 524288000;
+
+      # Per-host download buffer size
+      download-buffer-size = bufferSize;
+
       experimental-features = [ "nix-command" "flakes" ];
+
+      # Per-host keep options
+      keep-outputs = enableKeepOptions;
+      keep-derivations = enableKeepOptions;
+
       sandbox = true;
 
       # use faster caches
