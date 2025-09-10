@@ -5,6 +5,7 @@
   core = with pkgs; [
     mpv
     ffmpegthumbnailer
+    pulsemixer
   ];
 
   metadata = {

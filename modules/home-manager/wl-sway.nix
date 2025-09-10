@@ -184,13 +184,13 @@ in {
           "${cfg.modifier}+p" = "exec rofi -show combi";
           
           # Volume controls
-          "XF86AudioMute" = "exec pactl set-sink-mute @DEFAULT_SINK@ toggle";
+          "XF86AudioMute" = "exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle";
           "XF86AudioLowerVolume" =
-            "exec pactl set-sink-volume @DEFAULT_SINK@ -5%";
+            "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
           "XF86AudioRaiseVolume" =
-            "exec pactl set-sink-volume @DEFAULT_SINK@ +5%";
+            "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
           "XF86AudioMicMute" =
-            "exec pactl set-source-mute @DEFAULT_SOURCE@ toggle";
+            "exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle";
 
           # Brightness controls
           "XF86MonBrightnessDown" = "exec brightnessctl set 5%-";
