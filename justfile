@@ -48,7 +48,7 @@ test-basic:
 # Run all unit tests with verbose output (includes all tests + internal cross-platform tests)
 test-verbose:
     @echo "Running all unit tests with verbose output..."
-    nix-instantiate --eval --strict --expr 'import ./tests/default.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }'
+    nix-instantiate --eval --strict --expr 'import ./tests/default.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> { config.allowUnfree = true; }; }'
 
 # === Building and Switching ===
 
