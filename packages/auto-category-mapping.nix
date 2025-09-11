@@ -77,8 +77,9 @@ let
     ]) roles);
 
   serviceDerived = lib.flatten [
-    (lib.optional ((services.development or { }).docker or false
-      && (feats.development or false)) (add "k8s" "service:docker+development"))
+    # K8s client tools for all development hosts (independent of Docker)
+    (lib.optional (feats.development or false)
+      (add "k8s-clients" "feature:development"))
     (lib.optional ((services.homeAssistant or false))
       (add "system" "service:homeAssistant"))
     (lib.optional ((services.distributedBuilds or { }).enabled or false)
@@ -156,10 +157,9 @@ let
   warnVpn = lib.optional (lib.elem "vpn" final && !(security.vpn or false)
     && !(lib.elem "mobile" roles) && !(lib.elem "vpn" opt.force))
     "Category 'vpn' active but security.vpn=false and no mobile role";
-  warnK8s = lib.optional (lib.elem "k8s" final
-    && !(((services.development or { }).docker or false)
-      && (feats.development or false)) && !(lib.elem "k8s" opt.force))
-    "Category 'k8s' active but docker+development not enabled";
+  warnK8s = lib.optional (lib.elem "k8s-clients" final
+    && !(feats.development or false) && !(lib.elem "k8s-clients" opt.force))
+    "Category 'k8s-clients' active but development feature not enabled";
 
   warnings = warnGaming ++ warnVpn ++ warnK8s;
 

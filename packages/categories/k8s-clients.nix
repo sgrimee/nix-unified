@@ -1,4 +1,4 @@
-# packages/categories/k8s.nix
+# packages/categories/k8s-clients.nix
 { pkgs, lib, hostCapabilities ? { }, ... }:
 {
   core = with pkgs; [
@@ -9,7 +9,7 @@
   ];
 
   metadata = {
-    description = "Kubernetes CLI and workflow tools";
+    description = "Kubernetes client tools and workflow utilities";
     conflicts = [ ];
     requires = [ "development" ];
     size = "medium";

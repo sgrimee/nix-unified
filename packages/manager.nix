@@ -21,7 +21,9 @@ let
       import ./categories/system.nix { inherit pkgs lib hostCapabilities; };
     fonts =
       import ./categories/fonts.nix { inherit pkgs lib hostCapabilities; };
-    k8s = import ./categories/k8s.nix { inherit pkgs lib hostCapabilities; };
+    k8s-clients = import ./categories/k8s-clients.nix {
+      inherit pkgs lib hostCapabilities;
+    };
     vpn = import ./categories/vpn.nix { inherit pkgs lib hostCapabilities; };
     ham = import ./categories/ham.nix { inherit pkgs lib hostCapabilities; };
   };

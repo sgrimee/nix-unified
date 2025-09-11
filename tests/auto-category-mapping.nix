@@ -123,8 +123,8 @@ in {
     expected = true;
   };
 
-  testDockerDevAddsK8s = {
-    expr = expectHas (derive k8sCaps).categories "k8s";
+  testDevelopmentAddsK8sClients = {
+    expr = expectHas (derive k8sCaps).categories "k8s-clients";
     expected = true;
   };
 
