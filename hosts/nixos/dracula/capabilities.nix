@@ -41,7 +41,7 @@
   };
 
   # Host roles and primary use cases
-  roles = [ "workstation" ];
+  roles = [ "mobile" "workstation" ];
 
   # Environment preferences
   environment = {

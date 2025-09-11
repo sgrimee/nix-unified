@@ -16,6 +16,7 @@
     server = false; # Not a server host
     corporate = true; # Microsoft Office, Teams, corporate tools
     ai = false; # No AI/ML specific setup
+    ham = true; # Amateur radio tools for complete workstation
   };
 
   # Hardware-specific capabilities
@@ -37,7 +38,7 @@
   };
 
   # Host roles and primary use cases
-  roles = [ "workstation" ];
+  roles = [ "mobile" "workstation" ];
 
   # Environment preferences
   environment = {

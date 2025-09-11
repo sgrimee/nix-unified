@@ -8,8 +8,16 @@ let
     hostCapabilities = capabilities;
   };
 
-  # Define package categories for this host (manual; gaming kept if feature true handled elsewhere)
-  requestedCategories = [ "core" "development" "productivity" "security" "fonts" "k8s" ];
+  # Use automatic category derivation based on host capabilities
+  auto = packageManager.deriveCategories {
+    explicit = [ ];
+    options = {
+      enable = true;
+      exclude = [ ];
+      force = [ ];
+    };
+  };
+  requestedCategories = auto.categories;
 
   # Generate package list
   validation = packageManager.validatePackages requestedCategories;

@@ -19,7 +19,8 @@ let
       import ./categories/security.nix { inherit pkgs lib hostCapabilities; };
     system =
       import ./categories/system.nix { inherit pkgs lib hostCapabilities; };
-    fonts = import ./categories/fonts.nix { inherit pkgs lib hostCapabilities; };
+    fonts =
+      import ./categories/fonts.nix { inherit pkgs lib hostCapabilities; };
     k8s = import ./categories/k8s.nix { inherit pkgs lib hostCapabilities; };
     vpn = import ./categories/vpn.nix { inherit pkgs lib hostCapabilities; };
     ham = import ./categories/ham.nix { inherit pkgs lib hostCapabilities; };
@@ -34,22 +35,26 @@ let
     "unknown";
 
   # GPU detection from capabilities
-  currentGpu = hostCapabilities.hardware.gpu or "integrated";
+  currentGpu = if (hostCapabilities.hardware.gpu or null) == null then
+    "integrated"
+  else
+    hostCapabilities.hardware.gpu;
 
 in {
   # Export categories for external access
   inherit categories;
 
   # Auto category derivation helper
-  deriveCategories = { explicit ? [], options ? { } }:
-    let mapper = import ./auto-category-mapping.nix {
-          inherit lib hostCapabilities;
-          explicitRequested = explicit;
-          options = options;
-        };
+  deriveCategories = { explicit ? [ ], options ? { } }:
+    let
+      mapper = import ./auto-category-mapping.nix {
+        inherit lib hostCapabilities;
+        explicitRequested = explicit;
+        options = options;
+      };
     in mapper;
 
-  autoGenerateCategories = { explicit ? [], options ? { } }:
+  autoGenerateCategories = { explicit ? [ ], options ? { } }:
     (import ./auto-category-mapping.nix {
       inherit lib hostCapabilities;
       explicitRequested = explicit;
@@ -80,7 +85,8 @@ in {
             [ ]) ++
 
           # Utility packages
-          (cat.utilities or [ ]) ++ (cat.editors or [ ]) ++ (cat.browsers or [ ])
+          (cat.utilities or [ ]) ++ (cat.editors or [ ])
+          ++ (cat.browsers or [ ])
         else
           [ ]) requestedCategories;
 

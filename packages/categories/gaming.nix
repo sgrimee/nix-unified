@@ -2,14 +2,20 @@
 { pkgs, lib, hostCapabilities ? { }, ... }:
 
 {
-  # Core gaming packages
-  core = with pkgs; [ steam lutris discord gamemode lunar-client ];
+  # Core gaming packages (cross-platform)
+  core = with pkgs; [ discord ];
 
-  # Gaming utilities
-  utilities = with pkgs; [ mangohud goverlay protontricks ];
+  # Gaming utilities (Linux-specific tools)
+  utilities = with pkgs;
+    lib.optionals pkgs.stdenv.isLinux [ mangohud goverlay protontricks ];
 
-  # Emulation
-  emulation = with pkgs; [ retroarch dolphin-emu pcsx2 ];
+  # Gaming platforms (mostly Linux-specific)
+  platforms = with pkgs;
+    lib.optionals pkgs.stdenv.isLinux [ steam lutris lunar-client ];
+
+  # Emulation (cross-platform)
+  emulation = with pkgs;
+    [ retroarch ] ++ lib.optionals pkgs.stdenv.isLinux [ dolphin-emu pcsx2 ];
 
   # Platform-specific gaming
   platformSpecific = {

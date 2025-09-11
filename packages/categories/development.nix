@@ -9,7 +9,7 @@
     direnv
     just
     sonar-scanner-cli
-    update-coding-agents
+    update-coding-agents # From overlay - updates Claude Code and OpenCode AI packages
     go
     ripgrep
     lazygit

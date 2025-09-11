@@ -282,3 +282,4 @@ just install-hooks
 - Always tell the user to run these commands themselves when system switching is needed
 - You can use `nix build` to test configurations and verify they compile correctly without switching
 - When you make changes to the nixos config, always run 'just check-host' when your changes are done to catch issues.
+- When adding a new feature, always add a unit test for it.

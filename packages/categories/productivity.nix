@@ -12,7 +12,10 @@
     gping
   ];
 
-  browsers = with pkgs; [ chromium firefox ];
+  browsers = with pkgs;
+    [ firefox ] ++
+    # Chromium only available on Linux platforms
+    (lib.optional pkgs.stdenv.isLinux chromium);
 
   metadata = {
     description = "Productivity packages";
