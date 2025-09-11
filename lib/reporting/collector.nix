@@ -5,7 +5,7 @@
 let
   # Extract host capabilities from host configuration or direct data
   collectHostCapabilities =
-    hostConfig: hostName: platformMapping: capabilityData:
+    hostConfig: hostName: _platformMapping: capabilityData:
     let
       # Try multiple sources for capabilities from config
       configCapabilities = if hostConfig ? hostCapabilities then
@@ -161,17 +161,17 @@ let
     let
       allHosts = lib.attrNames hostMappings;
       platforms = lib.unique
-        (lib.mapAttrsToList (name: data: data.platform) hostMappings);
+        (lib.mapAttrsToList (_name: data: data.platform) hostMappings);
       allCategories = lib.unique (lib.flatten
-        (lib.mapAttrsToList (name: data: data.categories) hostMappings));
+        (lib.mapAttrsToList (_name: data: data.categories) hostMappings));
       allPackages = lib.unique (lib.flatten
-        (lib.mapAttrsToList (name: data: data.packages) hostMappings));
+        (lib.mapAttrsToList (_name: data: data.packages) hostMappings));
 
       # Calculate statistics
       totalWarnings = lib.length (lib.flatten
-        (lib.mapAttrsToList (name: data: data.warnings) hostMappings));
+        (lib.mapAttrsToList (_name: data: data.warnings) hostMappings));
       totalConflicts = lib.length (lib.flatten
-        (lib.mapAttrsToList (name: data: data.validation.conflicts)
+        (lib.mapAttrsToList (_name: data: data.validation.conflicts)
           hostMappings));
 
       # Platform breakdown

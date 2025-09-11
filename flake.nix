@@ -143,8 +143,8 @@
 
         # Create platform mapping from directory structure
         platformMapping =
-          (lib.genAttrs (lib.attrNames nixosHosts) (name: "nixos"))
-          // (lib.genAttrs (lib.attrNames darwinHosts) (name: "darwin"));
+          (lib.genAttrs (lib.attrNames nixosHosts) (_name: "nixos"))
+          // (lib.genAttrs (lib.attrNames darwinHosts) (_name: "darwin"));
 
         # Load actual capability files for hosts
         loadCapabilities = platform: hostName:
