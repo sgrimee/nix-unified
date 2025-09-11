@@ -10,10 +10,12 @@ in {
 
   # Main interface for collecting all host mapping data
   # This will be the primary function used by external tools  
-  collectAllHosts = hostConfigs: platformMapping: capabilityData:
+  collectAllHosts =
+    hostConfigs: platformMapping: capabilityData: packageManagerFactory:
     let
       hostMappings =
-        collector.collectHostMapping hostConfigs platformMapping capabilityData;
+        collector.collectHostMapping hostConfigs platformMapping capabilityData
+        packageManagerFactory;
       systemOverview = collector.collectSystemOverview hostMappings;
     in {
       hosts = hostMappings;
@@ -26,15 +28,18 @@ in {
     };
 
   # Convenience function for single host collection
-  collectHost = hostName: hostConfig: platformMapping: capabilityData:
+  collectHost =
+    hostName: hostConfig: platformMapping: capabilityData: packageManagerFactory:
     collector.collectHostMapping { ${hostName} = hostConfig; } platformMapping
-    capabilityData;
+    capabilityData packageManagerFactory;
 
   # Export as JSON string for external consumption
   exportJSON = data: builtins.toJSON data;
 
   # Export specific host as JSON
-  exportHostJSON = hostName: hostConfig:
+  exportHostJSON =
+    hostName: hostConfig: platformMapping: capabilityData: packageManagerFactory:
     builtins.toJSON
-    (collector.collectHostMapping { ${hostName} = hostConfig; });
+    (collector.collectHostMapping { ${hostName} = hostConfig; } platformMapping
+      capabilityData packageManagerFactory);
 }

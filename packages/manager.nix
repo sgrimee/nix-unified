@@ -94,6 +94,31 @@ in {
 
     in lib.unique (lib.flatten categoryPackages);
 
+  # Generate package names (for analysis/reporting)
+  generatePackageNames = requestedCategories:
+    let
+      # Inline the same logic as generatePackages but return names
+      categoryPackages = map (category:
+        if categories ? ${category} then
+          let
+            cat = categories.${category};
+            packages = (cat.core or [ ])
+              ++ (cat.platformSpecific.${currentPlatform} or [ ])
+              ++ (cat.gpuSpecific.${currentGpu} or [ ])
+              ++ (if category == "development" then
+                lib.flatten (lib.attrValues (cat.languages or { }))
+              else
+                [ ]) ++ (cat.utilities or [ ]) ++ (cat.editors or [ ])
+              ++ (cat.browsers or [ ]);
+          in map (pkg:
+            if lib.isDerivation pkg then
+              pkg.pname or pkg.name or "unknown-package"
+            else
+              toString pkg) packages
+        else
+          [ ]) requestedCategories;
+    in lib.unique (lib.flatten categoryPackages);
+
   # Validate package combinations
   validatePackages = requestedCategories:
     let

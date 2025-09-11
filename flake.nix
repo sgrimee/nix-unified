@@ -155,6 +155,27 @@
           (name: loadCapabilities "nixos" name))
           // (lib.genAttrs (lib.attrNames darwinHosts)
             (name: loadCapabilities "darwin" name));
+
+        # Create package manager factory function
+        packageManagerFactory = hostCapabilities:
+          let
+            overlays = import ./overlays;
+            # Use stable packages with overlays for package derivation
+            pkgs = if hostCapabilities.platform or "" == "darwin" then
+              import inputs.stable-darwin {
+                system = "aarch64-darwin";
+                overlays = overlays;
+                config = stableConfig;
+              }
+            else
+              import inputs.stable-nixos {
+                system = "x86_64-linux";
+                overlays = overlays;
+                config = stableConfig;
+              };
+          in import ./packages/manager.nix {
+            inherit lib pkgs hostCapabilities;
+          };
       in {
         # Main data collection functions
         inherit (reporting)
@@ -162,17 +183,17 @@
 
         # Collect all hosts data with platform information and capability data
         all = reporting.collectAllHosts allHostConfigs platformMapping
-          capabilityData;
+          capabilityData packageManagerFactory;
 
         # Individual host data (lazy evaluation)
         hosts = lib.mapAttrs (name: config:
-          reporting.collectHost name config platformMapping capabilityData)
-          allHostConfigs;
+          reporting.collectHost name config platformMapping capabilityData
+          packageManagerFactory) allHostConfigs;
 
         # Export functions for external tools
         exportAll = reporting.exportJSON
           (reporting.collectAllHosts allHostConfigs platformMapping
-            capabilityData);
+            capabilityData packageManagerFactory);
         exportHost = hostName:
           reporting.exportHostJSON hostName allHostConfigs.${hostName};
 

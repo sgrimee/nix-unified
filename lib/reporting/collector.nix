@@ -36,24 +36,8 @@ let
     };
 
   # Extract package categories and derivation for a host
-  collectHostPackageData = hostConfig:
+  collectHostPackageData = hostConfig: hostCapabilities: packageManager:
     let
-      capabilities = hostConfig.hostCapabilities or { };
-
-      # Import package manager - need to handle the case where it might not exist yet
-      packageManagerPath = ../packages/manager.nix;
-      packageManagerExists = builtins.pathExists packageManagerPath;
-
-      packageManager = if packageManagerExists then
-        import packageManagerPath {
-          inherit lib;
-          # For now, use a mock pkgs if not available
-          pkgs = hostConfig.pkgs or { };
-          hostCapabilities = capabilities;
-        }
-      else
-        null;
-
       # Try to derive categories if package manager exists
       derivation = if packageManager != null then
         try (packageManager.deriveCategories {
@@ -70,6 +54,12 @@ let
       # Generate packages if derivation successful
       packages = if derivation != null then
         try (packageManager.generatePackages derivation.categories)
+      else
+        [ ];
+
+      # Generate package names for statistics
+      packageNames = if derivation != null then
+        try (packageManager.generatePackageNames derivation.categories)
       else
         [ ];
 
@@ -95,6 +85,7 @@ let
       trace = if derivation != null then derivation.trace else { };
       warnings = if derivation != null then derivation.warnings else [ ];
       packages = packages;
+      packageNames = packageNames;
       packageCount = lib.length packages;
       validation = if validation != null then
         validation
@@ -109,12 +100,13 @@ let
         estimatedSize = "unknown";
         categories = [ ];
       };
-      hasPackageManager = packageManagerExists;
+      hasPackageManager = packageManager != null;
     };
 
   # Main function: collect mapping data from all host configurations
   # platformMapping parameter to override platform detection from directory structure
-  collectHostMapping = hostConfigs: platformMapping: capabilityData:
+  collectHostMapping =
+    hostConfigs: platformMapping: capabilityData: packageManagerFactory:
     let
       # Define the extraction function locally
       extractHostDataSafe = hostName: hostConfig:
@@ -122,7 +114,15 @@ let
           capabilities =
             collectHostCapabilities hostConfig hostName platformMapping
             capabilityData;
-          packageData = collectHostPackageData hostConfig;
+
+          # Create package manager instance for this host
+          packageManager = if packageManagerFactory != null then
+            packageManagerFactory capabilities
+          else
+            null;
+
+          packageData =
+            collectHostPackageData hostConfig capabilities packageManager;
           # Override platform if provided in platformMapping
           detectedPlatform =
             platformMapping.${hostName} or capabilities.platform;
@@ -136,6 +136,7 @@ let
           # Package derivation data
           categories = packageData.categories;
           packages = packageData.packages;
+          packageNames = packageData.packageNames;
           packageCount = packageData.packageCount;
 
           # Tracing and debugging info
@@ -165,7 +166,8 @@ let
       allCategories = lib.unique (lib.flatten
         (lib.mapAttrsToList (_name: data: data.categories) hostMappings));
       allPackages = lib.unique (lib.flatten
-        (lib.mapAttrsToList (_name: data: data.packages) hostMappings));
+        (lib.mapAttrsToList (_name: data: data.packageNames or [ ])
+          hostMappings));
 
       # Calculate statistics
       totalWarnings = lib.length (lib.flatten
@@ -192,11 +194,11 @@ let
       # Package usage statistics
       packageUsage = lib.foldl' (acc: package:
         let
-          usage = lib.length
-            (lib.filter (host: lib.elem package hostMappings.${host}.packages)
-              allHosts);
-          hosts =
-            lib.filter (host: lib.elem package hostMappings.${host}.packages)
+          usage = lib.length (lib.filter
+            (host: lib.elem package (hostMappings.${host}.packageNames or [ ]))
+            allHosts);
+          hosts = lib.filter
+            (host: lib.elem package (hostMappings.${host}.packageNames or [ ]))
             allHosts;
         in acc // {
           ${package} = {
