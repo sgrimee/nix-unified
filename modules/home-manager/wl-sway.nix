@@ -147,6 +147,9 @@ in {
       };
     };
 
+    # Home Manager layer: provides per-user sway configuration (keybindings, theming,
+    # startup, etc.). The system-wide module (modules/nixos/sway.nix) only ensures the
+    # global session (.desktop) and binaries are installed for all users.
     wayland.windowManager.sway = {
       enable = true;
       config = {
