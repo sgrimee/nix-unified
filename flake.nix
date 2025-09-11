@@ -134,6 +134,52 @@
       searchPackages = term:
         packageDiscovery.searchPackages term packageManager.categories;
 
+      # Host-to-Package Mapping Reporting System
+      hostPackageMapping = let
+        reporting = import ./lib/reporting { inherit lib; };
+        nixosHosts = generateConfigurations "nixos";
+        darwinHosts = generateConfigurations "darwin";
+        allHostConfigs = nixosHosts // darwinHosts;
+
+        # Create platform mapping from directory structure
+        platformMapping =
+          (lib.genAttrs (lib.attrNames nixosHosts) (name: "nixos"))
+          // (lib.genAttrs (lib.attrNames darwinHosts) (name: "darwin"));
+
+        # Load actual capability files for hosts
+        loadCapabilities = platform: hostName:
+          let capPath = ./hosts + "/${platform}/${hostName}/capabilities.nix";
+          in if builtins.pathExists capPath then import capPath else { };
+
+        capabilityData = (lib.genAttrs (lib.attrNames nixosHosts)
+          (name: loadCapabilities "nixos" name))
+          // (lib.genAttrs (lib.attrNames darwinHosts)
+            (name: loadCapabilities "darwin" name));
+      in {
+        # Main data collection functions
+        inherit (reporting)
+          collectAllHosts collectHost exportJSON exportHostJSON;
+
+        # Collect all hosts data with platform information and capability data
+        all = reporting.collectAllHosts allHostConfigs platformMapping
+          capabilityData;
+
+        # Individual host data (lazy evaluation)
+        hosts = lib.mapAttrs (name: config:
+          reporting.collectHost name config platformMapping capabilityData)
+          allHostConfigs;
+
+        # Export functions for external tools
+        exportAll = reporting.exportJSON
+          (reporting.collectAllHosts allHostConfigs platformMapping
+            capabilityData);
+        exportHost = hostName:
+          reporting.exportHostJSON hostName allHostConfigs.${hostName};
+
+        # Expose platform mapping and capability data for debugging
+        inherit platformMapping capabilityData;
+      };
+
       # Test outputs
       checks = {
         x86_64-linux =

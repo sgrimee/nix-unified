@@ -557,6 +557,178 @@ switch-dracula:
 switch-legion:
     @just switch-host legion
 
+# === Host-to-Package Mapping Reporting ===
+#
+# Systematic 4-version pattern for each data type:
+# For each item: <item>, <item>-host HOST, <item>-json, <item>-host-json HOST
+# 
+# Data Types:
+# - mapping-data: Complete system data  
+# - mapping-capabilities: Host capability information
+# - mapping-packages: Package information (Phase 2)
+# - mapping-hosts: Host discovery and platform info
+# - mapping-statistics: System statistics and analysis
+
+# === COMPLETE DATA ===
+# All hosts - human readable with headers and formatting
+mapping-data:
+    @echo "📊 Host-to-Package Mapping Data"
+    @echo "==============================="
+    @echo "System Overview:"
+    @nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty | jq -r '"  Hosts: " + (.hostCount | tostring) + " (" + (.platforms | join(", ")) + ")"'
+    @nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty | jq -r '"  Categories: " + (.categoryCount | tostring) + ", Packages: " + (.packageCount | tostring)'
+    @nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty | jq -r '"  Avg Packages/Host: " + (.statistics.averagePackagesPerHost | tostring)'
+    @echo ""
+    @echo "🏠 Host Details:"
+    @nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq -r '.hosts | to_entries[] | "\n  📍 " + .key + " (" + .value.platform + "/" + .value.capabilities.hardware.architecture + ")" + "\n     Packages: " + (.value.packageCount | tostring) + ", Categories: " + ((.value.categories | length) | tostring) + "\n     Roles: " + (.value.capabilities.roles | join(", ")) + "\n     Features: " + (if .value.capabilities.features then [.value.capabilities.features | to_entries[] | select(.value == true) | .key] | join(", ") else "none" end) + "\n     Environment: " + .value.capabilities.environment.desktop + "/" + .value.capabilities.environment.shell.primary + "\n     Status: Caps=" + (.value.status.hasCapabilities | tostring) + ", PkgMgr=" + (.value.status.hasPackageManager | tostring) + ", Valid=" + (.value.validation.valid | tostring)'
+
+# Single host - human readable with headers and formatting  
+mapping-data-host HOST:
+    @echo "📊 Host Data: {{HOST}}"
+    @echo "==================="
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Platform: " + .platform'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Architecture: " + .capabilities.hardware.architecture'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Package Count: " + (.packageCount | tostring)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Categories: " + if (.categories | length) > 0 then (.categories | join(", ")) else "none" end'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Packages: " + if (.packages | length) > 0 then (.packages | join(", ")) else "none" end'
+    @echo ""
+    @echo "🔧 Capabilities:"
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Roles: " + (.capabilities.roles | join(", "))'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Features: " + (if .capabilities.features then [.capabilities.features | to_entries[] | select(.value == true) | .key] | join(", ") else "none" end)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Hardware: CPU=" + .capabilities.hardware.cpu + ", GPU=" + .capabilities.hardware.gpu + ", Audio=" + .capabilities.hardware.audio'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Environment: Desktop=" + .capabilities.environment.desktop + ", Shell=" + .capabilities.environment.shell.primary + ", Terminal=" + .capabilities.environment.terminal'
+    @echo ""
+    @echo "📊 Status:"
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Has Capabilities: " + (.status.hasCapabilities | tostring)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Has Package Manager: " + (.status.hasPackageManager | tostring)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Has Packages: " + (.status.hasPackages | tostring)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Has Warnings: " + (.status.hasWarnings | tostring)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Has Conflicts: " + (.status.hasConflicts | tostring)'
+    @echo ""
+    @echo "✅ Validation:"
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Valid: " + (.validation.valid | tostring)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Conflicts: " + if (.validation.conflicts | length) > 0 then (.validation.conflicts | join(", ")) else "none" end'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Missing Requirements: " + if (.validation.missingRequirements | length) > 0 then (.validation.missingRequirements | join(", ")) else "none" end'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "  Warnings: " + if (.warnings | length) > 0 then (.warnings | join(", ")) else "none" end'
+
+# All hosts - clean JSON
+mapping-data-json:
+    nix eval .#hostPackageMapping.all --json --no-warn-dirty
+
+# Single host - clean JSON
+mapping-data-host-json HOST:
+    nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty
+
+# === CAPABILITIES ===
+# All hosts - human readable capabilities summary
+mapping-capabilities:
+    @echo "🔧 Host Capabilities Summary"
+    @echo "============================"
+    @nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq -r '.hosts | to_entries[] | "\n  🔧 " + .key + " (" + .value.platform + "/" + .value.capabilities.hardware.architecture + ")" + "\n    Hardware: CPU=" + .value.capabilities.hardware.cpu + ", GPU=" + .value.capabilities.hardware.gpu + ", Audio=" + .value.capabilities.hardware.audio + "\n    Environment: Desktop=" + .value.capabilities.environment.desktop + ", Shell=" + .value.capabilities.environment.shell.primary + ", Terminal=" + .value.capabilities.environment.terminal + "\n    Features: " + (if .value.capabilities.features then [.value.capabilities.features | to_entries[] | select(.value == true) | .key] | join(", ") else "none" end) + "\n    Roles: " + (.value.capabilities.roles | join(", ")) + "\n    Security: Firewall=" + (.value.capabilities.security.firewall | tostring) + ", VPN=" + (.value.capabilities.security.vpn | tostring) + ", SSH=" + (.value.capabilities.security.ssh.server | tostring)'
+
+# Single host - human readable capabilities detail
+mapping-capabilities-host HOST:
+    @echo "🔧 Capabilities: {{HOST}}"
+    @echo "======================"
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Platform: " + .platform + " (" + .capabilities.hardware.architecture + ")"'
+    @echo "Features:"
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}}.capabilities.features | to_entries[] | "  " + .key + ": " + (.value | tostring)'
+    @echo "Environment:"
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}}.capabilities.environment | to_entries[] | "  " + .key + ": " + (if (.value | type) == "object" then (.value | tostring) else (.value | tostring) end)'
+
+# All hosts - clean JSON capabilities only
+mapping-capabilities-json:
+    nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq '.hosts | map_values(.capabilities)'
+
+# Single host - clean JSON capabilities only
+mapping-capabilities-host-json HOST:
+    nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq '.{{HOST}}.capabilities'
+
+# === PACKAGES ===
+# All hosts - human readable package summary (Phase 2)
+mapping-packages:
+    @echo "📦 Package Summary (Phase 2 - Package Integration Pending)"
+    @echo "=========================================================="
+    @nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq -r '.hosts | to_entries[] | "  " + .key + ": " + (.value.packageCount | tostring) + " packages (" + (.value.categories | join(", ")) + ")"'
+
+# Single host - human readable package detail (Phase 2)
+mapping-packages-host HOST:
+    @echo "📦 Packages: {{HOST}}"
+    @echo "=================="
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Categories: " + (.categories | join(", "))'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Package Count: " + (.packageCount | tostring)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Packages: " + (.packages | join(", "))'
+
+# All hosts - clean JSON packages only  
+mapping-packages-json:
+    nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq '.hosts | map_values({categories, packages, packageCount})'
+
+# Single host - clean JSON packages only
+mapping-packages-host-json HOST:
+    nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq '.{{HOST}} | {categories, packages, packageCount}'
+
+# === HOSTS ===
+# All hosts - human readable host list with details
+mapping-hosts:
+    @echo "🖥️  Discovered Hosts"
+    @echo "=================="
+    @nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq -r '.hosts | to_entries[] | "  " + .key + " (" + .value.platform + ", " + .value.capabilities.hardware.architecture + ")"'
+    @echo ""
+    @nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty | jq -r '"Platform Summary: " + (.statistics.platformBreakdown | to_entries | map(.key + ": " + (.value | tostring)) | join(", "))'
+
+# Single host - human readable host info
+mapping-hosts-host HOST:
+    @echo "🖥️  Host Info: {{HOST}}"
+    @echo "==================="
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Platform: " + .platform'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Architecture: " + .capabilities.hardware.architecture'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Desktop: " + .capabilities.environment.desktop'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Roles: " + (.capabilities.roles | join(", "))'
+
+# All hosts - clean JSON host list
+mapping-hosts-json:
+    nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq '.hosts | keys'
+
+# Single host - clean JSON host info
+mapping-hosts-host-json HOST:
+    nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq '.{{HOST}} | {hostName, platform, capabilities: {hardware: {architecture: .capabilities.hardware.architecture}, environment: {desktop: .capabilities.environment.desktop}, roles: .capabilities.roles}}'
+
+# === STATISTICS ===
+# All hosts - human readable statistics
+mapping-statistics:
+    @echo "📈 System Statistics"
+    @echo "==================="
+    @nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty | jq -r '"Host Count: " + (.hostCount | tostring)'
+    @nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty | jq -r '"Platforms: " + (.platforms | join(", "))'
+    @nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty | jq -r '"Categories: " + (.categoryCount | tostring)'
+    @nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty | jq -r '"Packages: " + (.packageCount | tostring)'
+    @echo "Platform Breakdown:"
+    @nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty | jq -r '.statistics.platformBreakdown | to_entries[] | "  " + .key + ": " + (.value | tostring)'
+
+# Single host - human readable host statistics
+mapping-statistics-host HOST:
+    @echo "📈 Host Statistics: {{HOST}}"
+    @echo "=========================="
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Platform: " + .platform'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Categories: " + (.categories | length | tostring)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Packages: " + (.packageCount | tostring)'
+    @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Status: " + (if .status.hasCapabilities then "✓ Capabilities" else "✗ Capabilities" end) + (if .status.hasPackageManager then " ✓ Packages" else " ✗ Packages" end)'
+
+# All hosts - clean JSON statistics
+mapping-statistics-json:
+    nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty
+
+# Single host - clean JSON host statistics  
+mapping-statistics-host-json HOST:
+    nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq '.{{HOST}} | {hostName, platform, packageCount, categories, status, validation}'
+
+# === VALIDATION ===
+# Show validation results and warnings
+mapping-validate:
+    @echo "🔍 Configuration Validation"
+    @echo "=========================="
+    @nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq '.hosts[] | select(.status.hasWarnings or .status.hasConflicts) | {hostName, warnings, validation: {conflicts: .validation.conflicts}}' || echo "✅ No warnings or conflicts found"
+
 # === Documentation Formatting ===
 
 # Check if uvx is available
