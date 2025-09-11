@@ -197,6 +197,20 @@
         exportHost = hostName:
           reporting.exportHostJSON hostName allHostConfigs.${hostName};
 
+        # Graph export functions for visualization
+        inherit (reporting) toGraphML toDOT toJSONGraph;
+
+        # Graph exports using collected data
+        exportGraphML = reporting.exportGraphML
+          (reporting.collectAllHosts allHostConfigs platformMapping
+            capabilityData packageManagerFactory).hosts;
+        exportDOT = reporting.exportDOT
+          (reporting.collectAllHosts allHostConfigs platformMapping
+            capabilityData packageManagerFactory).hosts;
+        exportJSONGraph = reporting.exportJSONGraph
+          (reporting.collectAllHosts allHostConfigs platformMapping
+            capabilityData packageManagerFactory).hosts;
+
         # Expose platform mapping and capability data for debugging
         inherit platformMapping capabilityData;
       };

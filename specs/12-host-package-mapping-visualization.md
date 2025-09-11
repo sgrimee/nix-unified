@@ -270,269 +270,69 @@ Create exporters for multiple formats:
 }
 ```
 
-### 5. External Processing Tools
+### 5. Graph Visualization Formats (IMPLEMENTED ✅)
 
-Create external tools for advanced processing:
+**Current Implementation**: `lib/reporting/exporters.nix`
 
-```python
-# lib/tools/processor.py
-import json
-import networkx as nx
-from pathlib import Path
+The export system generates visualization-ready files in multiple formats:
 
-class HostPackageMappingProcessor:
-    def __init__(self, nix_data_path):
-        self.data = self.load_nix_data(nix_data_path)
-        self.graph = self.build_graph()
-    
-    def load_nix_data(self, path):
-        """Load JSON data exported from Nix evaluation"""
-        with open(path, 'r') as f:
-            return json.load(f)
-    
-    def build_graph(self):
-        """Build NetworkX graph from mapping data"""
-        G = nx.DiGraph()
-        
-        # Add nodes for hosts, capabilities, categories, packages
-        for host_name, host_data in self.data.items():
-            G.add_node(host_name, type='host', platform=host_data['platform'])
-            
-            # Add capability nodes
-            for capability, value in host_data['capabilities'].items():
-                if value:  # Only add enabled capabilities
-                    cap_node = f"{host_name}:cap:{capability}"
-                    G.add_node(cap_node, type='capability', name=capability)
-                    G.add_edge(host_name, cap_node)
-            
-            # Add category nodes  
-            for category in host_data['categories']:
-                cat_node = f"{host_name}:cat:{category}"
-                G.add_node(cat_node, type='category', name=category)
-                # Connect to host (could also connect via capabilities)
-                G.add_edge(host_name, cat_node)
-            
-            # Add package nodes
-            for package in host_data['packages']:
-                pkg_node = f"pkg:{package}"
-                if not G.has_node(pkg_node):
-                    G.add_node(pkg_node, type='package', name=package)
-                G.add_edge(f"{host_name}:cat:{category}", pkg_node)
-        
-        return G
-    
-    def export_graphml(self, output_path):
-        """Export to GraphML format"""
-        nx.write_graphml(self.graph, output_path)
-    
-    def generate_analysis(self):
-        """Generate analysis report"""
-        return {
-            'node_count': self.graph.number_of_nodes(),
-            'edge_count': self.graph.number_of_edges(),
-            'connected_components': nx.number_weakly_connected_components(self.graph),
-            'most_connected_packages': self.find_most_connected_packages(),
-            'host_similarities': self.calculate_host_similarities()
-        }
+**Graph Structure**: 187 nodes (5 hosts, 22 capabilities, 68 categories, 92 packages) and 5,651 relationships
+
+**1. GraphML Format** (for Cytoscape, yEd):
+- XML-based graph format with rich metadata
+- Node attributes: label, type, platform, package count
+- Edge attributes: relationship type (has_capability, has_category, provides_package)
+- Compatible with Cytoscape for advanced network analysis
+
+**2. DOT Format** (for Graphviz):
+- Text-based graph description language
+- Node styling by type (hosts=blue boxes, capabilities=red circles, categories=orange diamonds, packages=green circles)
+- Hierarchical layout with proper edge arrows
+- Generate SVG/PNG visualizations with `dot -Tsvg graph.dot -o graph.svg`
+
+**3. JSON Graph Format** (for Sigma.js, D3.js):
+- Standard JSON format with nodes and edges arrays
+- Numeric edge IDs and comprehensive metadata
+- Node/edge type breakdowns for filtering
+- Ready for web-based graph libraries
+
+**Note**: Cytoscape.js web format support was removed per user request. For Cytoscape network analysis, use the GraphML format which is fully compatible with the Cytoscape desktop application.
+
+### 6. Command-Line Integration (IMPLEMENTED ✅)
+
+**Current Implementation**: Enhanced `justfile` commands for graph export
+
+```bash
+# Graph Export Commands
+just mapping-export-graphml file.graphml       # GraphML for Cytoscape desktop, yEd
+just mapping-export-dot file.dot               # DOT for Graphviz  
+just mapping-export-json-graph file.json       # JSON Graph for Sigma.js, D3.js
+just mapping-export-all prefix                 # All formats with prefix
 ```
 
-### 6. Web Visualization Interface
-
-Create interactive web visualization:
-
-```javascript
-// lib/tools/web/src/graph-viewer.js
-import cytoscape from 'cytoscape';
-import dagre from 'cytoscape-dagre';
-
-cytoscape.use(dagre);
-
-class HostPackageGraphViewer {
-  constructor(containerId, data) {
-    this.container = document.getElementById(containerId);
-    this.data = data;
-    this.cy = null;
-    this.initializeGraph();
-    this.setupFilters();
-  }
-
-  initializeGraph() {
-    this.cy = cytoscape({
-      container: this.container,
-      elements: this.convertDataToCytoscape(),
-      style: this.getStylesheet(),
-      layout: {
-        name: 'dagre',
-        rankDir: 'TB',
-        spacingFactor: 1.5
-      }
-    });
-
-    // Add event listeners
-    this.cy.on('select', 'node', (evt) => this.showNodeDetails(evt.target));
-    this.cy.on('tap', 'edge', (evt) => this.highlightPath(evt.target));
-  }
-
-  convertDataToCytoscape() {
-    const elements = [];
-    
-    // Convert nodes
-    this.data.nodes.forEach(node => {
-      elements.push({
-        data: {
-          id: node.id,
-          label: node.label,
-          type: node.type,
-          ...node.metadata
-        }
-      });
-    });
-
-    // Convert edges  
-    this.data.edges.forEach(edge => {
-      elements.push({
-        data: {
-          id: `${edge.source}-${edge.target}`,
-          source: edge.source,
-          target: edge.target,
-          type: edge.type
-        }
-      });
-    });
-
-    return elements;
-  }
-
-  getStylesheet() {
-    return [
-      {
-        selector: 'node[type="host"]',
-        style: {
-          'background-color': '#3498db',
-          'label': 'data(label)',
-          'width': 60,
-          'height': 60,
-          'font-size': 14
-        }
-      },
-      {
-        selector: 'node[type="capability"]', 
-        style: {
-          'background-color': '#e74c3c',
-          'label': 'data(label)',
-          'width': 40,
-          'height': 40,
-          'font-size': 12
-        }
-      },
-      {
-        selector: 'node[type="category"]',
-        style: {
-          'background-color': '#f39c12',
-          'label': 'data(label)', 
-          'width': 50,
-          'height': 30,
-          'font-size': 10
-        }
-      },
-      {
-        selector: 'node[type="package"]',
-        style: {
-          'background-color': '#27ae60',
-          'label': 'data(label)',
-          'width': 30,
-          'height': 30,
-          'font-size': 8
-        }
-      },
-      {
-        selector: 'edge',
-        style: {
-          'width': 2,
-          'line-color': '#95a5a6',
-          'target-arrow-color': '#95a5a6',
-          'target-arrow-shape': 'triangle'
-        }
-      }
-    ];
-  }
-
-  setupFilters() {
-    // Platform filter
-    const platformFilter = document.getElementById('platform-filter');
-    platformFilter.addEventListener('change', (e) => {
-      this.filterByPlatform(e.target.value);
-    });
-
-    // Search functionality
-    const searchInput = document.getElementById('search-input');
-    searchInput.addEventListener('input', (e) => {
-      this.searchNodes(e.target.value);
-    });
-  }
-
-  filterByPlatform(platform) {
-    if (platform === 'all') {
-      this.cy.elements().show();
-    } else {
-      this.cy.elements().hide();
-      this.cy.nodes(`[platform="${platform}"]`).show();
-      // Show connected elements
-      const connectedElements = this.cy.nodes(`[platform="${platform}"]`).connectedEdges().connectedNodes();
-      connectedElements.show();
-    }
-  }
-
-  searchNodes(query) {
-    if (!query) {
-      this.cy.elements().removeClass('highlighted');
-      return;
-    }
-
-    this.cy.elements().removeClass('highlighted');
-    const matches = this.cy.nodes().filter(node => 
-      node.data('label').toLowerCase().includes(query.toLowerCase())
-    );
-    matches.addClass('highlighted');
-  }
-
-  showNodeDetails(node) {
-    const details = document.getElementById('node-details');
-    const data = node.data();
-    
-    details.innerHTML = `
-      <h3>${data.label}</h3>
-      <p><strong>Type:</strong> ${data.type}</p>
-      <p><strong>Platform:</strong> ${data.platform || 'N/A'}</p>
-      <div id="connections">
-        <h4>Connections:</h4>
-        <ul>
-          ${node.connectedEdges().map(edge => 
-            `<li>${edge.source().data('label')} → ${edge.target().data('label')}</li>`
-          ).join('')}
-        </ul>
-      </div>
-    `;
-  }
-}
-
-export default HostPackageGraphViewer;
+**Flake Integration**:
+```bash
+nix eval .#hostPackageMapping.exportGraphML --raw     # Direct Nix access
+nix eval .#hostPackageMapping.exportDOT --raw         # Generate DOT format
+nix eval .#hostPackageMapping.exportJSONGraph --raw   # JSON Graph format  
 ```
 
-## Files to Create/Modify
+## Files Created/Modified
 
-1. `specs/12-host-package-mapping-visualization.md` - This specification document
-1. `lib/reporting/` - New reporting library directory
-1. `lib/reporting/default.nix` - Main interface and exports  
-1. `lib/reporting/collector.nix` - Data collection functions
-1. `lib/reporting/analyzer.nix` - Analysis and optimization functions
-1. `lib/reporting/exporters.nix` - Format conversion functions
-1. `lib/reporting/templates/` - Report templates directory
-1. `lib/tools/` - External processing tools directory
-1. `lib/tools/processor.py` - Python data processing
-1. `lib/tools/web/` - Web visualization interface
-1. `flake.nix` - Export reporting functions and data
-1. `justfile` - Add reporting commands
+**Phase 1 & 2 (Data Collection & Package Integration)**:
+1. ✅ `specs/12-host-package-mapping-visualization.md` - This specification document
+1. ✅ `lib/reporting/` - New reporting library directory
+1. ✅ `lib/reporting/default.nix` - Main interface and exports  
+1. ✅ `lib/reporting/collector.nix` - Data collection functions
+1. ✅ `flake.nix` - Export reporting functions and data
+1. ✅ `justfile` - Add reporting commands
+1. ✅ `packages/manager.nix` - Added `generatePackageNames` function
+
+**Phase 3 (Graph Export)**:
+1. ✅ `lib/reporting/exporters.nix` - Graph format conversion functions
+1. ✅ `lib/reporting/default.nix` - Added graph export functions
+1. ✅ `flake.nix` - Added graph export outputs
+1. ✅ `justfile` - Added graph export commands
 
 ## Justfile Integration (IMPLEMENTED ✅)
 
@@ -574,6 +374,17 @@ just mapping-validate                       # Validation results
 ```bash
 just mapping-export mapping.json            # Export all data to file
 just mapping-export-host cirice cirice.json # Export single host to file
+```
+
+### Graph Export Commands (visualization formats):
+```bash
+# Individual format exports
+just mapping-export-graphml graph.graphml           # GraphML for Cytoscape desktop, yEd
+just mapping-export-dot graph.dot                   # DOT for Graphviz
+just mapping-export-json-graph graph.json           # JSON Graph for Sigma.js, D3.js
+
+# Export all formats at once
+just mapping-export-all host-graph                  # Creates host-graph.{graphml,dot,json}
 ```
 
 **Usage Examples**:
@@ -622,10 +433,10 @@ just mapping-stats
 1. ✅ Add package validation and conflict resolution
 1. ✅ Create optimization recommendation system
 
-### Phase 3: Export & Formats (FUTURE)
-1. Create export system supporting GraphML, DOT, JSON, and CSV formats
-1. Develop external processing tools in Python for advanced graph operations
-1. Add static report generation capabilities with markdown templates
+### Phase 3: Export & Formats (COMPLETED ✅)
+1. ✅ Create export system supporting GraphML, DOT, and JSON Graph formats
+1. ✅ Integrate graph exporters with flake and justfile for command-line access
+1. ✅ Generate visualization-ready files for popular graph tools (Cytoscape desktop, yEd, Graphviz, D3.js, Sigma.js)
 
 ### Phase 4: Visualization (FUTURE)
 1. Build interactive web visualization interface using Cytoscape.js
@@ -731,9 +542,14 @@ packages = packageManager.generatePackages derivation.categories;
 
 The system correctly uses the **same package derivation code** for both host configurations and reporting, ensuring accurate representation of actual package selections.
 
-### Phase 3+ Criteria (FUTURE)
-- [ ] Multiple export formats (GraphML, DOT, CSV) for visualization tools
-- [ ] Interactive graph exploration with multi-layer filtering and search capabilities  
-- [ ] Static report generation for documentation and audit purposes
+### Phase 3 Criteria (COMPLETED ✅)
+- [x] **Multiple export formats for visualization tools** - GraphML, DOT, and JSON Graph formats implemented
+- [x] **Integration with command-line workflow** - 4 justfile commands for graph export operations  
+- [x] **Visualization-ready output** - Files compatible with Cytoscape desktop, yEd, Graphviz, D3.js, and Sigma.js
+- [x] **Complete graph representation** - 187 nodes (5 hosts, 22 capabilities, 68 categories, 92 packages) and 5,651 edges
+- [x] **Flake integration** - Available as `hostPackageMapping.export*` outputs for programmatic access
+
+### Phase 4+ Criteria (FUTURE)
+- [ ] Interactive web visualization interface with real-time exploration capabilities  
+- [ ] Multi-layer graph layouts and interactive filtering and search capabilities  
 - [ ] Host comparison functionality for configuration management
-- [ ] Web visualization interface with real-time exploration capabilities

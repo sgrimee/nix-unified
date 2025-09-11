@@ -36,7 +36,7 @@ let
     };
 
   # Extract package categories and derivation for a host
-  collectHostPackageData = hostConfig: hostCapabilities: packageManager:
+  collectHostPackageData = _hostConfig: _hostCapabilities: packageManager:
     let
       # Try to derive categories if package manager exists
       derivation = if packageManager != null then

@@ -2,7 +2,9 @@
 # Main interface for host-to-package mapping visualization and reporting system
 { lib, pkgs ? null, ... }:
 
-let collector = import ./collector.nix { inherit lib; };
+let
+  collector = import ./collector.nix { inherit lib; };
+  exporters = import ./exporters.nix { inherit lib; };
 in {
   # Core data collection functions
   inherit (collector)
@@ -42,4 +44,12 @@ in {
     builtins.toJSON
     (collector.collectHostMapping { ${hostName} = hostConfig; } platformMapping
       capabilityData packageManagerFactory);
+
+  # Graph export functions
+  inherit (exporters) toGraphML toDOT toJSONGraph getGraphStats;
+
+  # Convenience functions for graph exports
+  exportGraphML = hostMappings: exporters.toGraphML hostMappings;
+  exportDOT = hostMappings: exporters.toDOT hostMappings;
+  exportJSONGraph = hostMappings: exporters.toJSONGraph hostMappings;
 }

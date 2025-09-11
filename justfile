@@ -729,6 +729,34 @@ mapping-validate:
     @echo "=========================="
     @nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq '.hosts[] | select(.status.hasWarnings or .status.hasConflicts) | {hostName, warnings, validation: {conflicts: .validation.conflicts}}' || echo "✅ No warnings or conflicts found"
 
+# === Graph Exports for Visualization ===
+
+# Export to GraphML format (for Cytoscape, yEd)
+mapping-export-graphml FILE:
+    @echo "📊 Exporting to GraphML format..."
+    @nix eval .#hostPackageMapping.exportGraphML --raw --no-warn-dirty > {{FILE}}
+    @echo "✅ GraphML exported to {{FILE}}"
+
+# Export to DOT format (for Graphviz)
+mapping-export-dot FILE:
+    @echo "📊 Exporting to DOT format..."
+    @nix eval .#hostPackageMapping.exportDOT --raw --no-warn-dirty > {{FILE}}
+    @echo "✅ DOT exported to {{FILE}}"
+
+# Export to JSON Graph format (for Sigma.js, D3.js)
+mapping-export-json-graph FILE:
+    @echo "📊 Exporting to JSON Graph format..."
+    @nix eval .#hostPackageMapping.exportJSONGraph --raw --no-warn-dirty > {{FILE}}
+    @echo "✅ JSON Graph exported to {{FILE}}"
+
+# Generate all graph formats (for quick testing)
+mapping-export-all PREFIX:
+    @echo "📊 Exporting all graph formats with prefix '{{PREFIX}}'..."
+    @just mapping-export-graphml {{PREFIX}}.graphml
+    @just mapping-export-dot {{PREFIX}}.dot
+    @just mapping-export-json-graph {{PREFIX}}.json
+    @echo "✅ All formats exported with prefix {{PREFIX}}"
+
 # === Documentation Formatting ===
 
 # Check if uvx is available
