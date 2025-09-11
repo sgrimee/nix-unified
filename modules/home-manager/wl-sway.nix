@@ -167,10 +167,25 @@ in {
           colors = {
             statusline = "#ffffff";
             background = "#323232";
+            activeWorkspace = {
+              border = "#89b4fa";
+              background = "#89b4fa";
+              text = "#1e1e2e";
+            };
+            focusedWorkspace = {
+              border = "#f38ba8";
+              background = "#f38ba8";
+              text = "#1e1e2e";
+            };
             inactiveWorkspace = {
               border = "#32323200";
               background = "#32323200";
               text = "#5c5c5c";
+            };
+            urgentWorkspace = {
+              border = "#f9e2af";
+              background = "#f9e2af";
+              text = "#1e1e2e";
             };
           };
         }];
