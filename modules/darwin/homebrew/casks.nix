@@ -11,7 +11,6 @@
   "busycal"
   "cocoapacketanalyzer"
   "curseforge"
-  "daisydisk"
   "devonthink"
   "discord"
   "docker-desktop"
