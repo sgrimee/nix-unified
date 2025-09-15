@@ -1,11 +1,10 @@
 # packages/categories/fonts.nix
-{ pkgs, lib, hostCapabilities ? { }, ... }:
-{
+{ pkgs, lib, hostCapabilities ? { }, ... }: {
   core = with pkgs; [
-    meslo-lgs-nf
-    nerd-fonts.fira-code
-    nerd-fonts.fira-mono
-    nerd-fonts.hack
+    meslo-lgs-nf # Meslo LG S Nerd Font for terminals
+    nerd-fonts.fira-code # Fira Code with programming ligatures
+    nerd-fonts.fira-mono # Fira Mono monospaced font
+    nerd-fonts.hack # Hack font optimized for source code
   ];
 
   metadata = {

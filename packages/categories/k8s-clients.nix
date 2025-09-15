@@ -1,11 +1,10 @@
 # packages/categories/k8s-clients.nix
-{ pkgs, lib, hostCapabilities ? { }, ... }:
-{
+{ pkgs, lib, hostCapabilities ? { }, ... }: {
   core = with pkgs; [
-    kubectl
-    k9s
-    kubectx
-    kubelogin-oidc
+    kubectl # Kubernetes command-line interface
+    k9s # Terminal UI for Kubernetes clusters
+    kubectx # Switch between kubectl contexts and namespaces
+    kubelogin-oidc # OIDC authentication plugin for kubectl
   ];
 
   metadata = {

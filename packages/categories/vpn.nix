@@ -3,10 +3,10 @@
   core = with pkgs;
   # NetworkManager tools only available on Linux
     (lib.optionals pkgs.stdenv.isLinux [
-      networkmanagerapplet
-      networkmanager-l2tp
-      strongswan
-      xl2tpd
+      networkmanagerapplet # NetworkManager system tray applet
+      networkmanager-l2tp # L2TP VPN plugin for NetworkManager
+      strongswan # IPsec-based VPN solution
+      xl2tpd # Layer 2 Tunneling Protocol daemon
     ]) ++
     # Cross-platform VPN tools
     [

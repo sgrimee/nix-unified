@@ -3,23 +3,42 @@
 
 {
   # Core gaming packages (cross-platform)
-  core = with pkgs; [ discord ];
+  core = with pkgs;
+    [
+      discord # Voice and text chat for gamers
+    ];
 
   # Gaming utilities (Linux-specific tools)
   utilities = with pkgs;
-    lib.optionals pkgs.stdenv.isLinux [ mangohud goverlay protontricks ];
+    lib.optionals pkgs.stdenv.isLinux [
+      mangohud # Gaming overlay for monitoring FPS, temps, CPU/GPU load
+      goverlay # GUI for MangoHud configuration
+      protontricks # Wine prefix manager for Steam games
+    ];
 
   # Gaming platforms (mostly Linux-specific)
   platforms = with pkgs;
-    lib.optionals pkgs.stdenv.isLinux [ steam lutris lunar-client ];
+    lib.optionals pkgs.stdenv.isLinux [
+      steam # Steam gaming platform
+      lutris # Game launcher for Linux
+      lunar-client # Minecraft client with mods and optimizations
+    ];
 
   # Emulation (cross-platform)
   emulation = with pkgs;
-    [ retroarch ] ++ lib.optionals pkgs.stdenv.isLinux [ dolphin-emu pcsx2 ];
+    [
+      retroarch # Multi-platform emulator frontend
+    ] ++ lib.optionals pkgs.stdenv.isLinux [
+      dolphin-emu # GameCube and Wii emulator
+      pcsx2 # PlayStation 2 emulator
+    ];
 
   # Platform-specific gaming
   platformSpecific = {
-    linux = with pkgs; [ gamemode gamescope ];
+    linux = with pkgs; [
+      gamemode # Optimize system performance for games
+      gamescope # Wayland compositor for gaming
+    ];
 
     darwin = with pkgs;
       [
@@ -29,9 +48,15 @@
 
   # GPU-specific packages
   gpuSpecific = {
-    nvidia = with pkgs; [ nvidia-vaapi-driver ];
+    nvidia = with pkgs;
+      [
+        nvidia-vaapi-driver # NVIDIA VAAPI driver for video acceleration
+      ];
 
-    amd = with pkgs; [ amdvlk ];
+    amd = with pkgs;
+      [
+        amdvlk # AMD Vulkan driver
+      ];
   };
 
   metadata = {

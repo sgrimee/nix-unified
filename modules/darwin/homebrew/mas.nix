@@ -1,20 +1,29 @@
-# mas search <app name>
+# Mac App Store applications (use `mas search <app name>` to find IDs)
 { ... }: {
-  "BlueSee" = 1336679524;
-  "Brother P-touch Editor" = 1453365242;
-  "BT Terminal" = 1511543453;
-  "Deliveries" = 924726344;
-  "Discovery" = 1381004916;
-  "eidReader" = 1190651975;
-  "LightBlue" = 557428110;
-  "MacFamilyTree 10" = 1567970985;
-  "MindNode" = 1289197285;
-  "Overlap" = 1516950324;
-  "Paprika Recipe Manager 3" = 1303222628;
-  "Plash" = 1494023538;
-  "SDR Control for Icom" = 1592313285;
-  "SmartSDR for Mac" = 1523656696;
-  "Speedtest" = 1153157709;
-  "Spotica Menu" = 570549457;
-  "WiFi Signal" = 525912054;
+  # Bluetooth & Hardware Tools
+  "BlueSee" = 1336679524; # Bluetooth Low Energy scanner
+  "BT Terminal" = 1511543453; # Bluetooth terminal for IoT devices
+  "LightBlue" = 557428110; # Bluetooth Low Energy scanner and analyzer
+
+  # Productivity & Organization
+  "Deliveries" = 924726344; # Package tracking application
+  "MindNode" = 1289197285; # Mind mapping and brainstorming tool
+  "Overlap" = 1516950324; # Time zone converter and meeting planner
+  "Paprika Recipe Manager 3" = 1303222628; # Recipe management and meal planning
+
+  # System & Network Utilities
+  "Discovery" = 1381004916; # Network discovery and port scanning
+  "Speedtest" = 1153157709; # Internet speed testing by Ookla
+  "WiFi Signal" = 525912054; # WiFi network analyzer and signal strength monitor
+  "Plash" = 1494023538; # Website as desktop wallpaper
+
+  # Ham Radio & SDR
+  "SDR Control for Icom" = 1592313285; # Software defined radio control for Icom
+  "SmartSDR for Mac" = 1523656696; # FlexRadio SmartSDR client
+
+  # Specialized Tools
+  "eidReader" = 1190651975; # Belgian eID card reader
+  "Brother P-touch Editor" = 1453365242; # Brother label printer editor
+  "MacFamilyTree 10" = 1567970985; # Genealogy and family tree software
+  "Spotica Menu" = 570549457; # Spotify menu bar controller
 }

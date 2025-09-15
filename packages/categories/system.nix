@@ -3,7 +3,15 @@
 
 {
   core = with pkgs;
-    [ qemu wakeonlan du-dust ncdu pat poppler unrar ] ++
+    [
+      qemu # Hardware virtualization and emulation
+      wakeonlan # Wake-on-LAN magic packet sender
+      du-dust # Disk usage analyzer with tree view
+      ncdu # Interactive ncurses disk usage analyzer
+      pat # Packet analysis toolkit
+      poppler # PDF rendering library utilities
+      unrar # RAR archive extraction utility
+    ] ++
     # Linux-specific system tools
     lib.optionals pkgs.stdenv.isLinux [
       interception-tools # Keyboard interception framework
