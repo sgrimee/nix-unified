@@ -3,7 +3,7 @@
 
 {
   core = with pkgs;
-    [ qemu wakeonlan du-dust pat poppler unrar ] ++
+    [ qemu wakeonlan du-dust ncdu pat poppler unrar ] ++
     # Linux-specific system tools
     lib.optionals pkgs.stdenv.isLinux [
       interception-tools # Keyboard interception framework
