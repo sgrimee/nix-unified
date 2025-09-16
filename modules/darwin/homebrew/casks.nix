@@ -7,7 +7,6 @@
   "docker-desktop" # Docker containerization platform
   "visual-studio-code" # Microsoft Visual Studio Code editor
   "visual-studio-code@insiders" # VS Code Insiders (preview build)
-  "windsurf" # AI-powered code editor
   "itermai" # AI-powered development assistant
   "gitup-app" # Git repository management application
   "mongodb-compass" # MongoDB GUI client
