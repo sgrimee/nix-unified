@@ -9,31 +9,11 @@
     localHostName = "SGRIMEE-M-4HJT";
   };
 
-  nix = {
-    distributedBuilds = true;
-    buildMachines = [
-      {
-        hostName = "cirice.local";
-        maxJobs = 8;
-        speedFactor = 100; # High priority - fastest build server
-        sshUser = "sgrimee";
-        sshKey = "/Users/sgrimee/.ssh/id_ed25519";
-        system = "x86_64-linux";
-        supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
-        publicHostKey =
-          "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUxsMUt4UEpXWFdHNnZOTTBEMVJkRllOWGx6UnNtaEVvclhjaVV4cER6M3ggcm9vdEBjaXJpY2UK";
-      }
-      {
-        hostName = "legion.local";
-        maxJobs = 8;
-        speedFactor = 50; # Lower priority fallback
-        sshUser = "sgrimee";
-        sshKey = "/Users/sgrimee/.ssh/id_ed25519";
-        system = "x86_64-linux";
-        supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
-        publicHostKey =
-          "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSVBydlBka3VmUFNoMEFJWi9mSWh0V25rd3NqV2x6anQ5RWpEK2J5bDY4Z0sgcm9vdEBuaXhvcwo=";
-      }
-    ];
+  # Host-specific Determinate Nix settings
+  determinate-nix.customSettings = {
+    # Distributed builds configuration
+    distributed-builds = true;
+    builders =
+      "ssh://sgrimee@cirice.local x86_64-linux /Users/sgrimee/.ssh/id_ed25519 8 100 kvm,nixos-test,big-parallel c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUxsMUt4UEpXWFdHNnZOTTBEMVJkRllOWGx6UnNtaEVvclhjaVV4cER6M3ggcm9vdEBjaXJpY2UK ssh://sgrimee@legion.local x86_64-linux /Users/sgrimee/.ssh/id_ed25519 8 50 kvm,nixos-test,big-parallel c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSVBydlBka3VmUFNoMEFJWi9mSWh0V25rd3NqV2x6anQ5RWpEK2J5bDY4Z0sgcm9vdEBuaXhvcwo=";
   };
 }

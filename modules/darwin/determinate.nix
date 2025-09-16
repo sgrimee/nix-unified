@@ -9,9 +9,8 @@ let
   # Keep options enabled only for hosts with large disk capability
   enableKeepOptions = hostCapabilities.hardware.large-disk or false;
 in {
-  nix = {
-    enable = false; # Let Determinate Nix handle Nix configuration
-  };
+  # Disable nix-darwin's Nix management - Determinate Nix handles everything
+  nix.enable = lib.mkForce false;
 
   # Determinate Nix custom settings
   determinate-nix.customSettings = {
