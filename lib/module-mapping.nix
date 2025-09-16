@@ -16,6 +16,7 @@
       ../modules/nixos/nix.nix
       ../modules/nixos/time.nix
       ../modules/nixos/polkit.nix
+      ../modules/nixos/build-machines.nix
     ];
 
     darwin = [
@@ -29,8 +30,10 @@
       ../modules/darwin/mac-app-util.nix
       ../modules/darwin/music_app.nix
       ../modules/darwin/screen.nix
+      ../modules/darwin/sudo.nix
       ../modules/darwin/system.nix
       ../modules/darwin/trackpad.nix
+      ../modules/darwin/build-machines.nix
     ];
 
     shared = [

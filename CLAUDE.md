@@ -279,6 +279,10 @@ just install-hooks
 
 ## OpenCode Operational Guidelines
 
+- **Interactive Command Limitations**: You cannot run interactive commands. This includes:
+  - `sudo` commands (interactive and will not work)
+  - Any command requiring user input or confirmation
+  - Always ask the user to run these commands on your behalf
 - Never run `just switch`, `nixos-rebuild switch`, `darwin-rebuild switch`, or any other system switching commands - these require sudo access which is not available
 - Always tell the user to run these commands themselves when system switching is needed
 - You can use `nix build` to test configurations and verify they compile correctly without switching
