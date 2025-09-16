@@ -1,6 +1,5 @@
 { ... }: [
   "borders" # macOS window border utility
-  "brunoluiz/tap/mermaid-server" # Mermaid diagram server
   "dua-cli" # Disk usage analyzer with interactive mode
   "node" # JavaScript runtime (managed by modules/home-manager/user/programs/node.nix)
   "pam-reattach" # Reattach to user namespace on macOS
