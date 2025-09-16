@@ -34,7 +34,7 @@
   };
 
   # IDE and editors
-  editors = with pkgs; [ vscode vim neovim ];
+  editors = with pkgs; [ vim neovim ];
 
   # Platform-specific development tools
   platformSpecific = {
@@ -47,12 +47,14 @@
       nodePackages.npm
       nodePackages.yarn
       nodePackages.typescript
+      # VSCode (Linux only - Darwin uses Homebrew)
+      vscode
     ];
 
     darwin = with pkgs;
       [
         # macOS-specific dev tools
-        # Note: Node.js/npm managed by Homebrew on Darwin
+        # Note: Node.js/npm and VSCode managed by Homebrew on Darwin
       ];
   };
 
