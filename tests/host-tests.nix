@@ -32,8 +32,7 @@ let
   # Generate tests for all critical files for a host
   generateHostTests = platform: hostName:
     let
-      requiredFiles =
-        [ "system.nix" "home.nix" "default.nix" "capabilities.nix" ];
+      requiredFiles = [ "system.nix" "home.nix" "capabilities.nix" ];
       tests = map (fileName: generateHostFileTest platform hostName fileName)
         requiredFiles;
     in lib.listToAttrs tests;
@@ -96,6 +95,79 @@ in lib.listToAttrs allHostTests // {
       hasCirice = lib.elem "cirice" nixosHosts;
       hasSGRIMEE = lib.elem "SGRIMEE-M-4HJT" darwinHosts;
     in hasNixair && hasDracula && hasLegion && hasCirice && hasSGRIMEE;
+    expected = true;
+  };
+
+  # Test that ALL hosts use capability system (mandatory)
+  testAllHostsHaveCapabilities = {
+    expr = let
+      checkPlatformHosts = platform: hosts:
+        lib.all (hostName:
+          builtins.pathExists ../hosts/${platform}/${hostName}/capabilities.nix)
+        hosts;
+
+      nixosCompliant = checkPlatformHosts "nixos" (allHosts.nixos or [ ]);
+      darwinCompliant = checkPlatformHosts "darwin" (allHosts.darwin or [ ]);
+    in nixosCompliant && darwinCompliant;
+    expected = true;
+  };
+
+  # Test that NO hosts have legacy default.nix files (they should be removed)
+  testNoLegacyDefaultFiles = {
+    expr = let
+      checkPlatformHosts = platform: hosts:
+        lib.all (hostName:
+          !(builtins.pathExists ../hosts/${platform}/${hostName}/default.nix))
+        hosts;
+
+      nixosCompliant = checkPlatformHosts "nixos" (allHosts.nixos or [ ]);
+      darwinCompliant = checkPlatformHosts "darwin" (allHosts.darwin or [ ]);
+    in nixosCompliant && darwinCompliant;
+    expected = true;
+  };
+
+  # Test that module-level default.nix files are removed (capability system handles imports)
+  # Exception: home-manager default.nix is still needed for the capability system
+  testNoModuleDefaultFiles = {
+    expr = let
+      darwinDefaultGone = !(builtins.pathExists ../modules/darwin/default.nix);
+      nixosDefaultGone = !(builtins.pathExists ../modules/nixos/default.nix);
+      homeManagerDefaultExists =
+        builtins.pathExists ../modules/home-manager/default.nix;
+    in darwinDefaultGone && nixosDefaultGone && homeManagerDefaultExists;
+    expected = true;
+  };
+
+  # Test that capability files are syntactically valid
+  testCapabilityFilesValid = {
+    expr = let
+      checkCapabilityFile = platform: hostName:
+        let capFile = ../hosts/${platform}/${hostName}/capabilities.nix;
+        in if builtins.pathExists capFile then
+          builtins.tryEval (import capFile)
+        else {
+          success = false;
+        };
+
+      checkPlatformCapabilities = platform: hosts:
+        lib.all (hostName: (checkCapabilityFile platform hostName).success)
+        hosts;
+
+      nixosValid = checkPlatformCapabilities "nixos" (allHosts.nixos or [ ]);
+      darwinValid = checkPlatformCapabilities "darwin" (allHosts.darwin or [ ]);
+    in nixosValid && darwinValid;
+    expected = true;
+  };
+
+  # Test capability system configuration structure
+  testCapabilitySystemStructure = {
+    expr = let
+      capabilityLoaderExists = builtins.pathExists ../lib/capability-loader.nix;
+      capabilityIntegrationExists =
+        builtins.pathExists ../lib/capability-integration.nix;
+      moduleMappingExists = builtins.pathExists ../lib/module-mapping.nix;
+    in capabilityLoaderExists && capabilityIntegrationExists
+    && moduleMappingExists;
     expected = true;
   };
 }

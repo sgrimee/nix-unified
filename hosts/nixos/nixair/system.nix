@@ -36,7 +36,6 @@
   };
 
   nix = {
-    distributedBuilds = true;
     buildMachines = [
       {
         hostName = "cirice.local";

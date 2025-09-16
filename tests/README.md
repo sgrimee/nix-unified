@@ -9,7 +9,7 @@ Tests that validate basic functionality and individual components in isolation.
 
 - **`basic.nix`** - Core configuration validation, system structure, flake integrity, and host patterns
 - **`module-tests.nix`** - Module structure validation, path checking, and basic module imports
-- **`host-tests.nix`** - Host configuration file validation and dynamic host discovery
+- **`host-tests.nix`** - Host configuration file validation, dynamic host discovery, and capability system compliance
 - **`utility-tests.nix`** - Basic Nix operations, library functions, and utility validation
 
 ### System Tests  
@@ -83,6 +83,7 @@ Tests are designed to be self-contained but rely on:
 - Standard nixpkgs library functions
 - Overlays applied to pkgs for custom packages
 - Proper file system structure (hosts/, modules/, etc.)
+- All hosts having mandatory `capabilities.nix` files (capability system requirement)
 
 ## Deprecated Files
 

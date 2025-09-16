@@ -23,7 +23,14 @@
       ../modules/darwin/networking.nix
       ../modules/darwin/dock.nix
       ../modules/darwin/finder.nix
-      # Other core modules don't exist yet - will be added incrementally
+      ../modules/darwin/environment.nix
+      ../modules/darwin/homebrew
+      ../modules/darwin/keyboard.nix
+      ../modules/darwin/mac-app-util.nix
+      ../modules/darwin/music_app.nix
+      ../modules/darwin/screen.nix
+      ../modules/darwin/system.nix
+      ../modules/darwin/trackpad.nix
     ];
 
     shared = [
@@ -300,7 +307,7 @@
       };
       client = {
         nixos = [ ];
-        darwin = [ ];
+        darwin = [ ../modules/darwin/ssh.nix ];
         homeManager = [ ];
       };
     };
@@ -337,14 +344,7 @@
       requiresArgs = [ "inputs" "host" "user" ];
     };
 
-    nixosBase = {
-      path = ../modules/nixos;
-      requiresArgs = [ "inputs" "host" "user" ];
-    };
-
-    darwinBase = {
-      path = ../modules/darwin;
-      requiresArgs = [ "inputs" "host" "user" ];
-    };
+    # nixosBase and darwinBase removed - individual modules are now imported directly
+    # via coreModules and other capability-based mappings
   };
 }

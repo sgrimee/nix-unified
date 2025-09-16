@@ -96,7 +96,7 @@ let
       let
         hostDir = ../hosts/${platform}/${hostName};
         requiredFiles =
-          [ "default.nix" "system.nix" "home.nix" "packages.nix" ];
+          [ "capabilities.nix" "system.nix" "home.nix" "packages.nix" ];
         fileExists =
           map (file: builtins.pathExists (hostDir + "/${file}")) requiredFiles;
       in {

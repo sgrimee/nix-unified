@@ -21,7 +21,7 @@ The flake uses automatic host discovery from directory structure:
 - **NixOS systems**: Discovered from `hosts/nixos/` (nixair, dracula, legion, cirice)
 - **Darwin systems**: Discovered from `hosts/darwin/` (SGRIMEE-M-4HJT)
 
-Each host directory contains system.nix, home.nix, packages.nix, capabilities.nix (for capability-based configuration), and default.nix as the entry point.
+Each host directory contains system.nix, home.nix, packages.nix, and a **mandatory** capabilities.nix file. All hosts MUST use the capability-based configuration system - traditional default.nix imports have been removed.
 
 ## Common Commands
 
@@ -112,7 +112,7 @@ just copy-host source-host target-host
 - **hosts/**: Per-host customizations with capability-based configuration
 - **packages/**: Centralized package management with categories (core, development, gaming, multimedia, productivity, security, system, fonts, k8s, vpn, ham)
 
-The configuration uses a sophisticated capability-based approach where modules are automatically imported based on host capability declarations in `capabilities.nix`. This eliminates manual module imports and provides intelligent configuration based on hardware and feature requirements.
+The configuration uses a **mandatory** capability-based approach where modules are automatically imported based on host capability declarations in `capabilities.nix`. This eliminates manual module imports and provides intelligent configuration based on hardware and feature requirements. ALL hosts must have a `capabilities.nix` file - traditional module imports via `default.nix` files have been removed.
 
 ## Automatic Package Categories
 
@@ -275,6 +275,7 @@ just install-hooks
 
 - On darwin, always install GUI applications using homebrew casks
 - When creating new specs, allways use the `00-spec-template.md` to ensure consistency.
+- Darwin hosts use **Determinate Nix** instead of upstream Nix - do NOT add `nix` configuration blocks to Darwin systems as they are managed by Determinate Nix
 
 ## OpenCode Operational Guidelines
 
@@ -283,3 +284,6 @@ just install-hooks
 - You can use `nix build` to test configurations and verify they compile correctly without switching
 - When you make changes to the nixos config, always run 'just check-host' when your changes are done to catch issues.
 - When adding a new feature, always add a unit test for it.
+- All hosts must use the capability system - never create traditional `default.nix` files for hosts or modules
+- When creating a new host, always create a `capabilities.nix` file instead of `default.nix`
+- Darwin hosts use Determinate Nix - never add `nix = { ... }` configuration blocks to Darwin systems

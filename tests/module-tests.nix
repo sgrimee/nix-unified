@@ -2,12 +2,12 @@
   # Test module paths and structure without importing
   testDarwinModuleExists = {
     expr = builtins.pathExists ../modules/darwin/default.nix;
-    expected = true;
+    expected = false;
   };
 
   testNixOSModuleExists = {
     expr = builtins.pathExists ../modules/nixos/default.nix;
-    expected = true;
+    expected = false;
   };
 
   testHomeManagerModuleExists = {

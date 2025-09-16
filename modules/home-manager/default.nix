@@ -1,3 +1,5 @@
+# Home Manager configuration module
+# This module is imported by the capability system and configures home-manager for the user
 { host, inputs, user, }:
 { inputs, pkgs, system, stateVersion, unstable, ... }:
 let
@@ -12,7 +14,7 @@ in {
     enable = true;
     package = inputs.unstable.legacyPackages.${system}.fish;
   };
-  # no opton for nushell exists here, seems not needed
+  # no option for nushell exists here, seems not needed
 
   users.users.${user} = {
     inherit home;

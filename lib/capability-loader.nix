@@ -38,17 +38,8 @@ let
         inherit inputs host user;
       })
 
-      # Platform-specific base module  
-      (if platform == "nixos" then
-        import moduleMapping.specialModules.nixosBase.path {
-          inherit inputs host user;
-        }
-      else if platform == "darwin" then
-        import moduleMapping.specialModules.darwinBase.path {
-          inherit inputs host user;
-        }
-      else
-        throw "Unsupported platform: ${platform}")
+      # Platform-specific base modules are now handled by coreModules in capability mapping
+      # No need to import base directories since individual modules are imported directly
     ];
 
 in rec {
