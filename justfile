@@ -757,6 +757,52 @@ mapping-export-all PREFIX:
     @just mapping-export-json-graph {{PREFIX}}.json
     @echo "✅ All formats exported with prefix {{PREFIX}}"
 
+# === Secrets Management ===
+
+# Edit shared secrets file with SOPS (accessible by all hosts)
+secret-edit:
+    @echo "📝 Editing shared secrets with SOPS..."
+    sops secrets/shared/sgrimee.yaml
+
+# Edit host-specific secrets
+secret-edit-host HOST:
+    @echo "📝 Editing secrets for {{HOST}}..."
+    @if [ ! -f "secrets/{{HOST}}/secrets.yaml" ]; then \
+        echo "Creating new secrets file for {{HOST}}..."; \
+        mkdir -p "secrets/{{HOST}}"; \
+        echo "# Secrets for {{HOST}}" > "secrets/{{HOST}}/secrets.yaml"; \
+        sops --encrypt --in-place "secrets/{{HOST}}/secrets.yaml"; \
+    fi
+    sops "secrets/{{HOST}}/secrets.yaml"
+
+# Validate secret files
+secret-validate:
+    @echo "🔍 Validating secret files..."
+    @find secrets/ -name "*.yaml" -not -name "*.example*" | while read file; do \
+        echo "Checking $$file..."; \
+        if sops decrypt "$$file" > /dev/null 2>&1; then \
+            echo "✅ $$file is valid"; \
+        else \
+            echo "❌ $$file is invalid or cannot be decrypted"; \
+        fi; \
+    done
+
+# List all secrets and their accessibility
+secret-list:
+    @echo "🗝️  Available Secrets"
+    @echo "==================="
+    @echo "Shared secrets (all hosts):"
+    @if [ -f "secrets/shared/sgrimee.yaml" ]; then \
+        sops decrypt secrets/shared/sgrimee.yaml 2>/dev/null | yq 'keys | .[]' | sed 's/^/  - /'; \
+    fi
+    @echo ""
+    @echo "Host-specific secrets:"
+    @find secrets/ -mindepth 2 -name "*.yaml" -not -name "*.example*" | while read file; do \
+        host=$$(echo "$$file" | cut -d'/' -f2); \
+        echo "  $$host:"; \
+        sops decrypt "$$file" 2>/dev/null | yq 'keys | .[]' | sed 's/^/    - /' || echo "    (cannot decrypt)"; \
+    done
+
 # === Documentation Formatting ===
 
 # Check if uvx is available

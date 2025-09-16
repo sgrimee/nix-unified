@@ -64,6 +64,31 @@ if [ -n "$nix_files" ]; then
     done
 fi
 
+# Validate secret files
+secret_files=$(git diff --cached --name-only --diff-filter=AM | grep "secrets/.*\.yaml$" || true)
+if [ -n "$secret_files" ]; then
+    print_status "$BLUE" "🔐 Validating secret files..."
+    for file in $secret_files; do
+        if [ -f "$file" ]; then
+            # Check if file is properly encrypted (contains 'ENC[' marker)
+            if ! grep -q "ENC\[" "$file"; then
+                print_status "$RED" "❌ Secret file $file is not encrypted!"
+                print_status "$RED" "   Use 'sops --encrypt --in-place $file' to encrypt it"
+                exit 1
+            fi
+            
+            # Try to decrypt to validate format
+            if ! sops decrypt "$file" >/dev/null 2>&1; then
+                print_status "$RED" "❌ Cannot decrypt secret file $file"
+                print_status "$RED" "   File may be corrupted or you lack decryption keys"
+                exit 1
+            fi
+            
+            print_status "$GREEN" "✅ Secret file $file is valid"
+        fi
+    done
+fi
+
 # Check for common patterns that shouldn't be committed
 print_status "$BLUE" "🔍 Checking for problematic patterns..."
 problematic_patterns=(

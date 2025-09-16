@@ -11,16 +11,44 @@ keys:
   - &server_nixair age19axf2ac6886gvqxp95wxwhcs4xnqadyg9m6ckhnfvrhs4nasyexqyzet0n
   - &server_legion age1sdjn90rr0e8vtvq9wt92rsw6vajmmrn5yj8dvzfardyrzj4uzpxs3zjcdx
 creation_rules:
-  # - path_regex: secrets/nixair/[^/]+\.(yaml|json|env|ini)$
-  #   key_groups:
-  #     - age:
-  #       - *admin_sgrimee
-  #       - *server_nixair
-  # - path_regex: secrets/mbp_16_2023/[^/]+\.(yaml|json|env|ini)$
-  #   key_groups:
-  #     - age:
-  #       - *admin_sgrimee
-  #       - *server_mbp_16_2023
+  # Host-specific secrets
+  - path_regex: secrets/nixair/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+        - *admin_sgrimee
+        - *server_nixair
+  - path_regex: secrets/cirice/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+        - *admin_sgrimee
+        - *server_cirice
+  - path_regex: secrets/dracula/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+        - *admin_sgrimee
+        - *server_dracula
+  - path_regex: secrets/legion/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+        - *admin_sgrimee
+        - *server_legion
+  - path_regex: secrets/mbp_16_2023/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+        - *admin_sgrimee
+        - *server_mbp_16_2023
+  # Shared secrets (accessible by all hosts)
+  - path_regex: secrets/shared/[^/]+\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+        - *admin_sgrimee
+        - *server_cirice
+        - *server_dracula
+        - *server_mbp_15_2018
+        - *server_mbp_16_2023
+        - *server_nixair
+        - *server_legion
+  # Legacy: existing root-level secrets (for backward compatibility)
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
