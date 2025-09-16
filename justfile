@@ -5,7 +5,7 @@ default:
     @just --list
 
 # === Testing ===
-# 
+#
 # Test Strategy:
 # - test: Lightweight basic validation (syntax, core modules, flake check)
 # - test-verbose: All tests with verbose output
@@ -97,11 +97,11 @@ switch:
     #!/usr/bin/env bash
     echo "Switching to current host configuration..."
     case "$(uname -s)" in
-        Darwin) 
-            sudo darwin-rebuild switch --flake . 
+        Darwin)
+            sudo darwin-rebuild switch --flake .
             ;;
-        *) 
-            sudo nixos-rebuild switch --flake . 
+        *)
+            sudo nixos-rebuild switch --flake .
             ;;
     esac
 
@@ -119,11 +119,11 @@ dry-run:
     #!/usr/bin/env bash
     echo "Dry run for current host..."
     case "$(uname -s)" in
-        Darwin) 
-            darwin-rebuild build --dry-run --flake . 
+        Darwin)
+            darwin-rebuild build --dry-run --flake .
             ;;
-        *) 
-            sudo nixos-rebuild dry-run --flake . 
+        *)
+            sudo nixos-rebuild dry-run --flake .
             ;;
     esac
 
@@ -225,7 +225,7 @@ search-packages TERM:
 validate-packages HOST:
     nix eval .#hostConfigs.{{HOST}}.packageValidation --json
 
-# Show package info for host  
+# Show package info for host
 package-info HOST:
     nix eval .#hostConfigs.{{HOST}}.packageInfo --json | jq
 
@@ -246,11 +246,11 @@ generations:
     #!/usr/bin/env bash
     echo "System generations:"
     case "$(uname -s)" in
-        Darwin) 
-            darwin-rebuild --list-generations 
+        Darwin)
+            darwin-rebuild --list-generations
             ;;
-        *) 
-            sudo nix-env --profile /nix/var/nix/profiles/system --list-generations 
+        *)
+            sudo nix-env --profile /nix/var/nix/profiles/system --list-generations
             ;;
     esac
 
@@ -259,11 +259,11 @@ clean-generations N="5":
     #!/usr/bin/env bash
     echo "Cleaning old generations (keeping last {{N}})..."
     case "$(uname -s)" in
-        Darwin) 
-            sudo nix-collect-garbage --delete-generations +{{N}} 
+        Darwin)
+            sudo nix-collect-garbage --delete-generations +{{N}}
             ;;
-        *) 
-            sudo nix-collect-garbage -d --delete-generations +{{N}} 
+        *)
+            sudo nix-collect-garbage -d --delete-generations +{{N}}
             ;;
     esac
 
@@ -324,17 +324,6 @@ info:
         echo "Nix version: $(nix --version)"; \
     fi
 
-# === Bootstrap ===
-
-# Bootstrap Darwin system (for new installs)
-bootstrap-darwin:
-    @echo "Bootstrapping Darwin system..."
-    ./utils/darwin-bootstrap.sh
-
-# Fix Darwin environment (if needed)
-fix-darwin-env:
-    @echo "Fixing Darwin environment..."
-    ./utils/darwin-fix-env.sh
 
 # === Host Management ===
 
@@ -474,7 +463,7 @@ new-nixos-host NAME:
     @echo "3. Customize hosts/nixos/{{NAME}}/home.nix and packages.nix"
     @echo "4. Test with: just build {{NAME}}"
 
-# Create a new Darwin host template  
+# Create a new Darwin host template
 new-darwin-host NAME:
     @echo "Creating new Darwin host: {{NAME}}"
     @mkdir -p hosts/darwin/{{NAME}}
@@ -561,9 +550,9 @@ switch-legion:
 #
 # Systematic 4-version pattern for each data type:
 # For each item: <item>, <item>-host HOST, <item>-json, <item>-host-json HOST
-# 
+#
 # Data Types:
-# - mapping-data: Complete system data  
+# - mapping-data: Complete system data
 # - mapping-capabilities: Host capability information
 # - mapping-packages: Package information (Phase 2)
 # - mapping-hosts: Host discovery and platform info
@@ -582,7 +571,7 @@ mapping-data:
     @echo "🏠 Host Details:"
     @nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq -r '.hosts | to_entries[] | "\n  📍 " + .key + " (" + .value.platform + "/" + .value.capabilities.hardware.architecture + ")" + "\n     Packages: " + (.value.packageCount | tostring) + ", Categories: " + ((.value.categories | length) | tostring) + "\n     Roles: " + (.value.capabilities.roles | join(", ")) + "\n     Features: " + (if .value.capabilities.features then [.value.capabilities.features | to_entries[] | select(.value == true) | .key] | join(", ") else "none" end) + "\n     Environment: " + .value.capabilities.environment.desktop + "/" + .value.capabilities.environment.shell.primary + "\n     Status: Caps=" + (.value.status.hasCapabilities | tostring) + ", PkgMgr=" + (.value.status.hasPackageManager | tostring) + ", Valid=" + (.value.validation.valid | tostring)'
 
-# Single host - human readable with headers and formatting  
+# Single host - human readable with headers and formatting
 mapping-data-host HOST:
     @echo "📊 Host Data: {{HOST}}"
     @echo "==================="
@@ -659,7 +648,7 @@ mapping-packages-host HOST:
     @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Package Count: " + (.packageCount | tostring)'
     @nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq -r '.{{HOST}} | "Packages: " + (.packages | join(", "))'
 
-# All hosts - clean JSON packages only  
+# All hosts - clean JSON packages only
 mapping-packages-json:
     nix eval .#hostPackageMapping.all --json --no-warn-dirty | jq '.hosts | map_values({categories, packages, packageCount})'
 
@@ -718,7 +707,7 @@ mapping-statistics-host HOST:
 mapping-statistics-json:
     nix eval .#hostPackageMapping.all.overview --json --no-warn-dirty
 
-# Single host - clean JSON host statistics  
+# Single host - clean JSON host statistics
 mapping-statistics-host-json HOST:
     nix eval .#hostPackageMapping.hosts.{{HOST}} --json --no-warn-dirty | jq '.{{HOST}} | {hostName, platform, packageCount, categories, status, validation}'
 
