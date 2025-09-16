@@ -83,4 +83,9 @@
     secrets = true; # SOPS secret management
     vpn = true; # StrongSwan L2TP/IPSec VPN client
   };
+
+  # Build machine configuration
+  buildMachines = {
+    enable = [ ]; # No remote builders - this is the primary build server
+  };
 }

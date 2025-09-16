@@ -64,6 +64,11 @@
     };
   };
 
+  # Build machine configuration
+  buildMachines = {
+    enable = [ "cirice" ]; # Use cirice as remote build machine
+  };
+
   # Security and access control
   security = {
     ssh = {

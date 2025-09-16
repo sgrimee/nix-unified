@@ -76,4 +76,9 @@
     firewall = true; # NixOS firewall enabled (default rules)
     secrets = true; # SOPS secret management
   };
+
+  # Build machine configuration
+  buildMachines = {
+    enable = [ "cirice" ]; # Use cirice as remote build machine
+  };
 }

@@ -77,4 +77,9 @@
     secrets = true; # SOPS secret management
     vpn = true; # StrongSwan L2TP/IPSec VPN client
   };
+
+  # Build machine configuration
+  buildMachines = {
+    enable = [ "cirice" ]; # Use cirice as remote build machine
+  };
 }

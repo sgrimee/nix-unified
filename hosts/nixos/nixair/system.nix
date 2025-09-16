@@ -32,29 +32,5 @@
     cores = lib.mkForce 2; # Threads per build (override global setting)
     max-jobs =
       lib.mkForce 2; # Allow local builds as fallback when remote unavailable
-    builders-use-substitutes = true; # Remote builders use caches
-  };
-
-  nix = {
-    buildMachines = [
-      {
-        hostName = "cirice.local";
-        sshUser = "sgrimee";
-        sshKey = "/home/sgrimee/.ssh/id_rsa";
-        system = "x86_64-linux";
-        maxJobs = 8;
-        speedFactor = 100; # High priority - fastest build server
-        supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
-      }
-      {
-        hostName = "legion.local";
-        sshUser = "sgrimee";
-        sshKey = "/home/sgrimee/.ssh/id_rsa";
-        system = "x86_64-linux";
-        maxJobs = 8;
-        speedFactor = 50; # Lower priority fallback
-        supportedFeatures = [ "kvm" "nixos-test" "big-parallel" ];
-      }
-    ];
   };
 }

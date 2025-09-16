@@ -76,4 +76,9 @@
     firewall = true; # Custom firewall rules enabled
     secrets = true; # SOPS secret management
   };
+
+  # Build machine configuration
+  buildMachines = {
+    enable = [ "cirice" ]; # Use cirice as remote build machine
+  };
 }
