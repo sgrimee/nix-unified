@@ -23,10 +23,11 @@
       url = "github:sgrimee/mactelnet";
       inputs.nixpkgs.follows = "stable-nixos";
     };
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
   };
 
   outputs = { home-manager, mac-app-util, mactelnet, nixos-hardware, self
-    , sops-nix, ... }@inputs:
+    , sops-nix, determinate, ... }@inputs:
     let
       lib = inputs.stable-nixos.lib;
       stateVersion = "23.05";

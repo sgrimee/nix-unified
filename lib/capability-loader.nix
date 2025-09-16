@@ -27,6 +27,12 @@ let
       else
         throw "Unsupported platform: ${platform}")
 
+      # Determinate Nix module (Darwin only)
+      (if platform == "darwin" then
+        inputs.determinate.darwinModules.default
+      else
+        { })
+
       # Home Manager configuration with proper arguments
       (import moduleMapping.specialModules.homeManager.path {
         inherit inputs host user;
