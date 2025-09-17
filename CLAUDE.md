@@ -262,6 +262,7 @@ just install-hooks
 ### Commit and PR Guidelines
 
 - Never mention the AI agent in commit messages and PR messages
+- Never commit to git unless specifically instructed to do so.
 
 ### Rebuilding Systems
 
