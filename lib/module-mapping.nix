@@ -39,6 +39,10 @@
     shared = [
       # Home Manager is included via special modules
     ];
+
+    homeManager = [
+      ../modules/home-manager/nixpkgs-config.nix
+    ];
   };
 
   # Feature-based module mappings - only existing modules
