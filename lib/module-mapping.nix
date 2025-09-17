@@ -13,7 +13,7 @@
       ../modules/nixos/environment.nix
       ../modules/nixos/hardware.nix
       ../modules/nixos/i18n.nix
-      ../modules/nixos/nix.nix
+      ../modules/nixos/determinate.nix
       ../modules/nixos/time.nix
       ../modules/nixos/polkit.nix
       ../modules/nixos/build-machines.nix

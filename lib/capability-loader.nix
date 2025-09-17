@@ -27,8 +27,10 @@ let
       else
         throw "Unsupported platform: ${platform}")
 
-      # Determinate Nix module (Darwin only)
-      (if platform == "darwin" then
+      # Determinate Nix module (both platforms)
+      (if platform == "nixos" then
+        inputs.determinate.nixosModules.default
+      else if platform == "darwin" then
         inputs.determinate.darwinModules.default
       else
         { })
