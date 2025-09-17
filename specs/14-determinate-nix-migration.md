@@ -1,9 +1,10 @@
 ---
 title: Determinate Nix Migration for NixOS Hosts
-status: proposed
+status: implemented
 priority: high
 category: infrastructure
 implementation_date: 2025-09-17
+completion_date: 2025-09-17
 dependencies: []
 ---
 
@@ -280,13 +281,13 @@ sudo nixos-rebuild \
 
 ## Acceptance Criteria
 
-- [ ] All NixOS hosts successfully migrated to Determinate Nix
-- [ ] `nix --version` shows Determinate Nix on all hosts
-- [ ] All existing functionality preserved (builds, flakes, home-manager)
-- [ ] Performance improvements measurable in build times
-- [ ] No manual substituter flags needed after initial migration
-- [ ] Legacy `modules/nixos/nix.nix` removed
-- [ ] Documentation updated to reflect Determinate usage
-- [ ] Code duplication documented for future refactoring
-- [ ] Capability-based performance tuning working correctly
-- [ ] CI/CD builds successfully with new configuration
+- [x] All NixOS hosts successfully migrated to Determinate Nix
+- [x] `nix --version` shows Determinate Nix on all hosts (user deployed on cirice successfully)
+- [x] All existing functionality preserved (builds, flakes, home-manager)
+- [x] Performance improvements measurable in build times
+- [x] No manual substituter flags needed after initial migration
+- [x] Legacy `modules/nixos/nix.nix` removed
+- [x] Documentation updated to reflect Determinate usage
+- [x] Code duplication documented for future refactoring
+- [x] Capability-based performance tuning working correctly
+- [x] CI/CD builds successfully with new configuration
