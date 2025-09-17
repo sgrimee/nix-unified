@@ -1,5 +1,0 @@
-{
-  programs.TEMPLATE = {
-    enable = true;
-  };
-}
