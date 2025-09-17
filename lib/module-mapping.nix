@@ -66,7 +66,10 @@
     };
 
     gaming = {
-      nixos = [ ];
+      nixos = [
+        ../modules/nixos/gaming-graphics.nix
+        ../modules/nixos/gaming-performance.nix
+      ];
       darwin = [ ];
       homeManager = [ ];
     };
@@ -106,7 +109,11 @@
         nixos = [ ../modules/nixos/nvidia.nix ];
         darwin = [ ];
       };
-      # Other GPU types (amd, intel, apple) not implemented yet
+      amd = {
+        nixos = [ ../modules/nixos/amd-graphics.nix ];
+        darwin = [ ];
+      };
+      # Other GPU types (intel, apple) not implemented yet
     };
 
     audio = {
@@ -336,6 +343,10 @@
   virtualizationModules = {
     windowsGpuPassthrough = {
       nixos = [ ../modules/nixos/virtualization/windows-gpu-passthrough.nix ];
+      darwin = [ ];
+    };
+    baseVirtualization = {
+      nixos = [ ../modules/nixos/virtualization/base.nix ];
       darwin = [ ];
     };
   };

@@ -41,7 +41,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    # Enable virtualization
+    # Base virtualization functionality
     virtualisation.libvirtd = {
       enable = true;
       qemu = {
@@ -53,6 +53,31 @@ in {
         };
       };
     };
+
+    # Base VM management tools
+    environment.systemPackages = with pkgs; [
+      virt-manager
+      virt-viewer
+      spice
+      spice-gtk
+      spice-protocol
+      win-virtio
+      win-spice
+      virtiofsd
+    ] ++ lib.optionals cfg.lookingGlass.enable [looking-glass-client];
+
+    # User permissions for VM management
+    users.users.${cfg.vmUser}.extraGroups = ["libvirtd" "kvm" "input"];
+
+    # Base KVM device permissions
+    services.udev.extraRules = ''
+      KERNEL=="kvm", GROUP="kvm", MODE="0660"
+      SUBSYSTEM=="vfio", OWNER="${cfg.vmUser}", GROUP="kvm"
+      SUBSYSTEM=="misc", KERNEL=="vfio/*", GROUP="kvm", MODE="0660"
+    '';
+
+    # Network bridge for VMs - libvirtd manages this automatically
+    networking.firewall.trustedInterfaces = ["virbr0"];
 
     # Enable IOMMU and VFIO
     boot = {
@@ -71,22 +96,6 @@ in {
       # VFIO will bind devices when libvirtd starts VMs
     };
 
-    # User permissions for VM management
-    users.users.${cfg.vmUser}.extraGroups = ["libvirtd" "kvm" "input"];
-
-    # VM management tools
-    environment.systemPackages = with pkgs;
-      [
-        virt-manager
-        virt-viewer
-        spice
-        spice-gtk
-        spice-protocol
-        win-virtio
-        win-spice
-        virtiofsd
-      ]
-      ++ lib.optionals cfg.lookingGlass.enable [looking-glass-client];
 
     # Looking Glass configuration
     systemd.tmpfiles.rules =
@@ -116,12 +125,6 @@ in {
       "vm.swappiness" = 10; # Reduce swapping for better VM performance
     });
 
-    # Ensure KVM device permissions
-    services.udev.extraRules = ''
-      SUBSYSTEM=="vfio", OWNER="${cfg.vmUser}", GROUP="kvm"
-      KERNEL=="kvm", GROUP="kvm", MODE="0660"
-      SUBSYSTEM=="misc", KERNEL=="vfio/*", GROUP="kvm", MODE="0660"
-    '';
 
     # Enable nested virtualization for AMD
     boot.extraModprobeConfig = lib.mkIf (cfg.iommuType == "amd_iommu") ''
@@ -129,12 +132,6 @@ in {
       options vfio_iommu_type1 allow_unsafe_interrupts=1
     '';
 
-    # Network bridge for VMs - libvirtd manages this automatically
-    # The default libvirt network provides virbr0 with DHCP at 192.168.122.0/24
-    # Manual systemd-networkd configuration removed to avoid conflicts
-
-    # Firewall rules for VM network
-    networking.firewall.trustedInterfaces = ["virbr0"];
 
     # Systemd service to bind VFIO devices after boot
     systemd.services.vfio-bind = lib.mkIf (cfg.vfioIds != []) {
