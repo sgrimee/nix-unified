@@ -71,6 +71,7 @@
 
     gaming = {
       nixos = [
+        ../modules/nixos/gaming.nix
         ../modules/nixos/gaming-graphics.nix
         ../modules/nixos/gaming-performance.nix
       ];

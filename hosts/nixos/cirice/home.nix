@@ -10,7 +10,7 @@ in {
   users.users.${user} = {
     isNormalUser = true;
     group = "users";
-    extraGroups = ["audio" "networkmanager" "systemd-journal" "video" "wheel"];
+    extraGroups = ["audio" "networkmanager" "systemd-journal" "video" "wheel" "render"];
     shell = pkgs.zsh;
   };
   home-manager.users.${user} = {

@@ -69,11 +69,20 @@ in {
     # User permissions for VM management
     users.users.${cfg.vmUser}.extraGroups = ["libvirtd" "kvm" "input"];
 
-    # Base KVM device permissions
+    # Base KVM device permissions and GPU access for user
     services.udev.extraRules = ''
       KERNEL=="kvm", GROUP="kvm", MODE="0660"
       SUBSYSTEM=="vfio", OWNER="${cfg.vmUser}", GROUP="kvm"
       SUBSYSTEM=="misc", KERNEL=="vfio/*", GROUP="kvm", MODE="0660"
+
+      # GPU device permissions for testing and access
+      KERNEL=="card*", SUBSYSTEM=="drm", GROUP="video", MODE="0664"
+      KERNEL=="renderD*", SUBSYSTEM=="drm", GROUP="render", MODE="0664"
+      SUBSYSTEM=="drm", GROUP="video", MODE="0664"
+
+      # Allow user access to GPU sysfs files for monitoring
+      SUBSYSTEM=="pci", ATTRS{vendor}=="0x1002", ATTRS{device}=="0x150e", GROUP="video", MODE="0664"
+      SUBSYSTEM=="pci", ATTRS{vendor}=="0x1002", ATTRS{device}=="0x1640", GROUP="video", MODE="0664"
     '';
 
     # Network bridge for VMs - libvirtd manages this automatically
@@ -81,8 +90,11 @@ in {
 
     # Enable IOMMU and VFIO
     boot = {
-      # Load VFIO modules in initrd to delay device binding until after boot
+      # Load VFIO modules but don't bind devices early to avoid timing issues
       initrd.kernelModules = ["vfio" "vfio_iommu_type1" "vfio_pci"];
+      kernelModules = ["vfio" "vfio_iommu_type1" "vfio_pci"];
+      # Explicitly exclude amdgpu from being automatically loaded
+      blacklistedKernelModules = ["amdgpu" "radeon"];
       kernelParams = [
         "${cfg.iommuType}=on"
         "iommu=pt"
@@ -92,8 +104,6 @@ in {
         # "systemd.log_target=console"
         # "udev.log_level=debug"
       ];
-      # Remove early device binding to prevent boot hang
-      # VFIO will bind devices when libvirtd starts VMs
     };
 
 
@@ -126,17 +136,20 @@ in {
     });
 
 
-    # Enable nested virtualization for AMD
+    # Enable nested virtualization for AMD and blacklist amdgpu
     boot.extraModprobeConfig = lib.mkIf (cfg.iommuType == "amd_iommu") ''
       options kvm_amd nested=1
       options vfio_iommu_type1 allow_unsafe_interrupts=1
+      # Blacklist amdgpu module to prevent it from loading
+      blacklist amdgpu
+      blacklist radeon
     '';
 
 
-    # Systemd service to bind VFIO devices after boot
+    # Systemd service to bind devices to VFIO (simplified version)
     systemd.services.vfio-bind = lib.mkIf (cfg.vfioIds != []) {
       description = "Bind GPU devices to VFIO for passthrough";
-      after = ["multi-user.target"];
+      after = ["basic.target" "udev.service"];
       before = ["libvirtd.service"];
       wantedBy = ["multi-user.target"];
       serviceConfig = {
@@ -145,11 +158,68 @@ in {
         ExecStart = let
           vfioBindScript = pkgs.writeShellScript "vfio-bind" ''
             set -e
-            echo "Binding devices to VFIO: ${lib.concatStringsSep " " cfg.vfioIds}"
+            echo "Starting VFIO device binding..."
+
+            # Process each device ID
             ${lib.concatMapStringsSep "\n" (id: ''
-              echo "${id}" > /sys/bus/pci/drivers/vfio-pci/new_id || true
+              echo "Processing device: ${id}"
+
+              # Convert format from 1002:150e to space-separated for new_id
+              vendor_id="${builtins.head (lib.splitString ":" id)}"
+              device_id="${builtins.elemAt (lib.splitString ":" id) 1}"
+
+              # Add to new_id if not already there
+              echo "$vendor_id $device_id" > /sys/bus/pci/drivers/vfio-pci/new_id 2>/dev/null || {
+                echo "Device ${id} already in vfio-pci new_id list (or error)"
+              }
+
+              # Find the actual PCI device path
+              device_found=false
+              for device_path in /sys/bus/pci/devices/*/; do
+                if [ -f "$device_path/vendor" ] && [ -f "$device_path/device" ]; then
+                  found_vendor=$(cat "$device_path/vendor" 2>/dev/null)
+                  found_device=$(cat "$device_path/device" 2>/dev/null)
+
+                  if [ "$found_vendor" = "0x$vendor_id" ] && [ "$found_device" = "0x$device_id" ]; then
+                    device_name=$(basename "$device_path")
+                    echo "Found device ${id} at $device_name"
+
+                    # Check if already bound to vfio-pci
+                    if [ -L "$device_path/driver" ]; then
+                      current_driver=$(basename $(readlink "$device_path/driver"))
+                      if [ "$current_driver" = "vfio-pci" ]; then
+                        echo "Device ${id} already bound to vfio-pci ✓"
+                        device_found=true
+                        break
+                      fi
+                    fi
+
+                    # Try to bind to vfio-pci
+                    echo "$device_name" > /sys/bus/pci/drivers/vfio-pci/bind 2>/dev/null || {
+                      echo "Failed to bind $device_name to vfio-pci (may already be bound)"
+                    }
+
+                    # Verify binding
+                    if [ -L "$device_path/driver" ]; then
+                      final_driver=$(basename $(readlink "$device_path/driver"))
+                      if [ "$final_driver" = "vfio-pci" ]; then
+                        echo "Successfully bound ${id} to vfio-pci ✓"
+                        device_found=true
+                      fi
+                    fi
+                    break
+                  fi
+                fi
+              done
+
+              if [ "$device_found" = false ]; then
+                echo "Warning: Device ${id} not found or not bound to vfio-pci"
+              fi
             '') cfg.vfioIds}
-            echo "VFIO device binding completed"
+
+            echo "VFIO binding process completed"
+            echo "Available VFIO devices:"
+            ls -la /dev/vfio/ 2>/dev/null || echo "No VFIO devices found"
           '';
         in "${vfioBindScript}";
       };

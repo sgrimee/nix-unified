@@ -11,7 +11,7 @@
   features = {
     development = true; # Full development environment
     desktop = true; # Sway Wayland desktop environment
-    gaming = false; # No gaming-specific software installed
+    gaming = true; # Gaming software including lunar-client
     multimedia = true; # Media players and codecs
     server = false; # Not a server host
     corporate = false; # No corporate tools
