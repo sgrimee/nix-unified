@@ -14,6 +14,8 @@
       mangohud # Gaming overlay for monitoring FPS, temps, CPU/GPU load
       goverlay # GUI for MangoHud configuration
       protontricks # Wine prefix manager for Steam games
+      mesa-demos # OpenGL testing utilities (glxinfo, glxgears)
+      vulkan-tools # Vulkan testing utilities (vulkaninfo)
     ];
 
   # Gaming platforms (mostly Linux-specific)
