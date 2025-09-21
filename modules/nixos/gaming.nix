@@ -28,5 +28,9 @@ in {
   services.udev.extraRules = ''
     # Gaming performance optimizations
     ACTION=="add", SUBSYSTEM=="cpu", KERNEL=="cpu[0-9]*", ATTR{cpufreq/scaling_governor}="performance"
+    
+    # Octavi IFR-1 flight controller support for X-Plane
+    # Allows read/write access to Octavi device for button presses and LED control
+    KERNEL=="*", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="e6d6", MODE="0666", ENV{ID_INPUT_JOYSTICK}="1", TAG+="uaccess"
   '';
 }
