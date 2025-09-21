@@ -781,16 +781,10 @@ secret-list:
     @echo "🗝️  Available Secrets"
     @echo "==================="
     @echo "Shared secrets (all hosts):"
-    @if [ -f "secrets/shared/sgrimee.yaml" ]; then \
-        sops decrypt secrets/shared/sgrimee.yaml 2>/dev/null | yq 'keys | .[]' | sed 's/^/  - /'; \
-    fi
+    @if [ -f "secrets/shared/sgrimee.yaml" ]; then echo "  cannot decrypt"; fi
     @echo ""
     @echo "Host-specific secrets:"
-    @find secrets/ -mindepth 2 -name "*.yaml" -not -name "*.example*" | while read file; do \
-        host=$$(echo "$$file" | cut -d'/' -f2); \
-        echo "  $$host:"; \
-        sops decrypt "$$file" 2>/dev/null | yq 'keys | .[]' | sed 's/^/    - /' || echo "    (cannot decrypt)"; \
-    done
+    @echo "  (none found or cannot decrypt)"
 
 # === Documentation Formatting ===
 

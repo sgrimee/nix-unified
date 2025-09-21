@@ -4,7 +4,7 @@
 # for a more complex example.
 keys:
   - &admin_sgrimee age1rn7gsv9e2dwhjt20p5gsnydrnqyu5c339gku2h9agq8kamqynqqs8v4m7u
-  - &server_cirice age1vxel6p05epr67nz6endwz6f23drk7r0yve6gjcrf57ypjvl7hq6s68nvjd
+  - &server_cirice age1jn57jevylkmcrwa0vp2hzs32anwn23e63xngh3npcuxhnpdet3dqhwcz4e
   - &server_dracula age166rqyrhv0rl20k3ga2v46tk3kge6vx7ahnm3v8xzv00zdfxya3pqjatxcw
   - &server_mbp_15_2018 age1g3yuwa905tsc5ylx58ax3aq882aet8kluyt8jshntzsza6h9cfuqg9z38m
   - &server_mbp_16_2023 age18xqlukfwr35mumgre56807raq0thq6ps6njdl9vfn8agw4qjlavs5f8qmj
