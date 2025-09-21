@@ -31,7 +31,7 @@ The AMD Radeon 890M GPU can only be controlled by **one driver at a time**:
 ### Host Configuration (cirice)
 - Gaming capability disabled (`features.gaming = false`)
 - GPU passthrough enabled with VFIO binding (PCI IDs: 1002:150e, 1002:1640)
-- Safe-boot specialisation exists but only disables passthrough without enabling gaming optimizations
+- Current configuration requires choosing between VFIO passthrough and native gaming at boot time
 
 ### Module Integration Gaps
 - `featureModules.gaming.nixos = []` (empty in lib/module-mapping.nix:69)
@@ -47,7 +47,7 @@ The AMD Radeon 890M GPU can only be controlled by **one driver at a time**:
 
 ### 1. Boot Specialisation Architecture
 
-Create three distinct boot modes using NixOS specialisation system:
+Create two distinct boot modes using NixOS specialisation system:
 
 ```nix
 specialisation = {
@@ -75,8 +75,6 @@ specialisation = {
     };
   };
 
-  # Keep existing safe-boot for troubleshooting
-  safe-boot = { /* existing config */ };
 };
 ```
 
@@ -238,7 +236,6 @@ boot.loader.timeout = 10;
 # Clear menu descriptions
 specialisation.native-gaming.configuration.system.nixos.label = "Gaming Mode (Default)";
 specialisation.vm-passthrough.configuration.system.nixos.label = "VM Passthrough Mode";
-specialisation.safe-boot.configuration.system.nixos.label = "Safe Boot (Troubleshooting)";
 ```
 
 #### Boot Menu Example:
@@ -246,7 +243,6 @@ specialisation.safe-boot.configuration.system.nixos.label = "Safe Boot (Troubles
 NixOS Configuration Menu:
 1. Gaming Mode (Default)           [10 seconds]
 2. VM Passthrough Mode
-3. Safe Boot (Troubleshooting)
 ```
 
 ### 6. Package Category Integration
@@ -383,12 +379,10 @@ lib/
 ### Switching Modes
 1. **To Gaming Mode** (default): Simply boot normally
 2. **To VM Mode**: Select from boot menu or `sudo nixos-rebuild boot --specialisation vm-passthrough`
-3. **To Safe Mode**: Select from boot menu for troubleshooting
 
 ### Expected Performance
 - **Gaming Mode**: Native GPU performance, low latency, optimized for games
 - **VM Mode**: GPU passthrough performance, Looking Glass display sharing
-- **Safe Mode**: Basic functionality for troubleshooting
 
 ## Future Enhancements
 

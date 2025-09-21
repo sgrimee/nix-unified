@@ -120,32 +120,6 @@
       };
     };
 
-    # Safe boot for troubleshooting (minimal configuration)
-    safe-boot = {
-      inheritParentConfig = true;
-      configuration = {
-        # Disable all optimizations and GPU passthrough
-        virtualization.windowsGpuPassthrough.enable = lib.mkForce false;
-        programs.gamemode.enable = lib.mkForce false;
 
-        # Override all boot parameters to minimal safe ones
-        boot.kernelParams = lib.mkForce [
-          "loglevel=4"
-          "lsm=landlock,yama,bpf"
-        ];
-
-        # Disable gaming-specific udev rules
-        services.udev.extraRules = lib.mkForce "";
-
-        # Reset kernel sysctl to defaults
-        boot.kernel.sysctl = lib.mkForce {};
-
-        # Ensure normal GPU driver loads
-        services.xserver.videoDrivers = lib.mkForce ["amdgpu"];
-
-        # Menu label
-        system.nixos.label = "safe-boot-troubleshooting";
-      };
-    };
   };
 }
