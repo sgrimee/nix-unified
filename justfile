@@ -764,27 +764,48 @@ secret-edit-host HOST:
     fi
     sops "secrets/{{HOST}}/secrets.yaml"
 
-# Validate secret files
+# Validate secret files  
 secret-validate:
     @echo "🔍 Validating secret files..."
-    @find secrets/ -name "*.yaml" -not -name "*.example*" | while read file; do \
+    @if [ -f "secrets/shared/sgrimee.yaml" ]; then \
+        echo "Checking secrets/shared/sgrimee.yaml..."; \
+        if sops decrypt "secrets/shared/sgrimee.yaml" > /dev/null 2>&1; then \
+            echo "✅ secrets/shared/sgrimee.yaml is valid"; \
+        else \
+            echo "❌ secrets/shared/sgrimee.yaml is invalid or cannot be decrypted"; \
+        fi; \
+    fi
+    @find secrets/ -path "*/shared/*" -prune -o -mindepth 2 -name "*.yaml" -not -name "*.example*" -type f -print 2>/dev/null | while IFS= read -r file; do \
         echo "Checking $$file..."; \
         if sops decrypt "$$file" > /dev/null 2>&1; then \
             echo "✅ $$file is valid"; \
         else \
             echo "❌ $$file is invalid or cannot be decrypted"; \
         fi; \
-    done
+    done || echo "No host-specific secrets found."
 
 # List all secrets and their accessibility
 secret-list:
     @echo "🗝️  Available Secrets"
     @echo "==================="
     @echo "Shared secrets (all hosts):"
-    @if [ -f "secrets/shared/sgrimee.yaml" ]; then echo "  cannot decrypt"; fi
+    @if [ -f "secrets/shared/sgrimee.yaml" ]; then \
+        if sops decrypt "secrets/shared/sgrimee.yaml" > /dev/null 2>&1; then \
+            echo "  ✅ secrets/shared/sgrimee.yaml (accessible)"; \
+            echo "     Keys: $(sops decrypt secrets/shared/sgrimee.yaml 2>/dev/null | grep -E '^[a-zA-Z_][a-zA-Z0-9_]*:' | cut -d: -f1 | tr '\n' ' ')"; \
+        else \
+            echo "  ❌ secrets/shared/sgrimee.yaml (cannot decrypt)"; \
+        fi; \
+    fi
     @echo ""
     @echo "Host-specific secrets:"
-    @echo "  (none found or cannot decrypt)"
+    @find secrets/ -path "*/shared/*" -prune -o -mindepth 2 -name "*.yaml" -not -name "*.example*" -type f -print 2>/dev/null | while IFS= read -r file; do \
+        if sops decrypt "$$file" > /dev/null 2>&1; then \
+            echo "  ✅ $$file (accessible)"; \
+        else \
+            echo "  ❌ $$file (cannot decrypt)"; \
+        fi; \
+    done || echo "  (none found)"
 
 # === Documentation Formatting ===
 
