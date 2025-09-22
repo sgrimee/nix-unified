@@ -4,6 +4,13 @@
   # Add aerospace CLI to system packages
   environment.systemPackages = with pkgs; [ aerospace ];
 
+  # System defaults for menu bar (used by simple-bar)
+  system.defaults.CustomUserPreferences = {
+    "com.apple.universalaccess" = {
+      reduceTransparency = true; # disable menu bar transparency for simple-bar
+    };
+  };
+
   services = {
     # AeroSpace tiling window manager
     aerospace = {
