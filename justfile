@@ -807,6 +807,21 @@ secret-list:
         fi; \
     done || echo "  (none found)"
 
+# Re-encrypt all secrets with current SOPS configuration (useful after adding new keys/hosts)
+secret-reencrypt:
+    @echo "🔄 Re-encrypting all secrets with current SOPS configuration..."
+    @if [ -f "secrets/shared/sgrimee.yaml" ]; then \
+        echo "Re-encrypting secrets/shared/sgrimee.yaml..."; \
+        sops updatekeys secrets/shared/sgrimee.yaml; \
+        echo "✅ secrets/shared/sgrimee.yaml re-encrypted"; \
+    fi
+    @find secrets/ -path "*/shared/*" -prune -o -mindepth 2 -name "*.yaml" -not -name "*.example*" -type f -print 2>/dev/null | while IFS= read -r file; do \
+        echo "Re-encrypting $$file..."; \
+        sops updatekeys "$$file"; \
+        echo "✅ $$file re-encrypted"; \
+    done || echo "No host-specific secrets to re-encrypt."
+    @echo "🎉 All secrets re-encrypted successfully!"
+
 # === Documentation Formatting ===
 
 # Check if uvx is available
