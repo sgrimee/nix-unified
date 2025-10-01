@@ -50,6 +50,7 @@
   "guitar-pro" # Guitar tablature editor
   "loopback" # Virtual audio routing
   "midi-monitor" # MIDI message monitoring tool
+  "music-assistant/tap/companion" # Music Assistant companion app
 
   # Gaming
   "steam" # Steam gaming platform
