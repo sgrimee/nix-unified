@@ -216,7 +216,11 @@
       sway = {
         nixos = [ ../modules/nixos/greetd.nix ../modules/nixos/sway.nix ];
         darwin = [ ];
-        homeManager = [ ../modules/home-manager/wl-sway.nix ];
+        homeManager = [
+          ../modules/home-manager/wl-sway.nix
+          ../modules/home-manager/waybar.nix
+          ../modules/home-manager/user/rofi.nix
+        ];
       };
       kde = {
         nixos = [ ];
@@ -253,6 +257,16 @@
         nixos = [ ];
         darwin = [ ];
         homeManager = [ ];
+      };
+      ghostty = {
+        nixos = [ ];
+        darwin = [ ];
+        homeManager = [ ../modules/home-manager/user/ghostty.nix ];
+      };
+      foot = {
+        nixos = [ ];
+        darwin = [ ];
+        homeManager = [ ../modules/home-manager/user/foot.nix ];
       };
     };
 
