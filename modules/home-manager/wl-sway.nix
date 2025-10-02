@@ -19,8 +19,13 @@ imports = [ ];
       enable = true;
       config = {
         modifier = cfg.modifier;
+        bars = [ ];
+        startup = [
+          { command = "waybar"; }
+        ];
         keybindings = lib.mkOptionDefault {
           "${cfg.modifier}+d" = "exec rofi -show drun";
+          "${cfg.modifier}+Shift+e" = "exec rofi -show power";
         };
       };
     };
