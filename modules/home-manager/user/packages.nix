@@ -6,5 +6,5 @@
       hamlib_4                  # radio/ham tooling (left uncategorized intentionally)
       inputs.mactelnet.packages.${system}.mactelnet # external input package
       unstable.vscode-langservers-extracted # language servers (keep unstable)
-    ] ++ lib.optionals pkgs.stdenv.isLinux [ ethtool unstable.qdmr spotifyd ];
+     ] ++ lib.optionals pkgs.stdenv.isLinux [ ethtool unstable.qdmr ];
 }

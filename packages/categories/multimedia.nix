@@ -13,6 +13,7 @@
       gst_all_1.gst-plugins-bad # Additional GStreamer plugins
       gst_all_1.gst-plugins-ugly # GStreamer plugins with licensing issues
       gst_all_1.gst-libav # GStreamer FFmpeg plugin
+      spotify-player # Terminal-based Spotify client
     ] ++
     # Linux-specific multimedia tools  
     lib.optionals pkgs.stdenv.isLinux [
@@ -20,6 +21,7 @@
       pulsemixer # PulseAudio mixer (Linux audio system)
       libva-utils # VA-API utilities (vainfo command)
       vdpauinfo # VDPAU info utility
+      spotifyd # Spotify daemon for headless music streaming
     ];
 
   metadata = {
