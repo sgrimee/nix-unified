@@ -17,7 +17,6 @@ in {
   home-manager.users.${user} = {
     imports = [
       ./packages.nix
-      ./programs
     ];
 
     home = {
