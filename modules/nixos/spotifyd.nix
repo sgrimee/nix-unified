@@ -8,13 +8,10 @@
 let
   inherit (lib) mkIf mkDefault;
 
-  # Get hostname from networking config
   hostname = config.networking.hostName;
 
-  # Check if multimedia is enabled in capabilities
   multimediaEnabled = hostCapabilities.features.multimedia or false;
 
-  # Default bitrate based on hardware capabilities (higher for better hardware)
   defaultBitrate = if hostCapabilities.hardware ? large-ram && hostCapabilities.hardware.large-ram then
     320
   else
@@ -24,7 +21,7 @@ in
 {
   config = mkIf multimediaEnabled {
     services.spotifyd = {
-      enable = mkDefault true;
+      enable = mkDefault false;
       settings = {
         global = {
           device_name = mkDefault hostname;
