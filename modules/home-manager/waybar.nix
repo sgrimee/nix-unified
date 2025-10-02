@@ -9,7 +9,7 @@
         output = [ "eDP-1" "HDMI-A-1" ];
         modules-left = [ "sway/workspaces" "sway/mode" "wlr/taskbar" ];
         modules-center = [ "sway/window" "custom/hello-from-waybar" ];
-        modules-right = [ "mpd" "custom/mymodule#with-css-id" "temperature" ];
+        modules-right = [ "mpd" "custom/mymodule#with-css-id" "temperature" "battery" ];
 
         "sway/workspaces" = {
           disable-scroll = true;
@@ -22,6 +22,15 @@
           exec = pkgs.writeShellScript "hello-from-waybar" ''
             echo "from within waybar"
           '';
+        };
+
+        "battery" = {
+          format = "{capacity}% {icon}";
+          format-icons = ["" "" "" "" ""];
+          states = {
+            warning = 30;
+            critical = 15;
+          };
         };
       };
     };
