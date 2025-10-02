@@ -1,21 +1,24 @@
-{ pkgs, ... }:
-let user = "sgrimee";
+{pkgs, ...}: let
+  user = "sgrimee";
 in {
-  users.users.lgrimee = {
-    isNormalUser = true;
-    group = "users";
-    extraGroups = [ "audio" "networkmanager" "video" ];
-    shell = pkgs.zsh;
-  };
   users.users.${user} = {
     isNormalUser = true;
     group = "users";
-    extraGroups =
-      [ "audio" "networkmanager" "systemd-journal" "video" "wheel" ];
+    extraGroups = [
+      "audio"
+      "networkmanager"
+      "systemd-journal"
+      "video"
+      "wheel"
+    ];
     shell = pkgs.zsh;
   };
+
   home-manager.users.${user} = {
-    imports = [ ./packages.nix ./programs ./spotifyd.nix ];
+    imports = [
+      ./packages.nix
+      ./programs
+    ];
 
     home = {
       # file = {
