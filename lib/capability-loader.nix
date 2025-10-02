@@ -65,11 +65,16 @@ in rec {
       coreModules = moduleMapping.coreModules.${platform} or [ ]
         ++ moduleMapping.coreModules.shared or [ ];
 
-      # Feature-based modules
-      featureModules = lib.flatten (lib.mapAttrsToList (featureName: enabled:
+      # Feature-based modules - separate system and home-manager
+      featureSystemModules = lib.flatten (lib.mapAttrsToList (featureName: enabled:
         if enabled && moduleMapping.featureModules ? ${featureName} then
           (moduleMapping.featureModules.${featureName}.${platform} or [ ])
-          ++ (moduleMapping.featureModules.${featureName}.homeManager or [ ])
+        else
+          [ ]) resolvedCapabilities.features);
+
+      featureHomeModules = lib.flatten (lib.mapAttrsToList (featureName: enabled:
+        if enabled && moduleMapping.featureModules ? ${featureName} then
+          (moduleMapping.featureModules.${featureName}.homeManager or [ ])
         else
           [ ]) resolvedCapabilities.features);
 
@@ -120,22 +125,26 @@ in rec {
           [ ])
       ];
 
-      # Role-based modules
-      roleModules = lib.flatten (map (role:
+      # Role-based modules - separate system and home-manager
+      roleSystemModules = lib.flatten (map (role:
         if moduleMapping.roleModules ? ${role} then
           (moduleMapping.roleModules.${role}.${platform} or [ ])
-          ++ (moduleMapping.roleModules.${role}.homeManager or [ ])
         else
           [ ]) resolvedCapabilities.roles);
 
-      # Environment modules
-      environmentModules = lib.flatten [
+      roleHomeModules = lib.flatten (map (role:
+        if moduleMapping.roleModules ? ${role} then
+          (moduleMapping.roleModules.${role}.homeManager or [ ])
+        else
+          [ ]) resolvedCapabilities.roles);
+
+      # Environment modules - separate system and home-manager
+      environmentSystemModules = lib.flatten [
         # Desktop environment
         (if resolvedCapabilities.environment.desktop != null
         && moduleMapping.environmentModules.desktop
         ? ${resolvedCapabilities.environment.desktop} then
           (moduleMapping.environmentModules.desktop.${resolvedCapabilities.environment.desktop}.${platform} or [ ])
-          ++ (moduleMapping.environmentModules.desktop.${resolvedCapabilities.environment.desktop}.homeManager or [ ])
         else
           [ ])
 
@@ -143,7 +152,6 @@ in rec {
         (if moduleMapping.environmentModules.shell
         ? ${resolvedCapabilities.environment.shell.primary} then
           (moduleMapping.environmentModules.shell.${resolvedCapabilities.environment.shell.primary}.${platform} or [ ])
-          ++ (moduleMapping.environmentModules.shell.${resolvedCapabilities.environment.shell.primary}.homeManager or [ ])
         else
           [ ])
 
@@ -151,7 +159,6 @@ in rec {
         (lib.flatten (map (shell:
           if moduleMapping.environmentModules.shell ? ${shell} then
             (moduleMapping.environmentModules.shell.${shell}.${platform} or [ ])
-            ++ (moduleMapping.environmentModules.shell.${shell}.homeManager or [ ])
           else
             [ ]) resolvedCapabilities.environment.shell.additional))
 
@@ -159,7 +166,6 @@ in rec {
         (if moduleMapping.environmentModules.terminal
         ? ${resolvedCapabilities.environment.terminal} then
           (moduleMapping.environmentModules.terminal.${resolvedCapabilities.environment.terminal}.${platform} or [ ])
-          ++ (moduleMapping.environmentModules.terminal.${resolvedCapabilities.environment.terminal}.homeManager or [ ])
         else
           [ ])
 
@@ -168,7 +174,45 @@ in rec {
         && moduleMapping.environmentModules.windowManager
         ? ${resolvedCapabilities.environment.windowManager} then
           (moduleMapping.environmentModules.windowManager.${resolvedCapabilities.environment.windowManager}.${platform} or [ ])
-          ++ (moduleMapping.environmentModules.windowManager.${resolvedCapabilities.environment.windowManager}.homeManager or [ ])
+        else
+          [ ])
+      ];
+
+      environmentHomeModules = lib.flatten [
+        # Desktop environment
+        (if resolvedCapabilities.environment.desktop != null
+        && moduleMapping.environmentModules.desktop
+        ? ${resolvedCapabilities.environment.desktop} then
+          (moduleMapping.environmentModules.desktop.${resolvedCapabilities.environment.desktop}.homeManager or [ ])
+        else
+          [ ])
+
+        # Shell configuration
+        (if moduleMapping.environmentModules.shell
+        ? ${resolvedCapabilities.environment.shell.primary} then
+          (moduleMapping.environmentModules.shell.${resolvedCapabilities.environment.shell.primary}.homeManager or [ ])
+        else
+          [ ])
+
+        # Additional shells
+        (lib.flatten (map (shell:
+          if moduleMapping.environmentModules.shell ? ${shell} then
+            (moduleMapping.environmentModules.shell.${shell}.homeManager or [ ])
+          else
+            [ ]) resolvedCapabilities.environment.shell.additional))
+
+        # Terminal emulator
+        (if moduleMapping.environmentModules.terminal
+        ? ${resolvedCapabilities.environment.terminal} then
+          (moduleMapping.environmentModules.terminal.${resolvedCapabilities.environment.terminal}.homeManager or [ ])
+        else
+          [ ])
+
+        # Window manager (if specified)
+        (if resolvedCapabilities.environment.windowManager != null
+        && moduleMapping.environmentModules.windowManager
+        ? ${resolvedCapabilities.environment.windowManager} then
+          (moduleMapping.environmentModules.windowManager.${resolvedCapabilities.environment.windowManager}.homeManager or [ ])
         else
           [ ])
       ];
@@ -199,8 +243,8 @@ in rec {
           resolvedCapabilities.services.development.databases))
       ];
 
-      # Security modules
-      securityModules = lib.flatten [
+      # Security modules - separate system and home-manager
+      securitySystemModules = lib.flatten [
         # SSH server
         (if resolvedCapabilities.security.ssh.server then
           moduleMapping.securityModules.ssh.server.${platform} or [ ]
@@ -210,7 +254,6 @@ in rec {
         # SSH client
         (if resolvedCapabilities.security.ssh.client then
           (moduleMapping.securityModules.ssh.client.${platform} or [ ])
-          ++ (moduleMapping.securityModules.ssh.client.homeManager or [ ])
         else
           [ ])
 
@@ -223,12 +266,25 @@ in rec {
         # Secrets management
         (if resolvedCapabilities.security.secrets then
           (moduleMapping.securityModules.secrets.${platform} or [ ])
-          ++ (moduleMapping.securityModules.secrets.homeManager or [ ])
         else
           [ ])
         # VPN support
         (if resolvedCapabilities.security.vpn or false then
           moduleMapping.securityModules.vpn.${platform} or [ ]
+        else
+          [ ])
+      ];
+
+      securityHomeModules = lib.flatten [
+        # SSH client
+        (if resolvedCapabilities.security.ssh.client then
+          (moduleMapping.securityModules.ssh.client.homeManager or [ ])
+        else
+          [ ])
+
+        # Secrets management
+        (if resolvedCapabilities.security.secrets then
+          (moduleMapping.securityModules.secrets.homeManager or [ ])
         else
           [ ])
       ];
@@ -245,25 +301,34 @@ in rec {
       # Special modules that require arguments
       specialModules = createSpecialModules hostCapabilities inputs hostName;
 
-      # Combine all modules
-      allModules = coreModules ++ featureModules ++ hardwareModules
-        ++ roleModules ++ environmentModules ++ serviceModules
-        ++ securityModules ++ virtualizationModules ++ specialModules;
+      # Combine system modules only
+      allSystemModules = coreModules ++ featureSystemModules ++ hardwareModules
+        ++ roleSystemModules ++ environmentSystemModules ++ serviceModules
+        ++ securitySystemModules ++ virtualizationModules ++ specialModules;
 
-      # Remove duplicates and sort
+      # Combine home-manager modules
+      allHomeModules = featureHomeModules ++ roleHomeModules ++ environmentHomeModules ++ securityHomeModules;
+
+      # Remove duplicates and sort system modules
       # Note: Special modules (functions) can't be sorted with paths, so we separate them
       pathModules =
         lib.filter (mod: builtins.isPath mod || builtins.isString mod)
-        allModules;
-      functionModules = lib.filter (mod: builtins.isFunction mod) allModules;
+        allSystemModules;
+      functionModules = lib.filter (mod: builtins.isFunction mod) allSystemModules;
 
       sortedPathModules = lib.unique
         (lib.sort (a: b: builtins.toString a < builtins.toString b)
           pathModules);
-      uniqueModules = sortedPathModules ++ functionModules;
+      uniqueSystemModules = sortedPathModules ++ functionModules;
+
+      # Remove duplicates and sort home-manager modules
+      uniqueHomeModules = lib.unique
+        (lib.sort (a: b: builtins.toString a < builtins.toString b)
+          (lib.filter (mod: builtins.isPath mod || builtins.isString mod) allHomeModules));
 
     in {
-      imports = uniqueModules;
+      imports = uniqueSystemModules;
+      homeManagerModules = uniqueHomeModules;
 
       # Debugging information
       debug = {
@@ -273,15 +338,20 @@ in rec {
         mappingValidation = mappingValidation;
         moduleBreakdown = {
           core = coreModules;
-          features = featureModules;
+          featuresSystem = featureSystemModules;
+          featuresHome = featureHomeModules;
           hardware = hardwareModules;
-          roles = roleModules;
-          environment = environmentModules;
+          rolesSystem = roleSystemModules;
+          rolesHome = roleHomeModules;
+          environmentSystem = environmentSystemModules;
+          environmentHome = environmentHomeModules;
           services = serviceModules;
-          security = securityModules;
+          securitySystem = securitySystemModules;
+          securityHome = securityHomeModules;
           virtualization = virtualizationModules;
         };
-        totalModules = lib.length uniqueModules;
+        totalSystemModules = lib.length uniqueSystemModules;
+        totalHomeModules = lib.length uniqueHomeModules;
       };
     };
 
@@ -289,7 +359,12 @@ in rec {
   generateHostConfig = hostCapabilities: inputs: hostName: _hostSpecificConfig:
     let moduleImports = generateModuleImports hostCapabilities inputs hostName;
     in {
-      imports = moduleImports.imports;
+      imports = moduleImports.imports ++ [
+        # Inject home-manager modules via sharedModules as a separate module
+        {
+          home-manager.sharedModules = moduleImports.homeManagerModules;
+        }
+      ];
 
       # Make capabilities available to modules that need them
       _module.args.hostCapabilities = hostCapabilities;
