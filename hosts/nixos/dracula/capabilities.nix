@@ -1,5 +1,5 @@
 # Capability Declaration for dracula
-# Intel MacBook Pro 2013 running NixOS with GNOME desktop
+# Intel MacBook Pro 2013 running NixOS with Sway desktop
 # Based on baseline analysis of current configuration
 
 {
@@ -45,13 +45,13 @@
 
   # Environment preferences
   environment = {
-    desktop = "gnome"; # GNOME desktop environment
+    desktop = "sway"; # Sway Wayland compositor
     shell = {
       primary = "zsh"; # Primary shell
       additional = [ "fish" ]; # Additional shells available
     };
     terminal = "alacritty"; # Default terminal emulator
-    windowManager = null; # Using GNOME's default window manager
+    windowManager = "sway"; # Sway is both desktop and window manager
   };
 
   # Service configurations
