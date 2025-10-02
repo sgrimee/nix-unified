@@ -13,13 +13,16 @@ imports = [ ];
 
   config = {
 
-    # Rofi is configured in host-specific programs - just ensure it's available for sway keybindings
-
     # Home Manager layer: provides per-user sway configuration
     # The system-wide module (modules/nixos/sway.nix) handles the global session
-    programs.sway = {
+    wayland.windowManager.sway = {
       enable = true;
-      # Basic configuration - can be extended with host-specific settings
+      config = {
+        modifier = cfg.modifier;
+        keybindings = lib.mkOptionDefault {
+          "${cfg.modifier}+d" = "exec rofi -show drun";
+        };
+      };
     };
   };
 }
