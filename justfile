@@ -822,6 +822,23 @@ secret-reencrypt:
     done || echo "No host-specific secrets to re-encrypt."
     @echo "🎉 All secrets re-encrypted successfully!"
 
+# === Keybindings ===
+
+# Show keybindings for current platform (Sway on Linux, Aerospace on macOS)
+wm-keys:
+    @echo "⌨️  Displaying keybindings..."
+    ./utils/show-keybindings.sh
+
+# Show Sway keybindings specifically
+wm-keys-sway HOST=`hostname`:
+    @echo "⌨️  Displaying Sway keybindings for {{HOST}}..."
+    ./utils/show-keybindings.sh sway {{HOST}}
+
+# Show Aerospace keybindings specifically
+wm-keys-aerospace HOST=`hostname`:
+    @echo "⌨️  Displaying Aerospace keybindings for {{HOST}}..."
+    ./utils/show-keybindings.sh aerospace {{HOST}}
+
 # === Documentation Formatting ===
 
 # Check if uvx is available
