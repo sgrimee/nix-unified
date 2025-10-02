@@ -13,7 +13,7 @@
       gst_all_1.gst-plugins-bad # Additional GStreamer plugins
       gst_all_1.gst-plugins-ugly # GStreamer plugins with licensing issues
       gst_all_1.gst-libav # GStreamer FFmpeg plugin
-      spotify-player # Terminal-based Spotify client
+      # spotify-player now managed via home-manager programs.spotify-player
     ] ++
     # Linux-specific multimedia tools  
     lib.optionals pkgs.stdenv.isLinux [

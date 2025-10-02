@@ -20,6 +20,7 @@
     ./neomutt.nix
     ./node.nix
     ./nushell.nix
+    ./spotify-player.nix
     ./ssh.nix
     ./starship.nix
     ./yt-dlp.nix
