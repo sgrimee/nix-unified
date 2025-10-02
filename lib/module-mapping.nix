@@ -90,8 +90,8 @@
     };
 
     corporate = {
-      nixos = [ ];
-      darwin = [ ];
+      nixos = [ ../modules/nixos/webex-tui.nix ];
+      darwin = [ ../modules/darwin/webex-tui.nix ];
       homeManager = [ ];
     };
 
