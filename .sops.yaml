@@ -4,7 +4,7 @@
 # for a more complex example.
 keys:
   - &admin_sgrimee age1rn7gsv9e2dwhjt20p5gsnydrnqyu5c339gku2h9agq8kamqynqqs8v4m7u
-  - &admin_sgrimee_cirice ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINh6O1vUZ/KOvrp5rEc7OlWdSfCEbnjJhRHDri3i7WMo admin_sgrimee_cirice
+  - &admin_sgrimee_cirice age1jn57jevylkmcrwa0vp2hzs32anwn23e63xngh3npcuxhnpdet3dqhwcz4e
   - &server_cirice age1vxel6p05epr67nz6endwz6f23drk7r0yve6gjcrf57ypjvl7hq6s68nvjd
   - &server_dracula age166rqyrhv0rl20k3ga2v46tk3kge6vx7ahnm3v8xzv00zdfxya3pqjatxcw
   - &server_mbp_15_2018 age1g3yuwa905tsc5ylx58ax3aq882aet8kluyt8jshntzsza6h9cfuqg9z38m
@@ -17,60 +17,53 @@ creation_rules:
     key_groups:
       - age:
         - *admin_sgrimee
-        - *server_nixair
-        ssh:
         - *admin_sgrimee_cirice
+        - *server_nixair
   - path_regex: secrets/cirice/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
         - *admin_sgrimee
-        - *server_cirice
-        ssh:
         - *admin_sgrimee_cirice
+        - *server_cirice
   - path_regex: secrets/dracula/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
         - *admin_sgrimee
-        - *server_dracula
-        ssh:
         - *admin_sgrimee_cirice
+        - *server_dracula
   - path_regex: secrets/legion/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
         - *admin_sgrimee
-        - *server_legion
-        ssh:
         - *admin_sgrimee_cirice
+        - *server_legion
   - path_regex: secrets/mbp_16_2023/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
         - *admin_sgrimee
-        - *server_mbp_16_2023
-        ssh:
         - *admin_sgrimee_cirice
+        - *server_mbp_16_2023
   # Shared secrets (accessible by all hosts)
   - path_regex: secrets/shared/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
         - *admin_sgrimee
+        - *admin_sgrimee_cirice
         - *server_cirice
         - *server_dracula
         - *server_mbp_15_2018
         - *server_mbp_16_2023
         - *server_nixair
         - *server_legion
-        ssh:
-        - *admin_sgrimee_cirice
   # Legacy: existing root-level secrets (for backward compatibility)
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini)$
     key_groups:
       - age:
         - *admin_sgrimee
+        - *admin_sgrimee_cirice
         - *server_cirice
         - *server_dracula
         - *server_mbp_15_2018
         - *server_mbp_16_2023
         - *server_nixair
         - *server_legion
-        ssh:
-        - *admin_sgrimee_cirice
