@@ -1,7 +1,7 @@
 # Home Manager configuration module
 # This module is imported by the capability system and configures home-manager for the user
 { host, inputs, user, }:
-{ inputs, pkgs, system, stateVersion, unstable, ... }:
+{ inputs, pkgs, system, stateVersion, unstable, config, lib, ... }:
 let
   home = if pkgs.stdenv.hostPlatform.isDarwin then
     "/Users/${user}"
@@ -26,7 +26,9 @@ in {
   home-manager.extraSpecialArgs = {
     inherit home inputs stateVersion system user unstable;
   };
-  home-manager.sharedModules = [ ];
+  # sharedModules will be set by the capability system via generateHostConfig
+  # This line allows capability modules to append to sharedModules
+  home-manager.sharedModules = lib.mkBefore [ ];
 
   home-manager.users.${user} =
     import ./user { inherit inputs home pkgs stateVersion system unstable; };
