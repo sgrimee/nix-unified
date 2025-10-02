@@ -209,7 +209,7 @@
   environmentModules = {
     desktop = {
       gnome = {
-        nixos = [ ];
+        nixos = [ ../modules/nixos/greetd.nix ../modules/nixos/gnome.nix ];
         darwin = [ ];
         homeManager = [ ];
       };
