@@ -78,7 +78,7 @@
     };
 
     multimedia = {
-      nixos = [ ../modules/nixos/sound.nix ];
+      nixos = [ ../modules/nixos/sound.nix ../modules/nixos/spotifyd.nix ];
       darwin = [ ];
       homeManager = [ ];
     };
@@ -216,7 +216,7 @@
       sway = {
         nixos = [ ../modules/nixos/greetd.nix ../modules/nixos/sway.nix ];
         darwin = [ ];
-        homeManager = [ ];
+        homeManager = [ ../modules/home-manager/wl-sway.nix ];
       };
       kde = {
         nixos = [ ];
