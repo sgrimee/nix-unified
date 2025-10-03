@@ -1,6 +1,6 @@
-{ unstable, ... }: {
+{ unstable, pkgs, ... }: {
   programs.ghostty = {
-    enable = true;
+    enable = pkgs.stdenv.isLinux; # Only enable on Linux where it's supported
     package = unstable.ghostty;
   };
 }

@@ -5,7 +5,7 @@
 {
   # Core platform information
   platform = "darwin";
-  architecture = "x86_64";
+  architecture = "aarch64";
 
   # Feature flags for major functionality groups
   features = {
@@ -21,7 +21,7 @@
 
   # Hardware-specific capabilities
   hardware = {
-    cpu = "intel"; # Intel-based Mac
+    cpu = "apple-silicon"; # Apple Silicon Mac
     gpu = null; # Integrated graphics
     audio = "coreaudio"; # macOS Core Audio
     display = {
