@@ -88,7 +88,7 @@ in {
     launchd.daemons.kanata = {
       serviceConfig = {
         ProgramArguments =
-          [ "${cfg.package}/bin/kanata" "--config" "/etc/kanata/kanata.kbd" ];
+          [ "${cfg.package}/bin/kanata" "-c" "/etc/kanata/kanata.kbd" ];
         Label = "org.nixos.kanata";
         RunAtLoad = true;
         KeepAlive = true;
