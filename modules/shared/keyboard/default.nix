@@ -13,15 +13,15 @@ in {
   options.keyboard = {
     remapper = mkOption {
       type = types.enum [ "karabiner" "kanata" ];
-      default = if isDarwin then "karabiner" else "kanata";
+      default = "kanata";
       description = ''
         Choose keyboard remapper for homerow mods and advanced functionality.
 
         - karabiner: Uses Karabiner Elements (macOS only, installed via Homebrew)
         - kanata: Uses Kanata (cross-platform, native Nix package)
 
-        Default: "karabiner" on macOS, "kanata" on Linux.
-        Karabiner is more established on macOS, while Kanata offers cross-platform consistency.
+        Default: "kanata" on all platforms.
+        Kanata provides cross-platform consistency and native Nix integration.
       '';
     };
 

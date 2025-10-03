@@ -82,10 +82,7 @@ in {
     environment.systemPackages = [ cfg.package ];
 
     # Create kanata config file
-    environment.etc."kanata/kanata.kbd" = {
-      text = cfg.config;
-      mode = "0644";
-    };
+    environment.etc."kanata/kanata.kbd".text = cfg.config;
 
     # Create launch daemon for kanata service
     launchd.daemons.kanata = {
