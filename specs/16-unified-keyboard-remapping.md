@@ -315,6 +315,35 @@ keyboard = {
 - Linux: Uses device path exclusion via service configuration
 - Discovery: Karabiner-EventViewer.app (macOS), udevadm (Linux)
 
+## TODO: Linux Keyboard Exclusion Implementation
+
+**Status: 🔄 PENDING - Requires Linux Host**
+
+### Problem
+While keyboard exclusion is fully implemented for macOS (using device names in Kanata config), Linux keyboard exclusion is **not implemented**. The `modules/nixos/kanata.nix` currently ignores the `excludeKeyboards` configuration and processes all devices, generating this warning:
+
+```
+Keyboard exclusion configured but not yet implemented for Linux.
+Excluded devices: 2 (will still be processed by Kanata)
+Use 'ls -l /dev/input/by-id/' to identify device paths for manual exclusion.
+```
+
+### Required Implementation
+1. **Device Path Mapping**: Map excluded keyboards (vendor_id/product_id) to actual `/dev/input/*` device paths at runtime
+2. **Path Filtering**: Filter excluded device paths from the `keyboardDevices` list before passing to Kanata service
+3. **Runtime Discovery**: Use `udevadm` or similar tools to enumerate devices and match against exclusion criteria
+4. **Fallback Handling**: Gracefully handle cases where device paths cannot be resolved
+
+### Implementation Location
+- **File**: `modules/nixos/kanata.nix`
+- **Function**: Replace the current TODO placeholder in `filteredDevices` logic
+- **Testing**: Requires Linux host with physical keyboard devices for validation
+
+### Expected Outcome
+- Warning eliminated when exclusions are properly filtered
+- Custom firmware keyboards (Aurora Sweep, Glove80) excluded from Kanata processing on Linux
+- Consistent exclusion behavior across Darwin and NixOS platforms
+
 ## Final Implementation Summary
 
 **Status: ✅ PRODUCTION READY**
