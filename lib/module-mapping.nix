@@ -27,6 +27,7 @@
       ../modules/darwin/environment.nix
       ../modules/darwin/homebrew
       ../modules/darwin/keyboard.nix
+      ../modules/darwin/kanata.nix
       ../modules/darwin/mac-app-util.nix
       ../modules/darwin/music_app.nix
       ../modules/darwin/screen.nix
@@ -161,7 +162,7 @@
     keyboard = {
       advanced = {
         nixos = [ ../modules/nixos/kanata.nix ];
-        darwin = [ ];
+        darwin = [ ../modules/darwin/kanata.nix ];
       };
     };
   };

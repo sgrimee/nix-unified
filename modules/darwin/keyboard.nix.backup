@@ -1,0 +1,111 @@
+{ config, lib, pkgs, ... }:
+
+with lib;
+
+let
+  cfg = config.darwin.keyboard;
+in
+
+{
+  options.darwin.keyboard = {
+    remapper = mkOption {
+      type = types.enum [ "karabiner" "kanata" "none" ];
+      default = "karabiner";
+      description = ''
+        Choose keyboard remapper for homerow mods and advanced functionality.
+        
+        - karabiner: Uses Karabiner Elements (installed via Homebrew) with JSON configuration
+        - kanata: Uses Kanata (native Nix package) with Karabiner driver dependency  
+        - none: Disables keyboard remapping (useful if keyboards have custom firmware)
+        
+        Karabiner is more established on macOS, while Kanata offers cross-platform consistency.
+      '';
+    };
+
+    enableHomerowMods = mkOption {
+      type = types.bool;
+      default = false;
+      description = "Enable homerow modifier key functionality";
+    };
+
+    excludeKeyboards = mkOption {
+      type = types.listOf types.attrs;
+      default = [];
+      example = [
+        { vendor_id = 1452; product_id = 592; }  # Apple Magic Keyboard
+        { vendor_id = 7504; product_id = 24926; } # Custom firmware keyboard
+      ];
+      description = ''
+        List of keyboards to exclude from remapping. Each entry should contain
+        vendor_id and product_id attributes. Use this to exclude keyboards that
+        have custom firmware doing their own remapping.
+        
+        You can find these IDs using:
+        - Karabiner-EventViewer.app (recommended - shows real-time device info)
+        - ioreg -p IOUSB -l | grep -A5 -B5 "idVendor\|idProduct" 
+        - For Bluetooth keyboards, check macOS Bluetooth preferences or Karabiner-EventViewer.app
+        
+        Note: Both USB and Bluetooth keyboards work with this exclusion system.
+      '';
+    };
+  };
+
+  config = {
+    # Basic macOS keyboard settings (always applied)
+    system = {
+      keyboard = {
+        enableKeyMapping = true;
+        nonUS.remapTilde = false;
+        # Only remap caps lock to control if not using homerow mods or remapper is disabled
+        remapCapsLockToControl = !(cfg.enableHomerowMods && cfg.remapper != "none");
+      };
+      defaults.NSGlobalDomain = {
+        InitialKeyRepeat = 30;
+        KeyRepeat = 2;
+        "com.apple.keyboard.fnState" = true; # function keys without Fn
+      };
+    };
+
+    # Conditionally enable kanata based on remapper choice
+    services.kanata = {
+      enable = mkIf (cfg.remapper == "kanata" && cfg.enableHomerowMods) true;
+      excludeKeyboards = cfg.excludeKeyboards;
+    };
+
+    # Warnings for different remapper configurations
+    warnings = mkMerge [
+      (mkIf (cfg.remapper == "karabiner" && cfg.enableHomerowMods) [
+        ''
+          Karabiner Elements homerow mods are enabled.
+          
+          Ensure Karabiner Elements is installed (via Homebrew) and configured with the
+          homerow mods rules from modules/home-manager/user/dotfiles/config/karabiner/karabiner.json
+          
+          You may need to:
+          1. Import complex modifications for homerow mods
+          2. Grant Input Monitoring permissions to Karabiner Elements
+          3. Configure device-specific settings in Karabiner preferences
+          ${optionalString (cfg.excludeKeyboards != []) 
+            "4. Configure excluded keyboards in Karabiner device settings"}
+        ''
+      ])
+      
+      (mkIf (cfg.remapper == "none" && cfg.enableHomerowMods) [
+        ''
+          Warning: enableHomerowMods is true but remapper is set to "none".
+          No keyboard remapping will be performed. This is only useful if your
+          keyboards have custom firmware that handles homerow mods.
+        ''
+      ])
+      
+      (mkIf (cfg.excludeKeyboards != []) [
+        ''
+          Keyboard filtering is configured:
+          - Excluded keyboards: ${toString (length cfg.excludeKeyboards)} devices
+          
+          Use Karabiner-EventViewer.app to find vendor_id/product_id values for additional keyboards.
+        ''
+      ])
+    ];
+  };
+}

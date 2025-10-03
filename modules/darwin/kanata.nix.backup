@@ -1,0 +1,137 @@
+{ config, lib, pkgs, ... }:
+
+with lib;
+
+let
+  cfg = config.services.kanata;
+
+  # Generate device filtering configuration for kanata
+  deviceFilterConfig = 
+    if cfg.excludeKeyboards != [] then
+      let
+        # Convert exclude list to kanata format  
+        excludeDevices = map (dev: 
+          "product-name \"${toString dev.vendor_id}:${toString dev.product_id}\""
+        ) cfg.excludeKeyboards;
+      in
+      ''
+      macos-dev-names-exclude (
+        ${concatStringsSep "\n    " excludeDevices}
+      )
+      ''
+    else
+      # No filtering - use all keyboards
+      "";
+
+  # Create kanata configuration with homerow mods equivalent to Karabiner config
+  kanataConfig = ''
+    ;; Kanata configuration for macOS
+    ;; Equivalent to Karabiner homerow mods configuration
+    
+    (defcfg
+      process-unmapped-keys yes
+      danger-enable-cmd yes
+      ${deviceFilterConfig}
+    )
+
+    ;; define the keys to remap - caps, homerow keys
+    (defsrc
+     caps a s d f j k l ;
+    )
+
+    ;; define values for tap time and hold time (matching Karabiner)
+    (defvar
+      tap-time 150
+      hold-time 200
+    )
+
+    ;; alias definitions matching Karabiner homerow mods
+    ;; Left side: a=ctrl, s=opt, d=cmd, f=shift  
+    ;; Right side: j=shift, k=cmd, l=opt, ;=ctrl
+    ;; caps=escape when tapped, ctrl when held
+    (defalias
+      escctrl (tap-hold $tap-time $hold-time esc lctl)
+      a (tap-hold $tap-time $hold-time a lctrl)
+      s (tap-hold $tap-time $hold-time s lalt)
+      d (tap-hold $tap-time $hold-time d lmet)
+      f (tap-hold $tap-time $hold-time f lsft)
+      j (tap-hold $tap-time $hold-time j rsft)
+      k (tap-hold $tap-time $hold-time k rmet)
+      l (tap-hold $tap-time $hold-time l ralt)
+      ; (tap-hold $tap-time $hold-time ; rctrl)
+    )
+
+    (deflayer base
+      @escctrl @a @s @d @f @j @k @l @;
+    )
+  '';
+
+in
+
+{
+  options.services.kanata = {
+    enable = mkEnableOption "Kanata keyboard remapper for macOS";
+    
+    package = mkOption {
+      type = types.package;
+      default = pkgs.kanata;
+      description = "The kanata package to use";
+    };
+
+    config = mkOption {
+      type = types.str;
+      default = kanataConfig;
+      description = "Kanata configuration content";
+    };
+
+    excludeKeyboards = mkOption {
+      type = types.listOf types.attrs;
+      default = [];
+      description = "List of keyboards to exclude from kanata remapping";
+    };
+
+    includeKeyboards = mkOption {
+      type = types.listOf types.attrs;
+      default = [];
+      description = "List of keyboards to include for kanata remapping (exclusive)";
+    };
+  };
+
+  config = mkIf cfg.enable {
+    warnings = [
+      ''
+        Kanata on macOS requires the Karabiner VirtualHIDDevice driver.
+        
+        Install it from: https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/blob/main/dist/Karabiner-DriverKit-VirtualHIDDevice-5.0.0.pkg
+        
+        After installation, activate it with:
+          sudo /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate
+        
+        Then run the daemon:
+          sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon' &
+        
+        You will also need to grant Input Monitoring permissions to kanata in System Preferences > Security & Privacy > Privacy > Input Monitoring.
+        
+        ${optionalString (cfg.excludeKeyboards != [] || cfg.includeKeyboards != []) ''
+        Keyboard filtering is configured:
+        ${optionalString (cfg.excludeKeyboards != []) 
+          "- Excluded keyboards: ${toString (length cfg.excludeKeyboards)} devices"}
+        ${optionalString (cfg.includeKeyboards != []) 
+          "- Included keyboards: ${toString (length cfg.includeKeyboards)} devices"}
+        ''}
+        
+        To manage the service manually, use:
+          utils/toggle-kanata.sh [on|off|status]
+      ''
+    ];
+
+    # Install kanata binary
+    environment.systemPackages = [ cfg.package ];
+
+    # Create kanata config file in a predictable location
+    environment.etc."kanata/kanata.kbd" = {
+      text = cfg.config;
+      mode = "0644";
+    };
+  };
+}

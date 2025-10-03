@@ -1,81 +1,80 @@
-{ config, lib, pkgs, hostCapabilities ? {}, ... }:
+{ config, lib, pkgs, hostCapabilities ? { }, ... }:
+
+with lib;
 
 let
-  # Extract keyboard devices from host capabilities
-  keyboardDevices = 
-    if hostCapabilities ? hardware 
-    && hostCapabilities.hardware ? keyboard 
-    && hostCapabilities.hardware.keyboard ? devices
-    then hostCapabilities.hardware.keyboard.devices
-    else [ "/dev/input/by-path/platform-i8042-serio-0-event-kbd" ]; # fallback
-in
+  keyboardCfg = config.keyboard;
 
-{
-
-  config = {
-  # Enable the uinput module
-  boot.kernelModules = [ "uinput" ];
-
-  # Enable uinput
-  hardware.uinput.enable = true;
-
-  # Set up udev rules for uinput
-  services.udev.extraRules = ''
-    KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
-  '';
-
-  # Ensure the uinput group exists
-  users.groups.uinput = { };
-
-  # Add the Kanata service user to necessary groups
-  systemd.services.kanata-internalKeyboard.serviceConfig = {
-    SupplementaryGroups = [ "input" "uinput" ];
+  # Import shared keyboard utilities
+  keyboardLib = import ../shared/keyboard/lib.nix {
+    inherit lib pkgs;
+    isDarwin = false;
   };
+  keyboardUtils = keyboardLib.mkKeyboardUtils keyboardCfg;
 
-  services.kanata = {
-    enable = true;
-    keyboards = {
-      internalKeyboard = {
-        devices = keyboardDevices;
-        extraDefCfg = "process-unmapped-keys yes";
-        config = ''
-          ;; home row-mods
+  # Extract keyboard devices from host capabilities (legacy compatibility)
+  keyboardDevices = if hostCapabilities ? hardware && hostCapabilities.hardware
+  ? keyboard && hostCapabilities.hardware.keyboard ? devices then
+    hostCapabilities.hardware.keyboard.devices
+  else
+    [ "/dev/input/by-path/platform-i8042-serio-0-event-kbd" ]; # fallback
 
-          ;; un-mapped keys behave as normally
-          ;;(defcfg
-          ;;  process-unmapped-keys yes
-          ;;)
+  # Generate Kanata configuration using shared module
+  kanataConfigText = keyboardUtils.generateKanataConfig;
 
-          ;; define the keys to remap
-          (defsrc
-           caps a s d f j k l ;
-          )
+  # Filter out excluded keyboards from device list
+  filteredDevices = if keyboardCfg.excludeKeyboards == [ ] then
+    keyboardDevices
+  else
+  # For now, keep all devices - exclusion filtering on Linux needs device-specific implementation
+  # TODO: Implement device path filtering based on vendor/product IDs
+    keyboardDevices;
 
-          ;; define values for tap time and hold time
-          (defvar
-            tap-time 150
-            hold-time 200
-          )
+in {
+  imports = [ ../shared/keyboard ];
 
-          ;; alias definitions
-          (defalias
-            escctrl (tap-hold $tap-time $hold-time esc lctl)
-            a (tap-hold $tap-time $hold-time a lctrl)
-            s (tap-hold $tap-time $hold-time s lalt)
-            d (tap-hold $tap-time $hold-time d lmet)
-            f (tap-hold $tap-time $hold-time f lsft)
-            j (tap-hold $tap-time $hold-time j rsft)
-            k (tap-hold $tap-time $hold-time k rmet)
-            l (tap-hold $tap-time $hold-time l ralt)
-            ; (tap-hold $tap-time $hold-time ; rctrl)
-          )
+  config = mkIf keyboardUtils.shouldEnableKanata {
+    # Enable the uinput module for Kanata
+    boot.kernelModules = [ "uinput" ];
 
-          (deflayer base
-            @escctrl @a @s @d @f @j @k @l @;
-          )
-        '';
+    # Enable uinput hardware support
+    hardware.uinput.enable = true;
+
+    # Set up udev rules for uinput access
+    services.udev.extraRules = ''
+      KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
+    '';
+
+    # Ensure the uinput group exists
+    users.groups.uinput = { };
+
+    # Configure systemd service supplementary groups
+    systemd.services.kanata-internalKeyboard.serviceConfig = {
+      SupplementaryGroups = [ "input" "uinput" ];
+    };
+
+    # Configure Kanata service with generated configuration
+    services.kanata = {
+      enable = true;
+      keyboards = {
+        internalKeyboard = {
+          devices = filteredDevices;
+          extraDefCfg = "process-unmapped-keys yes";
+          config = kanataConfigText;
+        };
       };
     };
-  };
+
+    # Conditional warnings - only show when there are issues or during builds
+    warnings = mkMerge [
+      # Only warn about exclusion if keyboards are actually excluded
+      (mkIf (keyboardCfg.excludeKeyboards != [ ]) [''
+        Keyboard exclusion configured but not yet implemented for Linux.
+        Excluded devices: ${
+          toString (length keyboardCfg.excludeKeyboards)
+        } (will still be processed by Kanata)
+        Use 'ls -l /dev/input/by-id/' to identify device paths for manual exclusion.
+      ''])
+    ];
   };
 }

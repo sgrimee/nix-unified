@@ -1,0 +1,24 @@
+{
+    "title": "Spacebar to Mew",
+    "rules": [
+        {
+            "description": "Change spacebar to Mew. (Post spacebar if pressed alone)",
+            "manipulators": [
+                {
+                    "from": {
+                        "key_code": "spacebar",
+                        "modifiers": { "optional": ["any"] }
+                    },
+                    "to_if_alone": [{ "key_code": "spacebar" }],
+                    "to_if_held_down": [
+                        {
+                            "key_code": "left_control",
+                            "modifiers": ["left_alt", "left_shift"]
+                        }
+                    ],
+                    "type": "basic"
+                }
+            ]
+        }
+    ]
+}
