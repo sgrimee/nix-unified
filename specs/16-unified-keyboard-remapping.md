@@ -330,6 +330,80 @@ The unified keyboard remapping system is complete with a clean, modern implement
 - **Granular Control**: Independent feature toggles replace monolithic configuration
 - **Comprehensive Testing**: All platforms build successfully with proper warnings
 
+### Setup Requirements
+
+#### Kanata on macOS
+Kanata requires additional setup on macOS due to system security restrictions:
+
+1. **Install Karabiner VirtualHIDDevice Driver**
+   ```bash
+   # Download from: https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases
+   # Install the .pkg file and restart your Mac
+   ```
+
+2. **Activate the Driver**
+   ```bash
+   sudo /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate
+   ```
+
+3. **Start the Daemon**
+   ```bash
+   sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon' &
+   ```
+
+4. **Grant Input Monitoring Permissions**
+   - System Settings → Privacy & Security → Input Monitoring
+   - Add and enable `kanata`
+
+5. **Service Management**
+   ```bash
+   # Start service
+   sudo launchctl load /Library/LaunchDaemons/org.nixos.kanata.plist
+
+   # Stop service
+   sudo launchctl unload /Library/LaunchDaemons/org.nixos.kanata.plist
+
+   # Check status
+   launchctl list | grep kanata
+
+   # View logs
+   tail -f /var/log/kanata.log
+   ```
+
+#### Karabiner on macOS
+Karabiner Elements is the default remapper and requires fewer setup steps:
+
+1. **Install via Homebrew** (automatic with Nix configuration)
+   ```bash
+   brew install --cask karabiner-elements
+   ```
+
+2. **Grant Input Monitoring Permissions**
+   - System Settings → Privacy & Security → Input Monitoring
+   - Add and enable `Karabiner-Elements`
+
+3. **Device Discovery** (for custom exclusions)
+   - Install `Karabiner-EventViewer` from Karabiner-Elements menu
+   - Use it to find device names and IDs for exclusion configuration
+
+#### Linux (NixOS)
+No additional setup required - Kanata works out of the box with uinput support.
+
+### macOS Device Filtering Fix (2025-01-03)
+**Issue:** Kanata configuration was generating Linux device filtering comments instead of macOS `macos-dev-names-exclude` blocks, causing custom firmware keyboards like Glove80 to be incorrectly remapped.
+
+**Root Cause:** Platform detection parameter `isDarwin` was not being properly threaded through the configuration generation pipeline.
+
+**Solution:** Modified `modules/shared/keyboard/kanata.nix` to detect platform using `pkgs.stdenv.isDarwin` instead of relying on parameter passing, ensuring correct macOS device filtering generation.
+
+**Result:** Kanata config now properly generates:
+```lisp
+macos-dev-names-exclude (
+  "Aurora Sweep (ZMK Project)"
+  "Glove80 Left (MoErgo)"
+)
+```
+
 ### Breaking Changes Made
 1. **Removed `darwin.keyboard.*` namespace** - All configuration now under unified `keyboard.*`
 2. **Removed `remapper = "none"` option** - Use feature toggles instead (`homerowMods = false`, `remapCapsLock = false`)

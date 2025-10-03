@@ -38,21 +38,6 @@ in {
       excludeKeyboards = cfg.excludeKeyboards;
     };
 
-    # Platform-specific warnings and instructions
-    warnings = optional
-      (keyboardUtils.shouldEnableKanata && cfg.excludeKeyboards != [ ]) ''
-        Kanata device filtering configured on macOS.
-
-        Ensure device names are provided for proper filtering:
-        ${concatMapStringsSep "\n" (kb:
-          if kb.name != null then
-            "✓ ${kb.name} (${toString kb.vendor_id}:${toString kb.product_id})"
-          else
-            "✗ Missing name for ${toString kb.vendor_id}:${
-              toString kb.product_id
-            }") cfg.excludeKeyboards}
-
-        Use Karabiner-EventViewer.app to find device names.
-      '';
+    # No warnings - setup instructions documented in specs
   };
 }

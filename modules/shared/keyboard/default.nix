@@ -118,7 +118,7 @@ in {
         {
           vendor_id = 5824; # 0x16c0
           product_id = 10203; # 0x27db
-          name = "Glove80 Left (MoErgo)";
+          name = "Glove80 Left";
           note =
             "Ergonomic split keyboard with custom firmware - handles own key remapping";
         }

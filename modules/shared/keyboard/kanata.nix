@@ -41,8 +41,10 @@ with lib;
             "k (tap-hold $tap-time $hold-time k rmet)"
             "l (tap-hold $tap-time $hold-time l ralt)"
             "; (tap-hold $tap-time $hold-time ; rctrl)"
-          ] ++ optional needsSpaceMew
-          "spcmew (tap-hold $tap-time $hold-time spc (lctl lalt lsft))");
+          ] ++ optionals needsSpaceMew [
+            "mew (multi lctl lalt lsft)"
+            "spcmew (tap-hold-release $tap-time $hold-time spc @mew)"
+          ]);
 
       # Build deflayer based on enabled features
       deflayer = let
@@ -55,7 +57,10 @@ with lib;
         "";
 
       # Generate device filtering section
-      deviceFilter = import ./filtering.nix { inherit lib isDarwin; };
+      deviceFilter = import ./filtering.nix {
+        inherit lib;
+        isDarwin = if pkgs != null then pkgs.stdenv.isDarwin else false;
+      };
       filterSection = deviceFilter.generateKanataFilter cfg;
 
     in if needsCaps || needsHomerow || needsSpaceMew then ''

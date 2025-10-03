@@ -182,7 +182,7 @@ The `justfile` provides common development tasks:
 
 **Building & Switching:**
 - `just build <host>` - Build specific host configuration
-- `just switch` - Switch current host to latest config
+- `just switch` - Switch current host to latest config. DO NOT attempt to use this, it requires interactive sudo.
 - `just dry-run` - Preview changes without applying
 
 **Maintenance:**  

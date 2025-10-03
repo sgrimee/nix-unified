@@ -39,45 +39,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    warnings = [''
-      Kanata keyboard remapper is enabled on macOS.
-
-      REQUIRED SETUP:
-      1. Install Karabiner VirtualHIDDevice driver:
-         Download: https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases
-         Install the .pkg file and restart
-
-      2. Activate the driver:
-         sudo /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate
-
-      3. Start the daemon:
-         sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon' &
-
-      4. Grant Input Monitoring permissions:
-         System Preferences > Security & Privacy > Privacy > Input Monitoring
-         Add and enable kanata
-
-      Current configuration:
-      - Remapper: ${keyboardCfg.remapper}
-      - Homerow mods: ${
-        if keyboardCfg.features.homerowMods then "enabled" else "disabled"
-      }
-      - Caps Lock remap: ${
-        if keyboardCfg.features.remapCapsLock then "enabled" else "disabled"
-      }
-      - Tap timing: ${toString keyboardCfg.timing.tapMs}ms
-      - Hold timing: ${toString keyboardCfg.timing.holdMs}ms
-      ${optionalString (keyboardCfg.excludeKeyboards != [ ])
-      "- Excluded devices: ${toString (length keyboardCfg.excludeKeyboards)}"}
-
-      Service management:
-        Start:  sudo launchctl load /Library/LaunchDaemons/org.nixos.kanata.plist
-        Stop:   sudo launchctl unload /Library/LaunchDaemons/org.nixos.kanata.plist
-        Status: launchctl list | grep kanata
-        
-      Logs: tail -f /var/log/kanata.log
-    ''];
-
     # Install kanata binary
     environment.systemPackages = [ cfg.package ];
 
