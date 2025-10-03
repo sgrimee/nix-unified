@@ -824,20 +824,25 @@ secret-reencrypt:
 
 # === Keybindings ===
 
-# Show keybindings for current platform (Sway on Linux, Aerospace on macOS)
+# Show all keybindings for current platform (live config + defaults + Nix config)
 wm-keys:
-    @echo "⌨️  Displaying keybindings..."
-    ./utils/show-keybindings.sh
+    #!/usr/bin/env bash
+    echo "⌨️  Displaying all keybindings..."
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        python3 utils/show-aerospace-keybindings.py
+    else
+        python3 utils/show-sway-keybindings.py
+    fi
 
-# Show Sway keybindings specifically
+# Show all Sway keybindings specifically (live config + defaults + Nix config)
 wm-keys-sway HOST=`hostname`:
-    @echo "⌨️  Displaying Sway keybindings for {{HOST}}..."
-    ./utils/show-keybindings.sh sway {{HOST}}
+    @echo "⌨️  Displaying all Sway keybindings for {{HOST}}..."
+    @python3 utils/show-sway-keybindings.py
 
-# Show Aerospace keybindings specifically
+# Show all Aerospace keybindings specifically (live config + defaults + Nix config)
 wm-keys-aerospace HOST=`hostname`:
-    @echo "⌨️  Displaying Aerospace keybindings for {{HOST}}..."
-    ./utils/show-keybindings.sh aerospace {{HOST}}
+    @echo "⌨️  Displaying all Aerospace keybindings for {{HOST}}..."
+    @python3 utils/show-aerospace-keybindings.py
 
 # === Documentation Formatting ===
 
