@@ -136,6 +136,14 @@
         default = false;
         description = "Printer support";
       };
+
+      keyboard = {
+        swapAltCommand = {
+          type = lib.types.bool;
+          default = false;
+          description = "Swap Alt and Command keys (useful for Mac keyboards on NixOS)";
+        };
+      };
     };
 
     # Role-based configurations
