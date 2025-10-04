@@ -60,6 +60,21 @@ in {
           When disabled, spacebar behaves normally.
         '';
       };
+
+      swapAltCommand = mkOption {
+        type = types.bool;
+        default = false;
+        description = ''
+          Swap Alt (Option) and Command (Meta/Super) keys on Mac keyboards.
+          Useful for Mac keyboards running on Linux/NixOS to match macOS behavior.
+
+          When enabled:
+          - Physical Alt/Option becomes Command/Meta
+          - Physical Command becomes Alt
+
+          When disabled, keys behave according to their standard mapping.
+        '';
+      };
     };
 
     timing = {

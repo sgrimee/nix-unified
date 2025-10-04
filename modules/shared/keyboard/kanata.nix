@@ -14,6 +14,7 @@ with lib;
       needsCaps = cfg.features.remapCapsLock;
       needsHomerow = cfg.features.homerowMods;
       needsSpaceMew = cfg.features.mapSpaceToMew;
+      needsSwapAltCmd = cfg.features.swapAltCommand;
 
       # Build defsrc based on enabled features
       defsrc = let
@@ -24,8 +25,9 @@ with lib;
         else
           "";
         spaceKey = if needsSpaceMew then " spc" else "";
-      in if baseKeys != "" || spaceKey != "" then
-        baseKeys + spaceKey
+        altCmdKeys = if needsSwapAltCmd then " lalt lmet ralt rmet" else "";
+      in if baseKeys != "" || spaceKey != "" || altCmdKeys != "" then
+        baseKeys + spaceKey + altCmdKeys
       else
         ""; # No remapping
 
@@ -44,6 +46,11 @@ with lib;
           ] ++ optionals needsSpaceMew [
             "mew (multi lctl lalt lsft)"
             "spcmew (tap-hold-release $tap-time $hold-time spc @mew)"
+          ] ++ optionals needsSwapAltCmd [
+            "swaplalt lmet"
+            "swaplmet lalt"
+            "swapralt rmet"
+            "swaprmet ralt"
           ]);
 
       # Build deflayer based on enabled features
@@ -51,8 +58,9 @@ with lib;
         capsPart = if needsCaps then "@escctrl" else "";
         homerowPart = if needsHomerow then " @a @s @d @f @j @k @l @;" else "";
         spacePart = if needsSpaceMew then " @spcmew" else "";
-      in if capsPart != "" || homerowPart != "" || spacePart != "" then
-        capsPart + homerowPart + spacePart
+        altCmdPart = if needsSwapAltCmd then " @swaplalt @swaplmet @swapralt @swaprmet" else "";
+      in if capsPart != "" || homerowPart != "" || spacePart != "" || altCmdPart != "" then
+        capsPart + homerowPart + spacePart + altCmdPart
       else
         "";
 
@@ -63,7 +71,7 @@ with lib;
       };
       filterSection = deviceFilter.generateKanataFilter cfg;
 
-    in if needsCaps || needsHomerow || needsSpaceMew then ''
+    in if needsCaps || needsHomerow || needsSpaceMew || needsSwapAltCmd then ''
       ;; Kanata configuration for cross-platform keyboard remapping
       ;; Generated automatically from unified keyboard module
 

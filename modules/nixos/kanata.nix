@@ -91,58 +91,6 @@ let
     '';
 
   # Create a script to filter devices at runtime
-  deviceFilterScript = pkgs.writeScript "kanata-device-filter" ''
-    #!/bin/sh
-    set -e
-
-    # Function to get device info
-    get_device_info() {
-      device_path="$1"
-      if ! ${pkgs.udev}/bin/udevadm info -a -n "$device_path" >/dev/null 2>&1; then
-        # Device doesn't exist or can't be queried
-        echo "unknown unknown"
-        return
-      fi
-
-      # Get vendor and product IDs
-      vendor=$(${pkgs.udev}/bin/udevadm info -a -n "$device_path" | grep 'ATTRS{idVendor}' | head -1 | sed 's/.*==//' || echo "unknown")
-      product=$(${pkgs.udev}/bin/udevadm info -a -n "$device_path" | grep 'ATTRS{idProduct}' | head -1 | sed 's/.*==//' || echo "unknown")
-
-      echo "$vendor $product"
-    }
-
-    # Check if device should be excluded
-    should_exclude() {
-      device_path="$1"
-      info=$(get_device_info "$device_path")
-      vendor=$(echo "$info" | cut -d' ' -f1)
-      product=$(echo "$info" | cut -d' ' -f2)
-
-      # Check against exclusion list
-      ${concatStringsSep "\n" (map (excluded: ''
-        if [ "$vendor" = "${toString excluded.vendor_id}" ] && [ "$product" = "${toString excluded.product_id}" ]; then
-          return 0
-        fi
-      '') keyboardCfg.excludeKeyboards)}
-
-      return 1
-    }
-
-    # Filter devices
-    filtered_devices=""
-    ${concatStringsSep "\n" (map (device: ''
-      if ! should_exclude "${device}"; then
-        if [ -n "$filtered_devices" ]; then
-          filtered_devices="$filtered_devices ${device}"
-        else
-          filtered_devices="${device}"
-        fi
-      fi
-    '') keyboardDevices)}
-
-    # Output filtered devices (space-separated)
-    echo "$filtered_devices"
-  '';
 
   # Generate filtered devices list at runtime
   filteredDevices = if keyboardCfg.excludeKeyboards == [ ] then
@@ -155,7 +103,15 @@ let
 in {
   imports = [ ../shared/keyboard ];
 
-  config = mkIf keyboardUtils.shouldEnableKanata {
+  # Configure keyboard features from capabilities
+  config = mkMerge [
+    # Apply capability-based keyboard configuration
+    (mkIf (hostCapabilities ? hardware && hostCapabilities.hardware ? keyboard && hostCapabilities.hardware.keyboard ? swapAltCommand) {
+      keyboard.features.swapAltCommand = hostCapabilities.hardware.keyboard.swapAltCommand;
+    })
+
+    # Enable Kanata service if needed
+    (mkIf keyboardUtils.shouldEnableKanata {
     # Enable the uinput module for Kanata
     boot.kernelModules = [ "uinput" ];
 
@@ -202,5 +158,6 @@ in {
     };
 
     # No warnings needed - keyboard exclusion is now implemented
-  };
+    })
+  ];
 }
