@@ -449,8 +449,10 @@
 
       # Formatter for nix fmt
       formatter = {
-        x86_64-linux = inputs.stable-nixos.legacyPackages.x86_64-linux.nixfmt-classic;
-        aarch64-darwin = inputs.stable-darwin.legacyPackages.aarch64-darwin.nixfmt-classic;
+        x86_64-linux =
+          inputs.stable-nixos.legacyPackages.x86_64-linux.alejandra;
+        aarch64-darwin =
+          inputs.stable-darwin.legacyPackages.aarch64-darwin.alejandra;
       };
     };
 }
