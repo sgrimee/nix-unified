@@ -14,6 +14,7 @@ let
 in {
   programs.rofi = {
     enable = true;
+    theme = "dracula";
     extraConfig = {
       modi = "drun,run,power:${powerMenuScript}";
       show-icons = true;
