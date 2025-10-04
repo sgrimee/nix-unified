@@ -31,30 +31,30 @@
 
       colors = {
         primary = {
-          background = "0x1f2528";
-          foreground = "0xc0c5ce";
+          background = "0x282a36";
+          foreground = "0xf8f8f2";
         };
 
         normal = {
-          black = "0x1f2528";
-          red = "0xec5f67";
-          green = "0x99c794";
-          yellow = "0xfac863";
-          blue = "0x6699cc";
-          magenta = "0xc594c5";
-          cyan = "0x5fb3b3";
-          white = "0xc0c5ce";
+          black = "0x21222c";
+          red = "0xff5555";
+          green = "0x50fa7b";
+          yellow = "0xf1fa8c";
+          blue = "0xbd93f9";
+          magenta = "0xff79c6";
+          cyan = "0x8be9fd";
+          white = "0xf8f8f2";
         };
 
         bright = {
-          black = "0x65737e";
-          red = "0xec5f67";
-          green = "0x99c794";
-          yellow = "0xfac863";
-          blue = "0x6699cc";
-          magenta = "0xc594c5";
-          cyan = "0x5fb3b3";
-          white = "0xd8dee9";
+          black = "0x6272a4";
+          red = "0xff6e6e";
+          green = "0x69ff94";
+          yellow = "0xffffa5";
+          blue = "0xd6acff";
+          magenta = "0xff92df";
+          cyan = "0xa4ffff";
+          white = "0xffffff";
         };
       };
     };

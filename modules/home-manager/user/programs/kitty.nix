@@ -6,5 +6,6 @@
     keybindings = {
       "f1" = "new_window_with_cwd";
     };
+    theme = "Dracula";
   };
 }
