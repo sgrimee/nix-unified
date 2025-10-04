@@ -160,7 +160,7 @@
         };
 
         "battery" = {
-          format = "{capacity}% {icon}";
+          format = " {capacity}% {icon}";
           format-icons = ["" "" "" "" ""];
           states = {
             warning = 30;
