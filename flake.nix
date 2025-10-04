@@ -24,6 +24,10 @@
       inputs.nixpkgs.follows = "stable-nixos";
     };
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
+      inputs.nixpkgs.follows = "stable-nixos";
+    };
   };
 
   outputs = {

@@ -217,6 +217,7 @@
         homeManager = [
           ../modules/home-manager/wl-sway.nix
           ../modules/home-manager/waybar.nix
+          ../modules/home-manager/quickshell.nix
           ../modules/home-manager/user/rofi.nix
         ];
       };

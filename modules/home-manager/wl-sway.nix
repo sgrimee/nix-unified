@@ -2,9 +2,15 @@
   pkgs,
   lib,
   config,
+  hostCapabilities ? {},
   ...
 }: let
   cfg = config.sway-config;
+  barChoice = hostCapabilities.environment.bar or "waybar";
+  barCommand =
+    if barChoice == "quickshell"
+    then "quickshell"
+    else "waybar";
 in {
   imports = [];
 
@@ -25,7 +31,7 @@ in {
         modifier = cfg.modifier;
         bars = [];
         startup = [
-          {command = "waybar";}
+          {command = barCommand;}
         ];
         keybindings = lib.mkOptionDefault {
           "${cfg.modifier}+d" = "exec rofi -show drun";

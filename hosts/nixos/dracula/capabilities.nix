@@ -51,6 +51,8 @@
     };
     terminal = "alacritty"; # Default terminal emulator
     windowManager = "sway"; # Sway is both desktop and window manager
+    # bar = "quickshell"; # Use quickshell status bar
+    bar = "waybar";
   };
 
   # Service configurations

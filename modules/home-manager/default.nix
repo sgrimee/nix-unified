@@ -12,6 +12,7 @@
   unstable,
   config,
   lib,
+  hostCapabilities ? null,
   ...
 }: let
   home =
@@ -35,7 +36,7 @@ in {
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.extraSpecialArgs = {
-    inherit home inputs stateVersion system user unstable;
+    inherit home inputs stateVersion system user unstable hostCapabilities;
   };
   # sharedModules will be set by the capability system via generateHostConfig
   # This line allows capability modules to append to sharedModules

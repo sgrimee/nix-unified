@@ -196,6 +196,13 @@
         default = null;
         description = "Window manager overlay";
       };
+
+      # Status bar for Wayland/X11
+      bar = {
+        type = lib.types.enum ["waybar" "quickshell"];
+        default = "waybar";
+        description = "Status bar implementation";
+      };
     };
 
     # Service configurations

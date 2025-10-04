@@ -1,6 +1,15 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  hostCapabilities ? {},
+  ...
+}:
+with lib; let
+  barChoice = hostCapabilities.environment.bar or "waybar";
+  shouldEnable = barChoice == "waybar";
+in {
   programs.waybar = {
-    enable = true;
+    enable = mkDefault shouldEnable;
     style = ''
       * {
         font-family: "MesloLGS NF", monospace;
