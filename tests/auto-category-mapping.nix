@@ -1,8 +1,10 @@
 # tests/auto-category-mapping.nix
 # Focused tests for automatic package category derivation, including ham feature
-
-{ lib, pkgs, ... }:
-let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   mkManager = caps:
     import ../packages/manager.nix {
       inherit lib pkgs;
@@ -12,8 +14,8 @@ let
   # Helper to derive categories from capabilities
   derive = caps:
     (mkManager caps).deriveCategories {
-      explicit = [ ];
-      options = { enable = true; };
+      explicit = [];
+      options = {enable = true;};
     };
 
   minimalCaps = {
@@ -41,7 +43,7 @@ let
       wifi = false;
       printer = false;
     };
-    roles = [ "workstation" ];
+    roles = ["workstation"];
     services = {
       distributedBuilds = {
         enabled = false;
@@ -50,7 +52,7 @@ let
       homeAssistant = false;
       development = {
         docker = false;
-        databases = [ ];
+        databases = [];
       };
     };
     security = {
@@ -64,14 +66,14 @@ let
     };
   };
 
-  hamCaps = lib.recursiveUpdate minimalCaps { features.ham = true; };
+  hamCaps = lib.recursiveUpdate minimalCaps {features.ham = true;};
 
   gamingMismatchCaps =
-    lib.recursiveUpdate minimalCaps { features.gaming = false; };
+    lib.recursiveUpdate minimalCaps {features.gaming = false;};
   # Force gaming explicitly to trigger warning
   gamingForced = (mkManager gamingMismatchCaps).deriveCategories {
-    explicit = [ "gaming" ];
-    options = { enable = true; }; # No force, should warn
+    explicit = ["gaming"];
+    options = {enable = true;}; # No force, should warn
   };
 
   vpnCaps = lib.recursiveUpdate minimalCaps {
@@ -80,9 +82,9 @@ let
     features.desktop = true;
   };
   mobileCaps =
-    lib.recursiveUpdate minimalCaps { roles = [ "mobile" "workstation" ]; };
+    lib.recursiveUpdate minimalCaps {roles = ["mobile" "workstation"];};
   workstationOnlyCaps =
-    lib.recursiveUpdate minimalCaps { roles = [ "workstation" ]; };
+    lib.recursiveUpdate minimalCaps {roles = ["workstation"];};
   k8sCaps = lib.recursiveUpdate minimalCaps {
     services.development.docker = true;
     features.development = true;
@@ -90,7 +92,6 @@ let
 
   # Expect helper
   expectHas = list: item: lib.elem item list;
-
 in {
   testAutoMinimalIncludesCore = {
     expr = expectHas (derive minimalCaps).categories "core";
@@ -113,8 +114,10 @@ in {
   };
 
   testGamingWarningWhenExplicitButFeatureFalse = {
-    expr = let warns = gamingForced.warnings;
-    in lib.any (w: lib.hasInfix "gaming" w) warns;
+    expr = let
+      warns = gamingForced.warnings;
+    in
+      lib.any (w: lib.hasInfix "gaming" w) warns;
     expected = true;
   };
 
@@ -145,8 +148,10 @@ in {
   };
 
   testMobileWorkstationHasBothProductivityAndVpn = {
-    expr = let cats = (derive mobileCaps).categories;
-    in (expectHas cats "productivity") && (expectHas cats "vpn");
+    expr = let
+      cats = (derive mobileCaps).categories;
+    in
+      (expectHas cats "productivity") && (expectHas cats "vpn");
     expected = true;
   };
 
@@ -158,17 +163,21 @@ in {
       # Mobile should have all workstation categories plus VPN
       workstationCats = workstationResult.categories;
       mobileCats = mobileResult.categories;
-      hasAllWorkstationCats = lib.all (cat: expectHas mobileCats cat)
+      hasAllWorkstationCats =
+        lib.all (cat: expectHas mobileCats cat)
         (lib.filter (c: c != "vpn") workstationCats);
       hasVpn = expectHas mobileCats "vpn";
-    in hasAllWorkstationCats && hasVpn;
+    in
+      hasAllWorkstationCats && hasVpn;
     expected = true;
   };
 
   # Test warning system doesn't trigger false positives for role-derived VPN
   testMobileVpnNoWarning = {
-    expr = let warns = (derive mobileCaps).warnings;
-    in !(lib.any (w: lib.hasInfix "vpn" w) warns);
+    expr = let
+      warns = (derive mobileCaps).warnings;
+    in
+      !(lib.any (w: lib.hasInfix "vpn" w) warns);
     expected = true;
   };
 }

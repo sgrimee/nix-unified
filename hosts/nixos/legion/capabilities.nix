@@ -1,7 +1,6 @@
 # Capability Declaration for legion
 # High-performance Intel workstation with NVIDIA GPU and build server capabilities
 # Based on baseline analysis of current configuration
-
 {
   # Core platform information
   platform = "nixos";
@@ -32,8 +31,7 @@
     printer = true; # CUPS printing support
     keyboard = {
       advanced = true; # Kanata keyboard remapping with home row mods
-      devices =
-        [ "/dev/input/by-path/pci-0000:00:14.0-usbv2-0:8:1.0-event-kbd" ];
+      devices = ["/dev/input/by-path/pci-0000:00:14.0-usbv2-0:8:1.0-event-kbd"];
     };
     # Resource capabilities for Nix configuration
     large-ram = true; # High memory system, use larger download buffers
@@ -41,14 +39,14 @@
   };
 
   # Host roles and primary use cases
-  roles = [ "workstation" "build-server" ];
+  roles = ["workstation" "build-server"];
 
   # Environment preferences
   environment = {
     desktop = "gnome"; # GNOME desktop environment
     shell = {
       primary = "zsh"; # Primary shell
-      additional = [ "fish" ]; # Additional shells available
+      additional = ["fish"]; # Additional shells available
     };
     terminal = "alacritty"; # Default terminal emulator
     windowManager = null; # Using GNOME's default window manager
@@ -63,7 +61,7 @@
     homeAssistant = true; # HomeAssistant user support enabled
     development = {
       docker = false; # No Docker setup
-      databases = [ ]; # No database services
+      databases = []; # No database services
     };
   };
 
@@ -79,6 +77,6 @@
 
   # Build machine configuration
   buildMachines = {
-    enable = [ "cirice" ]; # Use cirice as remote build machine
+    enable = ["cirice"]; # Use cirice as remote build machine
   };
 }

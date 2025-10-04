@@ -1,21 +1,18 @@
 # Capability Schema Definition
 # Defines the standard structure for host capability declarations
 # Based on comprehensive analysis of existing host configurations
-
-{ lib, ... }:
-
-{
+{lib, ...}: {
   # Standard capability schema that all hosts must conform to
   capabilitySchema = {
     # Core platform information
     platform = {
-      type = lib.types.enum [ "nixos" "darwin" ];
+      type = lib.types.enum ["nixos" "darwin"];
       description = "Host platform type";
       required = true;
     };
 
     architecture = {
-      type = lib.types.enum [ "x86_64" "aarch64" ];
+      type = lib.types.enum ["x86_64" "aarch64"];
       description = "CPU architecture";
       required = true;
     };
@@ -83,7 +80,7 @@
     hardware = {
       # CPU vendor and optimizations
       cpu = {
-        type = lib.types.enum [ "intel" "amd" "apple" ];
+        type = lib.types.enum ["intel" "amd" "apple"];
         description = "CPU vendor for optimization";
         required = true;
       };
@@ -91,14 +88,14 @@
       # GPU configuration
       gpu = {
         type =
-          lib.types.nullOr (lib.types.enum [ "nvidia" "amd" "intel" "apple" ]);
+          lib.types.nullOr (lib.types.enum ["nvidia" "amd" "intel" "apple"]);
         default = null;
         description = "Dedicated GPU vendor";
       };
 
       # Audio system
       audio = {
-        type = lib.types.enum [ "pipewire" "pulseaudio" "coreaudio" ];
+        type = lib.types.enum ["pipewire" "pulseaudio" "coreaudio"];
         description = "Audio system backend";
         required = true;
       };
@@ -156,7 +153,7 @@
         "home-server" # Home automation and services
         "mobile" # Laptop/portable device
       ]);
-      default = [ "workstation" ];
+      default = ["workstation"];
       description = "Host roles and primary use cases";
     };
 
@@ -165,7 +162,7 @@
       # Desktop environment selection
       desktop = {
         type =
-          lib.types.nullOr (lib.types.enum [ "gnome" "sway" "kde" "macos" ]);
+          lib.types.nullOr (lib.types.enum ["gnome" "sway" "kde" "macos"]);
         default = null;
         description = "Desktop environment choice";
       };
@@ -173,14 +170,14 @@
       # Shell configuration
       shell = {
         primary = {
-          type = lib.types.enum [ "zsh" "fish" "bash" ];
+          type = lib.types.enum ["zsh" "fish" "bash"];
           default = "zsh";
           description = "Primary interactive shell";
         };
 
         additional = {
-          type = lib.types.listOf (lib.types.enum [ "zsh" "fish" "bash" ]);
-          default = [ ];
+          type = lib.types.listOf (lib.types.enum ["zsh" "fish" "bash"]);
+          default = [];
           description = "Additional shells to install";
         };
       };
@@ -188,14 +185,14 @@
       # Terminal emulator
       terminal = {
         type =
-          lib.types.enum [ "alacritty" "wezterm" "kitty" "iterm2" "terminal" ];
+          lib.types.enum ["alacritty" "wezterm" "kitty" "iterm2" "terminal"];
         default = "alacritty";
         description = "Preferred terminal emulator";
       };
 
       # Window manager (for desktop environments that support it)
       windowManager = {
-        type = lib.types.nullOr (lib.types.enum [ "aerospace" "i3" "sway" ]);
+        type = lib.types.nullOr (lib.types.enum ["aerospace" "i3" "sway"]);
         default = null;
         description = "Window manager overlay";
       };
@@ -212,7 +209,7 @@
         };
 
         role = {
-          type = lib.types.enum [ "client" "server" "both" ];
+          type = lib.types.enum ["client" "server" "both"];
           default = "client";
           description = "Distributed build role";
         };
@@ -234,9 +231,10 @@
         };
 
         databases = {
-          type = lib.types.listOf
-            (lib.types.enum [ "postgresql" "mysql" "sqlite" "redis" ]);
-          default = [ ];
+          type =
+            lib.types.listOf
+            (lib.types.enum ["postgresql" "mysql" "sqlite" "redis"]);
+          default = [];
           description = "Database services to enable";
         };
       };
@@ -282,18 +280,16 @@
   };
 
   # Validation function for capability declarations
-  validateCapabilities = _capabilities:
-    let
-      errors = [ ];
-      # Add validation logic here
-    in {
-      valid = errors == [ ];
-      errors = errors;
-    };
+  validateCapabilities = _capabilities: let
+    errors = [];
+    # Add validation logic here
+  in {
+    valid = errors == [];
+    errors = errors;
+  };
 
   # Helper function to extract capabilities from existing host config
-  inferCapabilitiesFromConfig = _hostConfig:
-    {
-      # Return inferred capability structure
-    };
+  inferCapabilitiesFromConfig = _hostConfig: {
+    # Return inferred capability structure
+  };
 }

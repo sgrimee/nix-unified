@@ -1,24 +1,35 @@
-{ lib, hostCapabilities ? { }, ... }:
-let
+{
+  lib,
+  hostCapabilities ? {},
+  ...
+}: let
   # Capability-based configurations that are platform-agnostic
-  bufferSize = if (hostCapabilities.hardware.large-ram or false) then
-    524288000 # 500MiB for high memory hosts
-  else
-    52428800; # 50MiB for default/low memory hosts
+  bufferSize =
+    if (hostCapabilities.hardware.large-ram or false)
+    then 524288000 # 500MiB for high memory hosts
+    else 52428800; # 50MiB for default/low memory hosts
 
   enableKeepOptions = hostCapabilities.hardware.large-disk or false;
-  
+
   # Capability-based max-substitution-jobs
-  maxSubstitutionJobs = 
-    if builtins.elem "build-server" (hostCapabilities.roles or []) then 32
-    else if (hostCapabilities.hardware.large-ram or false) then 16
+  maxSubstitutionJobs =
+    if builtins.elem "build-server" (hostCapabilities.roles or [])
+    then 32
+    else if (hostCapabilities.hardware.large-ram or false)
+    then 16
     else 8;
 
   # Capability-based max-jobs and cores for performance tuning
   # Powerful machines: max-jobs = "auto", cores = 0 (use all available)
   # Small machines: max-jobs = 2, cores = 2 (conservative)
-  maxJobs = if (hostCapabilities.hardware.large-ram or false) then "auto" else 2;
-  coresPerJob = if (hostCapabilities.hardware.large-ram or false) then 0 else 2;
+  maxJobs =
+    if (hostCapabilities.hardware.large-ram or false)
+    then "auto"
+    else 2;
+  coresPerJob =
+    if (hostCapabilities.hardware.large-ram or false)
+    then 0
+    else 2;
 
   # Common substituters across platforms
   commonSubstituters = [
@@ -36,16 +47,16 @@ let
   ];
 
   # Common trusted users
-  commonTrustedUsers = [ "root" "sgrimee" "nixremote" ];
+  commonTrustedUsers = ["root" "sgrimee" "nixremote"];
 in {
   # Shared Determinate Nix configuration options
   shared = {
     inherit bufferSize enableKeepOptions maxSubstitutionJobs maxJobs coresPerJob;
     inherit commonSubstituters commonPublicKeys commonTrustedUsers;
-    
+
     # Common Nix settings that apply to both platforms
     commonNixSettings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = ["nix-command" "flakes"];
       download-buffer-size = bufferSize;
       keep-outputs = enableKeepOptions;
       keep-derivations = enableKeepOptions;

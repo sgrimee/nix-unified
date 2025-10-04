@@ -1,4 +1,8 @@
-{ lib, pkgs, ... }: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   # Test module paths and structure without importing
   testDarwinModuleExists = {
     expr = builtins.pathExists ../modules/darwin/default.nix;
@@ -48,7 +52,8 @@
   };
 
   testWindowsGpuPassthroughModuleExists = {
-    expr = builtins.pathExists
+    expr =
+      builtins.pathExists
       ../modules/nixos/virtualization/windows-gpu-passthrough.nix;
     expected = true;
   };

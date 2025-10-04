@@ -57,16 +57,22 @@ with lib; {
         };
       };
 
-      environment.etc =
-        let
-          cfg = config.services.custom.greetd;
-          envs = cfg.environments;
-          # Determine if system sway session will exist (programs.sway.enable)
-          swaySystem = config.programs.sway.enable or false;
-          mkDesktop = env: let
-            pkg = if lib.hasAttr env pkgs then builtins.getAttr env pkgs else null;
-            exec = if pkg != null then "${pkg}/bin/${env}" else env;
-          in nameValuePair "greetd/sessions/${env}.desktop" {
+      environment.etc = let
+        cfg = config.services.custom.greetd;
+        envs = cfg.environments;
+        # Determine if system sway session will exist (programs.sway.enable)
+        swaySystem = config.programs.sway.enable or false;
+        mkDesktop = env: let
+          pkg =
+            if lib.hasAttr env pkgs
+            then builtins.getAttr env pkgs
+            else null;
+          exec =
+            if pkg != null
+            then "${pkg}/bin/${env}"
+            else env;
+        in
+          nameValuePair "greetd/sessions/${env}.desktop" {
             text = ''
               [Desktop Entry]
               Name=${env}
@@ -74,17 +80,18 @@ with lib; {
               Type=Application
             '';
           };
-          # Filter sway out of generation if system session present to avoid duplication
-          genList = builtins.filter (e: !(e == "sway" && swaySystem)) envs;
-        in
-          (lib.optionalAttrs cfg.generateDesktopSessions (builtins.listToAttrs (map mkDesktop genList))) // {
-            "greetd/environments".text = concatStringsSep "\n" envs;
-          }
-          // lib.optionalAttrs swaySystem {
-            # Explicitly expose sway.desktop so tuigreet can list it even if
-            # the system profile does not link wayland-sessions from the sway package.
-            "greetd/sessions/sway.desktop".source = "${pkgs.sway}/share/wayland-sessions/sway.desktop";
-          };
+        # Filter sway out of generation if system session present to avoid duplication
+        genList = builtins.filter (e: !(e == "sway" && swaySystem)) envs;
+      in
+        (lib.optionalAttrs cfg.generateDesktopSessions (builtins.listToAttrs (map mkDesktop genList)))
+        // {
+          "greetd/environments".text = concatStringsSep "\n" envs;
+        }
+        // lib.optionalAttrs swaySystem {
+          # Explicitly expose sway.desktop so tuigreet can list it even if
+          # the system profile does not link wayland-sessions from the sway package.
+          "greetd/sessions/sway.desktop".source = "${pkgs.sway}/share/wayland-sessions/sway.desktop";
+        };
     })
   ];
 }

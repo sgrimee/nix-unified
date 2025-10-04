@@ -1,7 +1,10 @@
 # packages/categories/development.nix
-{ pkgs, lib, hostCapabilities ? { }, ... }:
-
 {
+  pkgs,
+  lib,
+  hostCapabilities ? {},
+  ...
+}: {
   # Core development tools
   core = with pkgs; [
     git
@@ -21,9 +24,9 @@
 
   # Language-specific packages
   languages = {
-    nix = with pkgs; [ nil nixpkgs-fmt alejandra deadnix ];
+    nix = with pkgs; [nil nixpkgs-fmt alejandra deadnix];
 
-    rust = with pkgs; [ rustc cargo rustfmt clippy ];
+    rust = with pkgs; [rustc cargo rustfmt clippy];
 
     python = with pkgs; [
       python3
@@ -34,7 +37,7 @@
   };
 
   # IDE and editors
-  editors = with pkgs; [ vim neovim ];
+  editors = with pkgs; [vim neovim];
 
   # Platform-specific development tools
   platformSpecific = {
@@ -51,18 +54,17 @@
       vscode
     ];
 
-    darwin = with pkgs;
-      [
-        # macOS-specific dev tools
-        # Note: Node.js/npm and VSCode managed by Homebrew on Darwin
-      ];
+    darwin = with pkgs; [
+      # macOS-specific dev tools
+      # Note: Node.js/npm and VSCode managed by Homebrew on Darwin
+    ];
   };
 
   # Package metadata
   metadata = {
     description = "Development tools and programming languages";
-    conflicts = [ ];
-    requires = [ ];
+    conflicts = [];
+    requires = [];
     size = "large";
     priority = "high";
   };

@@ -1,12 +1,14 @@
-{ config, lib, hostCapabilities, ... }:
+{
+  config,
+  lib,
+  hostCapabilities,
+  ...
+}: let
+  cfg = hostCapabilities.buildMachines or {};
+  buildMachinesLib = import ../shared/build-machines.nix {inherit lib;};
 
-let
-  cfg = hostCapabilities.buildMachines or { };
-  buildMachinesLib = import ../shared/build-machines.nix { inherit lib; };
-
-  enabledMachines = cfg.enable or [ ];
-  hasEnabledMachines = enabledMachines != [ ];
-
+  enabledMachines = cfg.enable or [];
+  hasEnabledMachines = enabledMachines != [];
 in {
   config = lib.mkIf hasEnabledMachines {
     # Add SSH host keys for enabled build machines

@@ -1,7 +1,12 @@
-{ pkgs, lib, config, ... }:
-let cfg = config.sway-config;
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: let
+  cfg = config.sway-config;
 in {
-imports = [ ];
+  imports = [];
 
   options.sway-config = {
     modifier = lib.mkOption {
@@ -12,16 +17,15 @@ imports = [ ];
   };
 
   config = {
-
     # Home Manager layer: provides per-user sway configuration
     # The system-wide module (modules/nixos/sway.nix) handles the global session
     wayland.windowManager.sway = {
       enable = true;
       config = {
         modifier = cfg.modifier;
-        bars = [ ];
+        bars = [];
         startup = [
-          { command = "waybar"; }
+          {command = "waybar";}
         ];
         keybindings = lib.mkOptionDefault {
           "${cfg.modifier}+d" = "exec rofi -show drun";

@@ -1,4 +1,8 @@
-{lib, pkgs, ...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   system.stateVersion = "23.05";
   networking.hostName = "cirice";
   # allowUnfree now handled centrally in flake
@@ -119,7 +123,5 @@
         system.nixos.label = "vm-passthrough-mode";
       };
     };
-
-
   };
 }

@@ -1,4 +1,11 @@
-{ inputs, stateVersion, system, unstable, pkgs, ... }: {
+{
+  inputs,
+  stateVersion,
+  system,
+  unstable,
+  pkgs,
+  ...
+}: {
   imports = [
     ./dotfiles # copy dotfiles into home
     ./fonts.nix # unified fonts configuration for both Darwin and NixOS
@@ -28,7 +35,8 @@
         "/opt/homebrew/bin"
         "/opt/homebrew/sbin"
         "/usr/local/bin"
-      ]) ++ [
+      ])
+      ++ [
         "$HOME/.cargo/bin"
         "$HOME/.local/bin"
         "/etc/profiles/per-user/$USER/bin"
@@ -39,8 +47,7 @@
       gst = "git status";
       history = "history 1";
       k = "kubectl";
-      laru-ansible =
-        "ANSIBLE_STDOUT_CALLBACK=json ansible -ulx2sg -e'ansible_connection=network_cli' -e'ansible_network_os=community.routeros.routeros' -m'routeros_command'";
+      laru-ansible = "ANSIBLE_STDOUT_CALLBACK=json ansible -ulx2sg -e'ansible_connection=network_cli' -e'ansible_network_os=community.routeros.routeros' -m'routeros_command'";
       laru-ssh = "ssh -llx2sg -oport=15722"; # TODO install esp-idf somehow
       path-lines = "echo $PATH | tr ':' '\\n' | tr ' ' '\\n'";
       sudo = "sudo "; # allow aliases to be run with sudo
@@ -53,7 +60,7 @@
 
   manual.html.enable = true;
 
-  pam.yubico.authorizedYubiKeys.ids = [ "fetchcjejtbu" ];
+  pam.yubico.authorizedYubiKeys.ids = ["fetchcjejtbu"];
 
   xdg.enable = true;
 }

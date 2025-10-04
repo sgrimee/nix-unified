@@ -1,7 +1,10 @@
 # packages/categories/system.nix
-{ pkgs, lib, hostCapabilities ? { }, ... }:
-
 {
+  pkgs,
+  lib,
+  hostCapabilities ? {},
+  ...
+}: {
   core = with pkgs;
     [
       qemu # Hardware virtualization and emulation
@@ -11,7 +14,8 @@
       pat # Packet analysis toolkit
       poppler # PDF rendering library utilities
       unrar # RAR archive extraction utility
-    ] ++
+    ]
+    ++
     # Linux-specific system tools
     lib.optionals pkgs.stdenv.isLinux [
       interception-tools # Keyboard interception framework
@@ -21,8 +25,8 @@
 
   metadata = {
     description = "System packages";
-    conflicts = [ ];
-    requires = [ ];
+    conflicts = [];
+    requires = [];
     size = "medium";
     priority = "high";
   };

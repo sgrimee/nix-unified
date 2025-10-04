@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   home.packages = with pkgs; [
     k9s # Kubernetes CLI To Manage Your Clusters In Style
     kubectl # Kubernetes command-line tool

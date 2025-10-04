@@ -1,8 +1,10 @@
-{ lib, pkgs, ... }:
-let
-
+{
+  lib,
+  pkgs,
+  ...
+}: let
   # Import all test suites
-  allTests = import ./default.nix { inherit lib pkgs; };
+  allTests = import ./default.nix {inherit lib pkgs;};
 
   # Create a derivation that runs tests and outputs results
   testRunner = pkgs.writeShellScriptBin "run-tests" ''
@@ -26,18 +28,17 @@ let
   '';
 
   # Test output formatter
-  formatTestResults = results:
-    let
-      passed = builtins.filter (test: test.success) results;
-      failed = builtins.filter (test: !test.success) results;
-    in {
-      summary = {
-        total = builtins.length results;
-        passed = builtins.length passed;
-        failed = builtins.length failed;
-      };
-      failures = failed;
+  formatTestResults = results: let
+    passed = builtins.filter (test: test.success) results;
+    failed = builtins.filter (test: !test.success) results;
+  in {
+    summary = {
+      total = builtins.length results;
+      passed = builtins.length passed;
+      failed = builtins.length failed;
     };
+    failures = failed;
+  };
 in {
   inherit testRunner formatTestResults;
 

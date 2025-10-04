@@ -1,7 +1,13 @@
-{ inputs, lib, pkgs, config, hostCapabilities ? { }, ... }:
-let
+{
+  inputs,
+  lib,
+  pkgs,
+  config,
+  hostCapabilities ? {},
+  ...
+}: let
   # Import shared Determinate Nix configuration
-  determinateConfig = import ../shared/determinate.nix { inherit lib hostCapabilities; };
+  determinateConfig = import ../shared/determinate.nix {inherit lib hostCapabilities;};
   shared = determinateConfig.shared;
   nixos = determinateConfig.nixos;
 in {
@@ -13,10 +19,13 @@ in {
 
   # NixOS-specific settings combined with shared configuration
   # The Determinate module will override/supplement these automatically
-  nix.settings = shared.commonNixSettings // nixos.nixSettings // {
-    # NixOS-specific substituters and keys
-    substituters = shared.commonSubstituters ++ nixos.extraSubstituters;
-    trusted-substituters = shared.commonSubstituters ++ nixos.extraSubstituters;
-    trusted-public-keys = shared.commonPublicKeys ++ nixos.extraPublicKeys;
-  };
+  nix.settings =
+    shared.commonNixSettings
+    // nixos.nixSettings
+    // {
+      # NixOS-specific substituters and keys
+      substituters = shared.commonSubstituters ++ nixos.extraSubstituters;
+      trusted-substituters = shared.commonSubstituters ++ nixos.extraSubstituters;
+      trusted-public-keys = shared.commonPublicKeys ++ nixos.extraPublicKeys;
+    };
 }

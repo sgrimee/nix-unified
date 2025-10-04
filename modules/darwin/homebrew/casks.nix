@@ -1,4 +1,4 @@
-{ ... }: [
+{...}: [
   # Security & Password Management
   "1password" # Password manager application
   "1password-cli" # 1Password command-line interface

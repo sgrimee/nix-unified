@@ -1,7 +1,10 @@
 # packages/categories/multimedia.nix
-{ pkgs, lib, hostCapabilities ? { }, ... }:
-
 {
+  pkgs,
+  lib,
+  hostCapabilities ? {},
+  ...
+}: {
   core = with pkgs;
     [
       mpv # Media player with support for many video formats
@@ -14,8 +17,9 @@
       gst_all_1.gst-plugins-ugly # GStreamer plugins with licensing issues
       gst_all_1.gst-libav # GStreamer FFmpeg plugin
       # spotify-player now managed via home-manager programs.spotify-player
-    ] ++
-    # Linux-specific multimedia tools  
+    ]
+    ++
+    # Linux-specific multimedia tools
     lib.optionals pkgs.stdenv.isLinux [
       gst_all_1.gst-vaapi # GStreamer VA-API plugin for hardware acceleration (Linux only)
       pulsemixer # PulseAudio mixer (Linux audio system)
@@ -26,8 +30,8 @@
 
   metadata = {
     description = "Multimedia packages";
-    conflicts = [ ];
-    requires = [ ];
+    conflicts = [];
+    requires = [];
     size = "large";
     priority = "medium";
   };

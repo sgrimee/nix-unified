@@ -1,18 +1,19 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.services.kanata;
   keyboardCfg = config.keyboard;
 
-  # Import shared keyboard utilities  
-  keyboardLib = import ../shared/keyboard/lib.nix { inherit lib pkgs; };
+  # Import shared keyboard utilities
+  keyboardLib = import ../shared/keyboard/lib.nix {inherit lib pkgs;};
   keyboardUtils = keyboardLib.mkKeyboardUtils keyboardCfg;
 
   # Generate Kanata configuration using shared module
   kanataConfigText = keyboardUtils.generateKanataConfig;
-
 in {
   options.services.kanata = {
     enable = mkEnableOption "Kanata keyboard remapper for macOS";
@@ -26,21 +27,19 @@ in {
     config = mkOption {
       type = types.str;
       default = kanataConfigText;
-      description =
-        "Kanata configuration content (auto-generated from keyboard options)";
+      description = "Kanata configuration content (auto-generated from keyboard options)";
     };
 
     excludeKeyboards = mkOption {
       type = types.listOf types.attrs;
-      default = [ ];
-      description =
-        "List of keyboards to exclude from kanata remapping (inherited from keyboard.excludeKeyboards)";
+      default = [];
+      description = "List of keyboards to exclude from kanata remapping (inherited from keyboard.excludeKeyboards)";
     };
   };
 
   config = mkIf cfg.enable {
     # Install kanata binary
-    environment.systemPackages = [ cfg.package ];
+    environment.systemPackages = [cfg.package];
 
     # Create kanata config file
     environment.etc."kanata/kanata.kbd".text = cfg.config;
@@ -48,8 +47,7 @@ in {
     # Create launch daemon for kanata service
     launchd.daemons.kanata = {
       serviceConfig = {
-        ProgramArguments =
-          [ "${cfg.package}/bin/kanata" "-c" "/etc/kanata/kanata.kbd" ];
+        ProgramArguments = ["${cfg.package}/bin/kanata" "-c" "/etc/kanata/kanata.kbd"];
         Label = "org.nixos.kanata";
         RunAtLoad = true;
         KeepAlive = true;

@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   # Enable fontconfig for better font management
   fonts.fontconfig.enable = true;
 

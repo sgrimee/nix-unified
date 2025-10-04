@@ -55,16 +55,18 @@ in {
     };
 
     # Base VM management tools
-    environment.systemPackages = with pkgs; [
-      virt-manager
-      virt-viewer
-      spice
-      spice-gtk
-      spice-protocol
-      win-virtio
-      win-spice
-      virtiofsd
-    ] ++ lib.optionals cfg.lookingGlass.enable [looking-glass-client];
+    environment.systemPackages = with pkgs;
+      [
+        virt-manager
+        virt-viewer
+        spice
+        spice-gtk
+        spice-protocol
+        win-virtio
+        win-spice
+        virtiofsd
+      ]
+      ++ lib.optionals cfg.lookingGlass.enable [looking-glass-client];
 
     # User permissions for VM management
     users.users.${cfg.vmUser}.extraGroups = ["libvirtd" "kvm" "input"];
@@ -106,7 +108,6 @@ in {
       ];
     };
 
-
     # Looking Glass configuration
     systemd.tmpfiles.rules =
       lib.mkIf cfg.lookingGlass.enable
@@ -135,7 +136,6 @@ in {
       "vm.swappiness" = 10; # Reduce swapping for better VM performance
     });
 
-
     # Enable nested virtualization for AMD and blacklist amdgpu
     boot.extraModprobeConfig = lib.mkIf (cfg.iommuType == "amd_iommu") ''
       options kvm_amd nested=1
@@ -144,7 +144,6 @@ in {
       blacklist amdgpu
       blacklist radeon
     '';
-
 
     # Systemd service to bind devices to VFIO (simplified version)
     systemd.services.vfio-bind = lib.mkIf (cfg.vfioIds != []) {
@@ -162,60 +161,61 @@ in {
 
             # Process each device ID
             ${lib.concatMapStringsSep "\n" (id: ''
-              echo "Processing device: ${id}"
+                echo "Processing device: ${id}"
 
-              # Convert format from 1002:150e to space-separated for new_id
-              vendor_id="${builtins.head (lib.splitString ":" id)}"
-              device_id="${builtins.elemAt (lib.splitString ":" id) 1}"
+                # Convert format from 1002:150e to space-separated for new_id
+                vendor_id="${builtins.head (lib.splitString ":" id)}"
+                device_id="${builtins.elemAt (lib.splitString ":" id) 1}"
 
-              # Add to new_id if not already there
-              echo "$vendor_id $device_id" > /sys/bus/pci/drivers/vfio-pci/new_id 2>/dev/null || {
-                echo "Device ${id} already in vfio-pci new_id list (or error)"
-              }
+                # Add to new_id if not already there
+                echo "$vendor_id $device_id" > /sys/bus/pci/drivers/vfio-pci/new_id 2>/dev/null || {
+                  echo "Device ${id} already in vfio-pci new_id list (or error)"
+                }
 
-              # Find the actual PCI device path
-              device_found=false
-              for device_path in /sys/bus/pci/devices/*/; do
-                if [ -f "$device_path/vendor" ] && [ -f "$device_path/device" ]; then
-                  found_vendor=$(cat "$device_path/vendor" 2>/dev/null)
-                  found_device=$(cat "$device_path/device" 2>/dev/null)
+                # Find the actual PCI device path
+                device_found=false
+                for device_path in /sys/bus/pci/devices/*/; do
+                  if [ -f "$device_path/vendor" ] && [ -f "$device_path/device" ]; then
+                    found_vendor=$(cat "$device_path/vendor" 2>/dev/null)
+                    found_device=$(cat "$device_path/device" 2>/dev/null)
 
-                  if [ "$found_vendor" = "0x$vendor_id" ] && [ "$found_device" = "0x$device_id" ]; then
-                    device_name=$(basename "$device_path")
-                    echo "Found device ${id} at $device_name"
+                    if [ "$found_vendor" = "0x$vendor_id" ] && [ "$found_device" = "0x$device_id" ]; then
+                      device_name=$(basename "$device_path")
+                      echo "Found device ${id} at $device_name"
 
-                    # Check if already bound to vfio-pci
-                    if [ -L "$device_path/driver" ]; then
-                      current_driver=$(basename $(readlink "$device_path/driver"))
-                      if [ "$current_driver" = "vfio-pci" ]; then
-                        echo "Device ${id} already bound to vfio-pci ✓"
-                        device_found=true
-                        break
+                      # Check if already bound to vfio-pci
+                      if [ -L "$device_path/driver" ]; then
+                        current_driver=$(basename $(readlink "$device_path/driver"))
+                        if [ "$current_driver" = "vfio-pci" ]; then
+                          echo "Device ${id} already bound to vfio-pci ✓"
+                          device_found=true
+                          break
+                        fi
                       fi
-                    fi
 
-                    # Try to bind to vfio-pci
-                    echo "$device_name" > /sys/bus/pci/drivers/vfio-pci/bind 2>/dev/null || {
-                      echo "Failed to bind $device_name to vfio-pci (may already be bound)"
-                    }
+                      # Try to bind to vfio-pci
+                      echo "$device_name" > /sys/bus/pci/drivers/vfio-pci/bind 2>/dev/null || {
+                        echo "Failed to bind $device_name to vfio-pci (may already be bound)"
+                      }
 
-                    # Verify binding
-                    if [ -L "$device_path/driver" ]; then
-                      final_driver=$(basename $(readlink "$device_path/driver"))
-                      if [ "$final_driver" = "vfio-pci" ]; then
-                        echo "Successfully bound ${id} to vfio-pci ✓"
-                        device_found=true
+                      # Verify binding
+                      if [ -L "$device_path/driver" ]; then
+                        final_driver=$(basename $(readlink "$device_path/driver"))
+                        if [ "$final_driver" = "vfio-pci" ]; then
+                          echo "Successfully bound ${id} to vfio-pci ✓"
+                          device_found=true
+                        fi
                       fi
+                      break
                     fi
-                    break
                   fi
-                fi
-              done
+                done
 
-              if [ "$device_found" = false ]; then
-                echo "Warning: Device ${id} not found or not bound to vfio-pci"
-              fi
-            '') cfg.vfioIds}
+                if [ "$device_found" = false ]; then
+                  echo "Warning: Device ${id} not found or not bound to vfio-pci"
+                fi
+              '')
+              cfg.vfioIds}
 
             echo "VFIO binding process completed"
             echo "Available VFIO devices:"

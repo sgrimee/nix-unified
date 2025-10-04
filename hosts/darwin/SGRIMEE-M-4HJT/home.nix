@@ -1,8 +1,8 @@
-{ pkgs, ... }:
-let user = "sgrimee";
+{pkgs, ...}: let
+  user = "sgrimee";
 in {
   home-manager.users.${user} = {
-    imports = [ ./packages.nix ];
+    imports = [./packages.nix];
 
     home = {
       sessionVariables = {

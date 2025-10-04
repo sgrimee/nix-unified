@@ -1,8 +1,11 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let cfg = config.programs.android-studio;
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
+  cfg = config.programs.android-studio;
 in {
   options.programs.android-studio = {
     enable = mkEnableOption "Android Studio development environment";
@@ -10,7 +13,7 @@ in {
 
   config = mkIf (cfg.enable && pkgs.stdenv.isDarwin) {
     # Set Android environment variables
-    home.sessionVariables = { ANDROID_HOME = "$HOME/Library/Android/sdk"; };
+    home.sessionVariables = {ANDROID_HOME = "$HOME/Library/Android/sdk";};
 
     # Add Android tools to PATH
     home.sessionPath = [

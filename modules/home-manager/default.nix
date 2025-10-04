@@ -1,12 +1,23 @@
 # Home Manager configuration module
 # This module is imported by the capability system and configures home-manager for the user
-{ host, inputs, user, }:
-{ inputs, pkgs, system, stateVersion, unstable, config, lib, ... }:
-let
-  home = if pkgs.stdenv.hostPlatform.isDarwin then
-    "/Users/${user}"
-  else
-    "/home/${user}";
+{
+  host,
+  inputs,
+  user,
+}: {
+  inputs,
+  pkgs,
+  system,
+  stateVersion,
+  unstable,
+  config,
+  lib,
+  ...
+}: let
+  home =
+    if pkgs.stdenv.hostPlatform.isDarwin
+    then "/Users/${user}"
+    else "/home/${user}";
 in {
   # Required even if present in user/programs, otherwise path is not set correctly
   programs.zsh.enable = true;
@@ -28,12 +39,12 @@ in {
   };
   # sharedModules will be set by the capability system via generateHostConfig
   # This line allows capability modules to append to sharedModules
-  home-manager.sharedModules = lib.mkBefore [ ];
+  home-manager.sharedModules = lib.mkBefore [];
 
   home-manager.users.${user} =
-    import ./user { inherit inputs home pkgs stateVersion system unstable; };
+    import ./user {inherit inputs home pkgs stateVersion system unstable;};
 
   home-manager.backupFileExtension = "nixbup";
 
-  imports = [ ];
+  imports = [];
 }

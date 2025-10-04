@@ -1,14 +1,14 @@
 # Capability System Tests
 # Tests the capability resolution, dependency handling, and validation logic
 # Ensures the capability system works correctly before migration
-
-{ lib, pkgs, ... }:
-
-let
-  capabilityLoader = import ../lib/capability-loader.nix { inherit lib; };
-  dependencyResolver = import ../lib/dependency-resolver.nix { inherit lib; };
-  moduleMapping = import ../lib/module-mapping.nix { inherit lib; };
-
+{
+  lib,
+  pkgs,
+  ...
+}: let
+  capabilityLoader = import ../lib/capability-loader.nix {inherit lib;};
+  dependencyResolver = import ../lib/dependency-resolver.nix {inherit lib;};
+  moduleMapping = import ../lib/module-mapping.nix {inherit lib;};
 in rec {
   # Test capability resolution
   testCapabilityResolution = {
@@ -28,12 +28,12 @@ in rec {
           gpu = "nvidia";
           audio = "pipewire";
         };
-        roles = [ "workstation" ];
+        roles = ["workstation"];
         environment = {
           desktop = "gnome";
           shell = {
             primary = "zsh";
-            additional = [ ];
+            additional = [];
           };
           terminal = "alacritty";
         };
@@ -54,20 +54,22 @@ in rec {
       };
 
       result = capabilityLoader.generateModuleImports input;
-
     in {
       input = input;
       success = result ? imports;
-      moduleCount = if result ? imports then lib.length result.imports else 0;
+      moduleCount =
+        if result ? imports
+        then lib.length result.imports
+        else 0;
       hasGamingModules =
         lib.any (mod: lib.hasInfix "gaming" (builtins.toString mod))
-        (result.imports or [ ]);
+        (result.imports or []);
       hasDesktopModules =
         lib.any (mod: lib.hasInfix "desktop" (builtins.toString mod))
-        (result.imports or [ ]);
+        (result.imports or []);
       hasNvidiaModules =
         lib.any (mod: lib.hasInfix "nvidia" (builtins.toString mod))
-        (result.imports or [ ]);
+        (result.imports or []);
       debug = result.debug or null;
     };
 
@@ -84,11 +86,11 @@ in rec {
           cpu = "intel";
           audio = "pipewire";
         };
-        roles = [ "gaming-rig" ]; # Should require gaming + multimedia
+        roles = ["gaming-rig"]; # Should require gaming + multimedia
         environment = {
           shell = {
             primary = "zsh";
-            additional = [ ];
+            additional = [];
           };
           terminal = "alacritty";
         };
@@ -110,7 +112,6 @@ in rec {
 
       resolved = dependencyResolver.resolveDependencies input;
       result = capabilityLoader.generateModuleImports resolved;
-
     in {
       input = input;
       resolved = resolved;
@@ -142,12 +143,12 @@ in rec {
           bluetooth = true;
           wifi = true;
         };
-        roles = [ "workstation" ];
+        roles = ["workstation"];
         environment = {
           desktop = "sway";
           shell = {
             primary = "zsh";
-            additional = [ ];
+            additional = [];
           };
           terminal = "alacritty";
         };
@@ -165,21 +166,24 @@ in rec {
           firewall = true;
           secrets = true;
         };
-        virtualization = { windowsGpuPassthrough = true; };
+        virtualization = {windowsGpuPassthrough = true;};
       };
 
       result = capabilityLoader.generateModuleImports input;
-
     in {
       input = input;
       success = result ? imports;
-      moduleCount = if result ? imports then lib.length result.imports else 0;
+      moduleCount =
+        if result ? imports
+        then lib.length result.imports
+        else 0;
       hasVirtualizationModules =
         lib.any (mod: lib.hasInfix "virtualization" (builtins.toString mod))
-        (result.imports or [ ]);
-      hasGpuPassthroughModule = lib.any
+        (result.imports or []);
+      hasGpuPassthroughModule =
+        lib.any
         (mod: lib.hasInfix "windows-gpu-passthrough" (builtins.toString mod))
-        (result.imports or [ ]);
+        (result.imports or []);
       debug = result.debug or null;
     };
   };
@@ -199,11 +203,11 @@ in rec {
           cpu = "intel";
           audio = "pipewire";
         };
-        roles = [ "workstation" ];
+        roles = ["workstation"];
         environment = {
           shell = {
             primary = "zsh";
-            additional = [ ];
+            additional = [];
           };
           terminal = "alacritty";
         };
@@ -225,7 +229,6 @@ in rec {
 
       resolved = dependencyResolver.resolveDependencies input;
       validation = dependencyResolver.validateCapabilities resolved;
-
     in {
       input = input;
       resolved = resolved;
@@ -241,16 +244,16 @@ in rec {
       input = {
         platform = "nixos";
         architecture = "x86_64";
-        features = { development = true; };
+        features = {development = true;};
         hardware = {
           cpu = "intel";
           audio = "pipewire";
         };
-        roles = [ "gaming-rig" "home-server" ]; # These roles should conflict
+        roles = ["gaming-rig" "home-server"]; # These roles should conflict
         environment = {
           shell = {
             primary = "zsh";
-            additional = [ ];
+            additional = [];
           };
           terminal = "alacritty";
         };
@@ -272,7 +275,6 @@ in rec {
 
       resolved = dependencyResolver.resolveDependencies input;
       validation = dependencyResolver.validateCapabilities resolved;
-
     in {
       input = input;
       resolved = resolved;
@@ -296,12 +298,12 @@ in rec {
           cpu = "intel";
           audio = "coreaudio";
         };
-        roles = [ "workstation" ];
+        roles = ["workstation"];
         environment = {
           desktop = "gnome"; # Not supported on Darwin
           shell = {
             primary = "zsh";
-            additional = [ ];
+            additional = [];
           };
           terminal = "alacritty";
         };
@@ -323,7 +325,6 @@ in rec {
 
       resolved = dependencyResolver.resolveDependencies input;
       validation = dependencyResolver.validateCapabilities resolved;
-
     in {
       input = input;
       resolved = resolved;
@@ -339,8 +340,7 @@ in rec {
   testBackwardsCompatibility = {
     # Test that existing host configurations can still be loaded
     # This would be implemented during the migration phase
-    placeholder =
-      "Backwards compatibility tests would be implemented during migration";
+    placeholder = "Backwards compatibility tests would be implemented during migration";
   };
 
   # Test capability validation
@@ -358,12 +358,12 @@ in rec {
           cpu = "intel";
           audio = "pipewire";
         };
-        roles = [ "workstation" ];
+        roles = ["workstation"];
         environment = {
           desktop = "gnome";
           shell = {
             primary = "zsh";
-            additional = [ ];
+            additional = [];
           };
           terminal = "alacritty";
         };
@@ -384,7 +384,6 @@ in rec {
       };
 
       validation = capabilityLoader.validateCapabilityDeclaration input;
-
     in {
       input = input;
       valid = validation.valid;
@@ -397,11 +396,10 @@ in rec {
       input = {
         # Missing required platform field
         architecture = "x86_64";
-        features = { development = true; };
+        features = {development = true;};
       };
 
       validation = capabilityLoader.validateCapabilityDeclaration input;
-
     in {
       input = input;
       valid = validation.valid;
@@ -413,40 +411,44 @@ in rec {
   # Test specific host capability declarations
   testHostCapabilities = let
     # Dynamically discover hosts from directory structure
-    discoverHosts = hostsDir:
-      let
-        platforms = builtins.attrNames (builtins.readDir hostsDir);
-        hostsByPlatform = lib.genAttrs platforms (platform:
-          let platformDir = hostsDir + "/${platform}";
-          in if builtins.pathExists platformDir then
-            builtins.attrNames (builtins.readDir platformDir)
-          else
-            [ ]);
-      in hostsByPlatform;
+    discoverHosts = hostsDir: let
+      platforms = builtins.attrNames (builtins.readDir hostsDir);
+      hostsByPlatform = lib.genAttrs platforms (platform: let
+        platformDir = hostsDir + "/${platform}";
+      in
+        if builtins.pathExists platformDir
+        then builtins.attrNames (builtins.readDir platformDir)
+        else []);
+    in
+      hostsByPlatform;
 
     allHosts =
-      if builtins.pathExists ../hosts then discoverHosts ../hosts else { };
+      if builtins.pathExists ../hosts
+      then discoverHosts ../hosts
+      else {};
 
     # Test a single host's capability declaration with error handling
-    testHostCapability = platform: hostName:
-      let
-        capabilityPath = ../hosts/${platform}/${hostName}/capabilities.nix;
-        capabilityExists = builtins.pathExists capabilityPath;
+    testHostCapability = platform: hostName: let
+      capabilityPath = ../hosts/${platform}/${hostName}/capabilities.nix;
+      capabilityExists = builtins.pathExists capabilityPath;
 
-        testResult = if !capabilityExists then {
+      testResult =
+        if !capabilityExists
+        then {
           hostName = hostName;
           platform = platform;
           capabilityFileExists = false;
           valid = false;
-          errors = [ "Capability file not found: ${capabilityPath}" ];
-        } else
+          errors = ["Capability file not found: ${capabilityPath}"];
+        }
+        else
           builtins.tryEval (let
             capabilities = import capabilityPath;
             validation =
               capabilityLoader.validateCapabilityDeclaration capabilities;
-            moduleGenResult = builtins.tryEval
+            moduleGenResult =
+              builtins.tryEval
               (capabilityLoader.generateModuleImports capabilities);
-
           in {
             hostName = hostName;
             platform = capabilities.platform;
@@ -454,65 +456,67 @@ in rec {
             valid = validation.valid;
             errors = validation.errors;
             moduleGenSuccess = moduleGenResult.success;
-            moduleCount = if moduleGenResult.success then
-              lib.length moduleGenResult.value.imports
-            else
-              0;
+            moduleCount =
+              if moduleGenResult.success
+              then lib.length moduleGenResult.value.imports
+              else 0;
             # Platform-specific module checks
             hasSwayModules =
-              if moduleGenResult.success && platform == "nixos" then
+              if moduleGenResult.success && platform == "nixos"
+              then
                 lib.any (mod: lib.hasInfix "sway" (builtins.toString mod))
                 moduleGenResult.value.imports
-              else
-                false;
+              else false;
             hasGnomeModules =
-              if moduleGenResult.success && platform == "nixos" then
+              if moduleGenResult.success && platform == "nixos"
+              then
                 lib.any (mod: lib.hasInfix "gnome" (builtins.toString mod))
                 moduleGenResult.value.imports
-              else
-                false;
+              else false;
             hasNvidiaModules =
-              if moduleGenResult.success && platform == "nixos" then
+              if moduleGenResult.success && platform == "nixos"
+              then
                 lib.any (mod: lib.hasInfix "nvidia" (builtins.toString mod))
                 moduleGenResult.value.imports
-              else
-                false;
+              else false;
             hasHomeAssistant =
-              if moduleGenResult.success && platform == "nixos" then
+              if moduleGenResult.success && platform == "nixos"
+              then
                 lib.any
                 (mod: lib.hasInfix "homeassistant" (builtins.toString mod))
                 moduleGenResult.value.imports
-              else
-                false;
+              else false;
             hasDarwinModules =
-              if moduleGenResult.success && platform == "darwin" then
+              if moduleGenResult.success && platform == "darwin"
+              then
                 lib.any (mod: lib.hasInfix "darwin" (builtins.toString mod))
                 moduleGenResult.value.imports
-              else
-                false;
+              else false;
             hasHomebrewModules =
-              if moduleGenResult.success && platform == "darwin" then
+              if moduleGenResult.success && platform == "darwin"
+              then
                 lib.any (mod: lib.hasInfix "homebrew" (builtins.toString mod))
                 moduleGenResult.value.imports
-              else
-                false;
+              else false;
             hasVirtualizationModules =
-              if moduleGenResult.success && platform == "nixos" then
+              if moduleGenResult.success && platform == "nixos"
+              then
                 lib.any
                 (mod: lib.hasInfix "virtualization" (builtins.toString mod))
                 moduleGenResult.value.imports
-              else
-                false;
+              else false;
             hasGpuPassthroughModule =
-              if moduleGenResult.success && platform == "nixos" then
+              if moduleGenResult.success && platform == "nixos"
+              then
                 lib.any (mod:
                   lib.hasInfix "windows-gpu-passthrough"
-                  (builtins.toString mod)) moduleGenResult.value.imports
-              else
-                false;
+                  (builtins.toString mod))
+                moduleGenResult.value.imports
+              else false;
           });
-      in if testResult.success or true then
-        testResult.value or testResult
+    in
+      if testResult.success or true
+      then testResult.value or testResult
       else {
         hostName = hostName;
         platform = platform;
@@ -528,13 +532,14 @@ in rec {
     # Generate tests for all discovered hosts
     generateHostTests = platform: hosts:
       lib.listToAttrs (map (hostName: {
-        name = hostName;
-        value = testHostCapability platform hostName;
-      }) hosts);
+          name = hostName;
+          value = testHostCapability platform hostName;
+        })
+        hosts);
 
     allHostTests = lib.mapAttrs generateHostTests allHosts;
-
-  in allHostTests;
+  in
+    allHostTests;
 
   # Test module mapping accuracy
   testModuleMapping = {
@@ -548,24 +553,22 @@ in rec {
     # Test capability to module mapping consistency
     mappingConsistency = {
       # Verify that all capabilities in the schema have corresponding modules
-      allFeaturesHaveModules =
-        lib.all (feature: moduleMapping.featureModules ? ${feature}) [
-          "development"
-          "desktop"
-          "gaming"
-          "multimedia"
-          "server"
-          "corporate"
-          "ai"
-        ];
+      allFeaturesHaveModules = lib.all (feature: moduleMapping.featureModules ? ${feature}) [
+        "development"
+        "desktop"
+        "gaming"
+        "multimedia"
+        "server"
+        "corporate"
+        "ai"
+      ];
 
-      allEnvironmentsMapped =
-        lib.all (env: moduleMapping.environmentModules.desktop ? ${env}) [
-          "gnome"
-          "sway"
-          "kde"
-          "macos"
-        ];
+      allEnvironmentsMapped = lib.all (env: moduleMapping.environmentModules.desktop ? ${env}) [
+        "gnome"
+        "sway"
+        "kde"
+        "macos"
+      ];
 
       allVirtualizationMapped = moduleMapping.virtualizationModules
         ? windowsGpuPassthrough;
@@ -591,7 +594,6 @@ in rec {
     ];
 
     passedTests = lib.filter (x: x) allTests;
-
   in {
     totalTests = lib.length allTests;
     passedTests = lib.length passedTests;

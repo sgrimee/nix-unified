@@ -1,4 +1,8 @@
-{ inputs, system, ... }: {
+{
+  inputs,
+  system,
+  ...
+}: {
   imports = [
     ./aerc.nix
     ./alacritty.nix

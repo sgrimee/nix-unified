@@ -1,7 +1,6 @@
 # Capability Declaration for cirice
 # Framework AMD AI 300 series running NixOS with Sway (Wayland) desktop
 # Cloned from nixair but with updated hardware capabilities
-
 {
   # Core platform information
   platform = "nixos";
@@ -33,7 +32,7 @@
     printer = true; # CUPS printing support
     keyboard = {
       advanced = true; # Kanata keyboard remapping with home row mods
-      devices = [ "/dev/input/by-path/platform-i8042-serio-0-event-kbd" ];
+      devices = ["/dev/input/by-path/platform-i8042-serio-0-event-kbd"];
     };
     # Resource capabilities for Nix configuration
     large-ram = true; # High memory system, use larger download buffers
@@ -41,14 +40,14 @@
   };
 
   # Host roles and primary use cases
-  roles = [ "mobile" "workstation" ];
+  roles = ["mobile" "workstation"];
 
   # Environment preferences
   environment = {
     desktop = "sway"; # Sway Wayland compositor
     shell = {
       primary = "zsh"; # Primary shell
-      additional = [ "fish" ]; # Additional shells available
+      additional = ["fish"]; # Additional shells available
     };
     terminal = "alacritty"; # Preferred terminal emulator
     windowManager = "sway"; # Sway is both desktop and window manager
@@ -63,7 +62,7 @@
     homeAssistant = false; # No Home Assistant
     development = {
       docker = true; # Enable Docker for development
-      databases = [ "postgresql" "sqlite" ]; # Common databases
+      databases = ["postgresql" "sqlite"]; # Common databases
     };
   };
 
@@ -86,6 +85,6 @@
 
   # Build machine configuration
   buildMachines = {
-    enable = [ ]; # No remote builders - this is the primary build server
+    enable = []; # No remote builders - this is the primary build server
   };
 }

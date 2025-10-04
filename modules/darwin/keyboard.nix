@@ -1,8 +1,10 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.keyboard;
 
   # Import shared keyboard utilities
@@ -11,9 +13,8 @@ let
     isDarwin = true;
   };
   keyboardUtils = keyboardLib.mkKeyboardUtils cfg;
-
 in {
-  imports = [ ../shared/keyboard ];
+  imports = [../shared/keyboard];
 
   config = {
     # Basic macOS keyboard system settings (always applied)

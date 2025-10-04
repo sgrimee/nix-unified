@@ -1,1 +1,1 @@
-{ ... }: { networking.firewall.allowedTCPPorts = [ 11434 ]; }
+{...}: {networking.firewall.allowedTCPPorts = [11434];}

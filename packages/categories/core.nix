@@ -1,7 +1,10 @@
 # packages/categories/core.nix
-{ pkgs, lib, hostCapabilities ? { }, ... }:
-
 {
+  pkgs,
+  lib,
+  hostCapabilities ? {},
+  ...
+}: {
   core = with pkgs; [
     coreutils-full
     curl
@@ -16,8 +19,8 @@
 
   metadata = {
     description = "Core packages";
-    conflicts = [ ];
-    requires = [ ];
+    conflicts = [];
+    requires = [];
     size = "small";
     priority = "high";
   };

@@ -1,12 +1,14 @@
 # packages/categories/gaming.nix
-{ pkgs, lib, hostCapabilities ? { }, ... }:
-
 {
+  pkgs,
+  lib,
+  hostCapabilities ? {},
+  ...
+}: {
   # Core gaming packages (cross-platform)
-  core = with pkgs;
-    [
-      discord # Voice and text chat for gamers
-    ];
+  core = with pkgs; [
+    discord # Voice and text chat for gamers
+  ];
 
   # Gaming utilities (Linux-specific tools)
   utilities = with pkgs;
@@ -30,7 +32,8 @@
   emulation = with pkgs;
     [
       retroarch # Multi-platform emulator frontend
-    ] ++ lib.optionals pkgs.stdenv.isLinux [
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [
       dolphin-emu # GameCube and Wii emulator
       pcsx2 # PlayStation 2 emulator
     ];
@@ -42,29 +45,26 @@
       gamescope # Wayland compositor for gaming
     ];
 
-    darwin = with pkgs;
-      [
-        # macOS gaming tools
-      ];
+    darwin = with pkgs; [
+      # macOS gaming tools
+    ];
   };
 
   # GPU-specific packages
   gpuSpecific = {
-    nvidia = with pkgs;
-      [
-        nvidia-vaapi-driver # NVIDIA VAAPI driver for video acceleration
-      ];
+    nvidia = with pkgs; [
+      nvidia-vaapi-driver # NVIDIA VAAPI driver for video acceleration
+    ];
 
-    amd = with pkgs;
-      [
-        amdvlk # AMD Vulkan driver
-      ];
+    amd = with pkgs; [
+      amdvlk # AMD Vulkan driver
+    ];
   };
 
   metadata = {
     description = "Gaming applications and utilities";
-    conflicts = [ "minimal" "server" ];
-    requires = [ "multimedia" ];
+    conflicts = ["minimal" "server"];
+    requires = ["multimedia"];
     size = "xlarge";
     priority = "medium";
   };

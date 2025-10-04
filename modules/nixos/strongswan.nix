@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 with lib; {
   options = {
     services.strongswan-senningerberg = {
@@ -29,9 +35,9 @@ with lib; {
     services.strongswan = {
       enable = true;
 
-      secrets = [ "/etc/ipsec.d/senningerberg.secrets" ];
+      secrets = ["/etc/ipsec.d/senningerberg.secrets"];
 
-      ca = { };
+      ca = {};
 
       connections = {
         senningerberg-l2tp = {
@@ -72,10 +78,10 @@ with lib; {
       # StrongSwan setup configuration
       setup = {
         # Debug configuration
-        charondebug = if config.services.strongswan-senningerberg.debug then
-          "ike 4, knl 4, net 4, asn 4, enc 4, lib 4, esp 4, tls 4, tnc 4, imc 4, imv 4, pts 4"
-        else
-          "ike 1, knl 1";
+        charondebug =
+          if config.services.strongswan-senningerberg.debug
+          then "ike 4, knl 4, net 4, asn 4, enc 4, lib 4, esp 4, tls 4, tnc 4, imc 4, imv 4, pts 4"
+          else "ike 1, knl 1";
 
         # Unique ID handling
         uniqueids = "yes";
@@ -91,7 +97,9 @@ with lib; {
 
     # Override strongswan service to prevent auto-start unless configured
     systemd.services.strongswan.wantedBy = lib.mkForce (
-      if config.services.strongswan-senningerberg.autoStart then [ "multi-user.target" ] else [ ]
+      if config.services.strongswan-senningerberg.autoStart
+      then ["multi-user.target"]
+      else []
     );
 
     # Enable xl2tpd service (we'll override the config)
@@ -100,10 +108,13 @@ with lib; {
     # Override xl2tpd systemd service to use our config
     systemd.services.xl2tpd = {
       wantedBy = lib.mkForce (
-        if config.services.strongswan-senningerberg.autoStart then [ "multi-user.target" ] else [ ]
+        if config.services.strongswan-senningerberg.autoStart
+        then ["multi-user.target"]
+        else []
       );
       serviceConfig = {
-        ExecStart = lib.mkForce
+        ExecStart =
+          lib.mkForce
           "${pkgs.xl2tpd}/bin/xl2tpd -D -c /etc/xl2tpd/xl2tpd.conf -s /etc/xl2tpd/l2tp-secrets -p /run/xl2tpd/pid -C /run/xl2tpd/control";
       };
     };
@@ -111,8 +122,8 @@ with lib; {
     # Create xl2tpd configuration file at runtime using SOPS
     systemd.services.senningerberg-xl2tpd-config = {
       description = "Generate Senningerberg xl2tpd config with SOPS";
-      wantedBy = lib.mkIf config.services.strongswan-senningerberg.autoStart [ "xl2tpd.service" ];
-      before = [ "xl2tpd.service" ];
+      wantedBy = lib.mkIf config.services.strongswan-senningerberg.autoStart ["xl2tpd.service"];
+      before = ["xl2tpd.service"];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -138,7 +149,9 @@ with lib; {
           require authentication = yes
           name = $USERNAME
           ppp debug = ${
-            if config.services.strongswan-senningerberg.debug then "yes" else "no"
+            if config.services.strongswan-senningerberg.debug
+            then "yes"
+            else "no"
           }
           pppoptfile = /etc/ppp/options.l2tpd
           length bit = yes
@@ -149,13 +162,13 @@ with lib; {
     };
 
     # Ensure xl2tpd runtime directory exists
-    systemd.tmpfiles.rules = [ "d /run/xl2tpd 0755 root root -" ];
+    systemd.tmpfiles.rules = ["d /run/xl2tpd 0755 root root -"];
 
     # Create PPP options file at runtime using SOPS
     systemd.services.senningerberg-ppp-options = {
       description = "Generate Senningerberg PPP options with SOPS";
-      wantedBy = [ "xl2tpd.service" ];
-      before = [ "xl2tpd.service" ];
+      wantedBy = ["xl2tpd.service"];
+      before = ["xl2tpd.service"];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -191,8 +204,8 @@ with lib; {
     # Create PPP ip-up script for routing
     systemd.services.senningerberg-ppp-ipup = {
       description = "Generate Senningerberg PPP ip-up script";
-      wantedBy = [ "xl2tpd.service" ];
-      before = [ "xl2tpd.service" ];
+      wantedBy = ["xl2tpd.service"];
+      before = ["xl2tpd.service"];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -217,8 +230,8 @@ with lib; {
     # Create PPP secrets files at runtime using SOPS
     systemd.services.senningerberg-ppp-secrets = {
       description = "Generate Senningerberg PPP secrets with SOPS";
-      wantedBy = [ "xl2tpd.service" ];
-      before = [ "xl2tpd.service" ];
+      wantedBy = ["xl2tpd.service"];
+      before = ["xl2tpd.service"];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -247,8 +260,8 @@ with lib; {
     # Create the IPSec secrets file at runtime using SOPS
     systemd.services.senningerberg-ipsec-secrets = {
       description = "Generate Senningerberg IPsec secrets with SOPS";
-      wantedBy = [ "strongswan.service" ];
-      before = [ "strongswan.service" ];
+      wantedBy = ["strongswan.service"];
+      before = ["strongswan.service"];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -265,36 +278,35 @@ with lib; {
 
     # Firewall configuration for IPSec
     networking.firewall = {
-      allowedUDPPorts = [ 500 4500 ]; # IKE and NAT-T
-      allowedTCPPorts = [ ];
+      allowedUDPPorts = [500 4500]; # IKE and NAT-T
+      allowedTCPPorts = [];
 
       # Enable connection tracking for IPSec
-      connectionTrackingModules = [ "nf_conntrack_netlink" ];
+      connectionTrackingModules = ["nf_conntrack_netlink"];
     };
 
     # Create systemd service to maintain route to VPN server
-    systemd.services.senningerberg-server-route =
-      lib.mkIf config.services.strongswan-senningerberg.enable {
-        description = "Maintain route to Senningerberg VPN server";
-        after = [ "network.target" ];
-        wantedBy = lib.mkIf config.services.strongswan-senningerberg.autoStart [ "multi-user.target" ];
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecStart = pkgs.writeShellScript "add-server-route" ''
-            export PATH=${pkgs.iproute2}/bin:${pkgs.gawk}/bin:${pkgs.util-linux}/bin:$PATH
+    systemd.services.senningerberg-server-route = lib.mkIf config.services.strongswan-senningerberg.enable {
+      description = "Maintain route to Senningerberg VPN server";
+      after = ["network.target"];
+      wantedBy = lib.mkIf config.services.strongswan-senningerberg.autoStart ["multi-user.target"];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStart = pkgs.writeShellScript "add-server-route" ''
+          export PATH=${pkgs.iproute2}/bin:${pkgs.gawk}/bin:${pkgs.util-linux}/bin:$PATH
 
-            # Get the default gateway before VPN connects
-            DEFAULT_GW=$(ip route | grep '^default' | grep -v ppp | head -1 | awk '{print $3}')
-            DEFAULT_IFACE=$(ip route | grep '^default' | grep -v ppp | head -1 | awk '{print $5}')
+          # Get the default gateway before VPN connects
+          DEFAULT_GW=$(ip route | grep '^default' | grep -v ppp | head -1 | awk '{print $3}')
+          DEFAULT_IFACE=$(ip route | grep '^default' | grep -v ppp | head -1 | awk '{print $5}')
 
-            if [ -n "$DEFAULT_GW" ] && [ -n "$DEFAULT_IFACE" ]; then
-              ip route add ${config.services.strongswan-senningerberg.serverAddress}/32 via $DEFAULT_GW dev $DEFAULT_IFACE metric 1
-              logger "Added route to VPN server ${config.services.strongswan-senningerberg.serverAddress} via $DEFAULT_GW dev $DEFAULT_IFACE"
-            fi
-          '';
-        };
+          if [ -n "$DEFAULT_GW" ] && [ -n "$DEFAULT_IFACE" ]; then
+            ip route add ${config.services.strongswan-senningerberg.serverAddress}/32 via $DEFAULT_GW dev $DEFAULT_IFACE metric 1
+            logger "Added route to VPN server ${config.services.strongswan-senningerberg.serverAddress} via $DEFAULT_GW dev $DEFAULT_IFACE"
+          fi
+        '';
       };
+    };
 
     # Enable IP forwarding for VPN routing
     boot.kernel.sysctl = {
@@ -305,7 +317,7 @@ with lib; {
     };
 
     # Load required kernel modules
-    boot.kernelModules = [ "af_key" ];
+    boot.kernelModules = ["af_key"];
 
     # Install packages for L2TP/IPSec VPN
     environment.systemPackages = with pkgs; [
@@ -358,8 +370,8 @@ with lib; {
     # Systemd service to ensure proper startup order
     systemd.services.strongswan-senningerberg-setup = {
       description = "Senningerberg VPN Setup";
-      after = [ "network.target" "strongswan.service" ];
-      wants = [ "strongswan.service" ];
+      after = ["network.target" "strongswan.service"];
+      wants = ["strongswan.service"];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -369,7 +381,7 @@ with lib; {
         sleep 2
         echo "Senningerberg VPN configuration ready"
       '';
-      wantedBy = lib.mkIf config.services.strongswan-senningerberg.autoStart [ "multi-user.target" ];
+      wantedBy = lib.mkIf config.services.strongswan-senningerberg.autoStart ["multi-user.target"];
     };
   };
 }

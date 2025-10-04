@@ -1,8 +1,10 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; {
   # Rust development configuration
   # Mapped to development capability
 

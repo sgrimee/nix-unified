@@ -1,6 +1,9 @@
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   config = lib.mkIf (config.capabilities.features.gaming or false) {
     # CPU performance governor for gaming
     services.udev.extraRules = ''
@@ -10,7 +13,7 @@
     # Gaming-specific kernel parameters
     boot.kernelParams = [
       "amd_pstate=active"
-      "processor.max_cstate=1"  # Reduce CPU latency
+      "processor.max_cstate=1" # Reduce CPU latency
     ];
 
     # System optimizations for gaming

@@ -1,7 +1,6 @@
 # Capability Declaration for SGRIMEE-M-4HJT
 # Darwin workstation with comprehensive corporate toolset
 # Based on baseline analysis of current configuration
-
 {
   # Core platform information
   platform = "darwin";
@@ -38,14 +37,14 @@
   };
 
   # Host roles and primary use cases
-  roles = [ "mobile" "workstation" ];
+  roles = ["mobile" "workstation"];
 
   # Environment preferences
   environment = {
     desktop = "macos"; # Native macOS desktop
     shell = {
       primary = "zsh"; # Primary shell
-      additional = [ "fish" ]; # Additional shells available
+      additional = ["fish"]; # Additional shells available
     };
     terminal = "ghostty"; # Preferred terminal emulator
     windowManager = "aerospace"; # Aerospace window manager
@@ -60,13 +59,13 @@
     homeAssistant = false; # No Home Assistant
     development = {
       docker = true; # Docker Desktop via Homebrew
-      databases = [ ]; # MongoDB Compass available but no local DBs
+      databases = []; # MongoDB Compass available but no local DBs
     };
   };
 
   # Build machine configuration
   buildMachines = {
-    enable = [ "cirice" ]; # Use cirice as remote build machine
+    enable = ["cirice"]; # Use cirice as remote build machine
   };
 
   # Security and access control

@@ -1,7 +1,7 @@
 final: prev: {
   update-coding-agents = prev.writeShellApplication {
     name = "update-coding-agents";
-    runtimeInputs = [ ];
+    runtimeInputs = [];
     text = ''
       # Check if npm is available
       if ! command -v npm >/dev/null 2>&1; then
@@ -23,8 +23,7 @@ final: prev: {
       npm list -g --depth=0 | grep opencode-ai
     '';
     meta = with final.lib; {
-      description =
-        "Update Claude Code and OpenCode AI packages to latest versions";
+      description = "Update Claude Code and OpenCode AI packages to latest versions";
       license = licenses.mit;
       platforms = platforms.all;
     };

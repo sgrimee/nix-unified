@@ -1,11 +1,11 @@
-{ lib, pkgs ? null, isDarwin ? false }:
-
-with lib;
-
-let
-  kanataConfig = import ./kanata.nix { inherit lib pkgs isDarwin; };
-  filteringConfig = import ./filtering.nix { inherit lib isDarwin; };
-
+{
+  lib,
+  pkgs ? null,
+  isDarwin ? false,
+}:
+with lib; let
+  kanataConfig = import ./kanata.nix {inherit lib pkgs isDarwin;};
+  filteringConfig = import ./filtering.nix {inherit lib isDarwin;};
 in {
   # Create keyboard utilities based on configuration
   mkKeyboardUtils = cfg: {
@@ -15,12 +15,21 @@ in {
     generateKanataFilter = filteringConfig.generateKanataFilter cfg;
 
     # State queries
-    hasActiveFeatures = cfg.features.homerowMods || cfg.features.remapCapsLock
+    hasActiveFeatures =
+      cfg.features.homerowMods
+      || cfg.features.remapCapsLock
       || cfg.features.mapSpaceToMew;
-    shouldEnableKanata = cfg.remapper == "kanata" && (cfg.features.homerowMods
-      || cfg.features.remapCapsLock || cfg.features.mapSpaceToMew);
-    shouldEnableKarabiner = cfg.remapper == "karabiner"
-      && (cfg.features.homerowMods || cfg.features.remapCapsLock
+    shouldEnableKanata =
+      cfg.remapper
+      == "kanata"
+      && (cfg.features.homerowMods
+        || cfg.features.remapCapsLock
+        || cfg.features.mapSpaceToMew);
+    shouldEnableKarabiner =
+      cfg.remapper
+      == "karabiner"
+      && (cfg.features.homerowMods
+        || cfg.features.remapCapsLock
         || cfg.features.mapSpaceToMew);
   };
 }

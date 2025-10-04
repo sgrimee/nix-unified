@@ -1,5 +1,4 @@
-{ pkgs, ... }: 
-let
+{pkgs, ...}: let
   powerMenuScript = pkgs.writeShellScript "rofi-power-menu" ''
     if [ -z "$@" ]; then
       echo -e "Logout\nReboot\nShutdown"

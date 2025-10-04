@@ -1,4 +1,8 @@
-{ lib, pkgs, ... }: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   # Test string utilities
   testStringConcatenation = {
     expr = "hello" + " " + "world";
@@ -12,28 +16,28 @@
 
   # Test list utilities
   testListLength = {
-    expr = builtins.length [ 1 2 3 ];
+    expr = builtins.length [1 2 3];
     expected = 3;
   };
 
   testListHead = {
-    expr = builtins.head [ "first" "second" ];
+    expr = builtins.head ["first" "second"];
     expected = "first";
   };
 
   testListTail = {
-    expr = builtins.tail [ "first" "second" "third" ];
-    expected = [ "second" "third" ];
+    expr = builtins.tail ["first" "second" "third"];
+    expected = ["second" "third"];
   };
 
   # Test attribute set utilities
   testAttrSetHasKey = {
-    expr = builtins.hasAttr "test" { test = "value"; };
+    expr = builtins.hasAttr "test" {test = "value";};
     expected = true;
   };
 
   testAttrSetMissing = {
-    expr = builtins.hasAttr "missing" { test = "value"; };
+    expr = builtins.hasAttr "missing" {test = "value";};
     expected = false;
   };
 
@@ -43,7 +47,7 @@
       a = 1;
       c = 3;
     });
-    expected = [ "a" "b" "c" ];
+    expected = ["a" "b" "c"];
   };
 
   # Test path utilities
@@ -64,12 +68,12 @@
   };
 
   testTypeOfList = {
-    expr = builtins.typeOf [ ];
+    expr = builtins.typeOf [];
     expected = "list";
   };
 
   testTypeOfAttrSet = {
-    expr = builtins.typeOf { };
+    expr = builtins.typeOf {};
     expected = "set";
   };
 

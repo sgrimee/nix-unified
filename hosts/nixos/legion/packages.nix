@@ -1,7 +1,10 @@
 # modules/hosts/legion/packages.nix
-{ config, lib, pkgs, ... }:
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   capabilities = import ./capabilities.nix;
   packageManager = import ../../../packages/manager.nix {
     inherit lib pkgs;
@@ -10,25 +13,26 @@ let
 
   # Use automatic category derivation based on host capabilities
   auto = packageManager.deriveCategories {
-    explicit = [ ];
+    explicit = [];
     options = {
       enable = true;
-      exclude = [ ];
-      force = [ ];
+      exclude = [];
+      force = [];
     };
   };
   requestedCategories = auto.categories;
 
   # Generate package list
   validation = packageManager.validatePackages requestedCategories;
-  systemPackages = if validation.valid then
-    packageManager.generatePackages requestedCategories
-  else
-    throw "Invalid package combination: ${toString validation.conflicts}";
-
+  systemPackages =
+    if validation.valid
+    then packageManager.generatePackages requestedCategories
+    else throw "Invalid package combination: ${toString validation.conflicts}";
 in {
   # System packages with host-specific overrides
-  home.packages = systemPackages ++ [
-    # Any host-specific packages that don't fit categories
-  ];
+  home.packages =
+    systemPackages
+    ++ [
+      # Any host-specific packages that don't fit categories
+    ];
 }

@@ -1,17 +1,18 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
-
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+with lib; let
   cfg = config.keyboard;
 
   # Platform detection
   isDarwin = pkgs.stdenv.isDarwin;
-
 in {
   options.keyboard = {
     remapper = mkOption {
-      type = types.enum [ "karabiner" "kanata" ];
+      type = types.enum ["karabiner" "kanata"];
       default = "kanata";
       description = ''
         Choose keyboard remapper for homerow mods and advanced functionality.
@@ -126,23 +127,23 @@ in {
           vendor_id = 7504; # 0x1d50
           product_id = 24926; # 0x615e
           name = "Aurora Sweep (ZMK Project)";
-          note =
-            "Custom split keyboard with ZMK firmware - handles own key remapping";
+          note = "Custom split keyboard with ZMK firmware - handles own key remapping";
         }
         {
           vendor_id = 5824; # 0x16c0
           product_id = 10203; # 0x27db
           name = "Glove80 Left";
-          note =
-            "Ergonomic split keyboard with custom firmware - handles own key remapping";
+          note = "Ergonomic split keyboard with custom firmware - handles own key remapping";
         }
       ];
-      example = [{
-        vendor_id = 1452;
-        product_id = 592;
-        name = "Apple Internal Keyboard";
-        note = "Built-in keyboard with custom firmware";
-      }];
+      example = [
+        {
+          vendor_id = 1452;
+          product_id = 592;
+          name = "Apple Internal Keyboard";
+          note = "Built-in keyboard with custom firmware";
+        }
+      ];
       description = ''
         List of keyboards to exclude from remapping. Each entry should contain
         vendor_id and product_id. For macOS Kanata filtering, the 'name' field
@@ -163,17 +164,20 @@ in {
     # Generate warnings only for critical configuration issues
     warnings = let
       hasRemapping = cfg.features.homerowMods || cfg.features.remapCapsLock;
-      macosKanataWithoutNames = isDarwin && cfg.remapper == "kanata"
-        && cfg.excludeKeyboards != [ ]
+      macosKanataWithoutNames =
+        isDarwin
+        && cfg.remapper == "kanata"
+        && cfg.excludeKeyboards != []
         && any (kb: kb.name == null) cfg.excludeKeyboards;
       unnamedKeyboards = filter (kb: kb.name == null) cfg.excludeKeyboards;
       # Only show warnings for actual problems, not status information
-    in optional (!hasRemapping)
-    "Keyboard remapping disabled: both homerowMods and remapCapsLock are false"
-    ++ optional macosKanataWithoutNames
-    "Kanata macOS filtering requires device names for ${
-      toString (length unnamedKeyboards)
-    } excluded keyboards";
+    in
+      optional (!hasRemapping)
+      "Keyboard remapping disabled: both homerowMods and remapCapsLock are false"
+      ++ optional macosKanataWithoutNames
+      "Kanata macOS filtering requires device names for ${
+        toString (length unnamedKeyboards)
+      } excluded keyboards";
 
     # No internal state needed - platform modules will import the lib directly
   };

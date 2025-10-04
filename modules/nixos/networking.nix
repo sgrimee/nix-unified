@@ -1,4 +1,8 @@
-{ config, lib, ... }: {
+{
+  config,
+  lib,
+  ...
+}: {
   # Enable networking
   networking.networkmanager.enable = true;
   networking.useDHCP = lib.mkDefault true;
@@ -25,5 +29,5 @@
   };
 
   # Open firewall for avahi (mDNS)
-  networking.firewall.allowedUDPPorts = [ 5353 ];
+  networking.firewall.allowedUDPPorts = [5353];
 }

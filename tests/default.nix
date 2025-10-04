@@ -1,5 +1,8 @@
-{ lib, pkgs, ... }:
-let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   inherit (lib) runTests;
 
   # Apply overlays to pkgs for tests that need custom packages
@@ -19,7 +22,7 @@ let
     pkgs = pkgsWithOverlays;
   };
 
-  # Test host configuration files and structure  
+  # Test host configuration files and structure
   hostTests = import ./host-tests.nix {
     inherit lib;
     pkgs = pkgsWithOverlays;
@@ -49,7 +52,7 @@ let
     pkgs = pkgsWithOverlays;
   };
 
-  # ===== INTEGRATION TESTS =====  
+  # ===== INTEGRATION TESTS =====
   # Test that configurations actually work together
   integrationTests = import ./integration-tests.nix {
     inherit lib;
@@ -70,7 +73,7 @@ let
     pkgs = pkgsWithOverlays;
   };
 
-  # ===== INFRASTRUCTURE TESTS =====  
+  # ===== INFRASTRUCTURE TESTS =====
   # Test development and deployment infrastructure
   justfileCommandTests = import ./justfile-commands.nix {
     inherit lib;
@@ -94,6 +97,10 @@ let
   infrastructureTests = ciPipelineTests // justfileCommandTests;
 
   # Combine all test categories into comprehensive test suite
-  allTests = unitTests // systemTests // integrationTestSuite
+  allTests =
+    unitTests
+    // systemTests
+    // integrationTestSuite
     // consistencyTests // propertyTests // infrastructureTests;
-in runTests allTests
+in
+  runTests allTests

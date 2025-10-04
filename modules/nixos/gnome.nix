@@ -11,7 +11,7 @@ with lib; {
 
   config = mkMerge [
     # Enable automatically when module imported (can be disabled explicitly)
-    { programs.custom.gnome.enable = mkDefault true; }
+    {programs.custom.gnome.enable = mkDefault true;}
 
     (mkIf config.programs.custom.gnome.enable {
       # Enable GNOME Desktop Environment

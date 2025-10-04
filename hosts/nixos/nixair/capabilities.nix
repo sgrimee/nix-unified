@@ -1,7 +1,6 @@
 # Capability Declaration for nixair
 # Apple MacBook Air 2011 running NixOS with Sway (Wayland) desktop
 # Based on baseline analysis of current configuration
-
 {
   # Core platform information
   platform = "nixos";
@@ -33,8 +32,7 @@
     keyboard = {
       advanced = true; # Kanata keyboard remapping with home row mods
       swapAltCommand = true; # Swap Alt and Command keys (Mac keyboard on NixOS)
-      devices =
-        [ "/dev/input/by-path/pci-0000:00:1a.7-usbv2-0:1.2:1.0-event-kbd" ];
+      devices = ["/dev/input/by-path/pci-0000:00:1a.7-usbv2-0:1.2:1.0-event-kbd"];
     };
     # Resource capabilities for Nix configuration
     large-ram = false; # Limited memory, use smaller download buffers
@@ -42,14 +40,14 @@
   };
 
   # Host roles and primary use cases
-  roles = [ "mobile" "workstation" ];
+  roles = ["mobile" "workstation"];
 
   # Environment preferences
   environment = {
     desktop = "sway"; # Sway Wayland compositor
     shell = {
       primary = "zsh"; # Primary shell
-      additional = [ "fish" ]; # Additional shells available
+      additional = ["fish"]; # Additional shells available
     };
     terminal = "ghostty"; # Preferred terminal emulator
     windowManager = "sway"; # Sway is both desktop and window manager
@@ -64,7 +62,7 @@
     homeAssistant = false; # No Home Assistant
     development = {
       docker = false; # No Docker setup (resource constrained)
-      databases = [ ]; # No database services
+      databases = []; # No database services
     };
   };
 
@@ -81,6 +79,6 @@
 
   # Build machine configuration
   buildMachines = {
-    enable = [ "cirice" ]; # Use cirice as remote build machine
+    enable = ["cirice"]; # Use cirice as remote build machine
   };
 }

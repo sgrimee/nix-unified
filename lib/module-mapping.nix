@@ -1,10 +1,7 @@
 # Minimal Module Mapping Configuration
 # Maps capabilities to EXISTING module imports only
 # This is a realistic version that matches the current module structure
-
-{ lib, ... }:
-
-{
+{lib, ...}: {
   # Core modules that are always imported
   coreModules = {
     nixos = [
@@ -41,7 +38,7 @@
       # Home Manager is included via special modules
     ];
 
-    homeManager = [ ../modules/home-manager/nixpkgs-config.nix ];
+    homeManager = [../modules/home-manager/nixpkgs-config.nix];
   };
 
   # Feature-based module mappings - only existing modules
@@ -53,8 +50,8 @@
         ../modules/nixos/vscode.nix
         ../modules/nixos/development/rust.nix
       ];
-      darwin = [ ];
-      homeManager = [ ];
+      darwin = [];
+      homeManager = [];
     };
 
     desktop = {
@@ -64,8 +61,8 @@
         ../modules/nixos/mounts.nix
         # Add more as they exist
       ];
-      darwin = [ ];
-      homeManager = [ ];
+      darwin = [];
+      homeManager = [];
     };
 
     gaming = {
@@ -74,95 +71,95 @@
         ../modules/nixos/gaming-graphics.nix
         ../modules/nixos/gaming-performance.nix
       ];
-      darwin = [ ];
-      homeManager = [ ];
+      darwin = [];
+      homeManager = [];
     };
 
     multimedia = {
-      nixos = [ ../modules/nixos/sound.nix ../modules/nixos/spotifyd.nix ];
-      darwin = [ ];
-      homeManager = [ ];
+      nixos = [../modules/nixos/sound.nix ../modules/nixos/spotifyd.nix];
+      darwin = [];
+      homeManager = [];
     };
 
     server = {
-      nixos = [ ];
-      darwin = [ ];
-      homeManager = [ ];
+      nixos = [];
+      darwin = [];
+      homeManager = [];
     };
 
     corporate = {
-      nixos = [ ../modules/nixos/webex-tui.nix ];
-      darwin = [ ../modules/darwin/webex-tui.nix ];
-      homeManager = [ ];
+      nixos = [../modules/nixos/webex-tui.nix];
+      darwin = [../modules/darwin/webex-tui.nix];
+      homeManager = [];
     };
 
     ai = {
-      nixos = [ ../modules/nixos/nvidia.nix ];
-      darwin = [ ];
-      homeManager = [ ];
+      nixos = [../modules/nixos/nvidia.nix];
+      darwin = [];
+      homeManager = [];
     };
   };
 
   # Hardware-specific module mappings - only existing modules
   hardwareModules = {
     # CPU modules not implemented yet - will add when specific CPU optimizations are needed
-    cpu = { };
+    cpu = {};
 
     gpu = {
       nvidia = {
-        nixos = [ ../modules/nixos/nvidia.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/nvidia.nix];
+        darwin = [];
       };
       amd = {
-        nixos = [ ../modules/nixos/amd-graphics.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/amd-graphics.nix];
+        darwin = [];
       };
       # Other GPU types (intel, apple) not implemented yet
     };
 
     audio = {
       pipewire = {
-        nixos = [ ../modules/nixos/sound.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/sound.nix];
+        darwin = [];
       };
       pulseaudio = {
-        nixos = [ ../modules/nixos/sound.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/sound.nix];
+        darwin = [];
       };
       # coreaudio not implemented yet for Darwin
     };
 
     display = {
       hidpi = {
-        nixos = [ ../modules/nixos/display.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/display.nix];
+        darwin = [];
       };
       multimonitor = {
-        nixos = [ ../modules/nixos/display.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/display.nix];
+        darwin = [];
       };
       "benq-display" = {
-        nixos = [ ];
-        darwin = [ ../modules/darwin/benq-display.nix ];
+        nixos = [];
+        darwin = [../modules/darwin/benq-display.nix];
       };
     };
 
     connectivity = {
       # bluetooth modules not implemented yet
       wifi = {
-        nixos = [ ../modules/nixos/iwd.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/iwd.nix];
+        darwin = [];
       };
       printer = {
-        nixos = [ ../modules/nixos/printing.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/printing.nix];
+        darwin = [];
       };
     };
 
     keyboard = {
       advanced = {
-        nixos = [ ../modules/nixos/kanata.nix ];
-        darwin = [ ../modules/darwin/kanata.nix ];
+        nixos = [../modules/nixos/kanata.nix];
+        darwin = [../modules/darwin/kanata.nix];
       };
     };
   };
@@ -170,39 +167,39 @@
   # Role-based module mappings - mostly empty for now
   roleModules = {
     workstation = {
-      nixos = [ ];
-      darwin = [ ];
-      homeManager = [ ];
+      nixos = [];
+      darwin = [];
+      homeManager = [];
     };
 
     "build-server" = {
-      nixos = [ ];
-      darwin = [ ];
-      homeManager = [ ];
+      nixos = [];
+      darwin = [];
+      homeManager = [];
     };
 
     "gaming-rig" = {
-      nixos = [ ../modules/nixos/nvidia.nix ];
-      darwin = [ ];
-      homeManager = [ ];
+      nixos = [../modules/nixos/nvidia.nix];
+      darwin = [];
+      homeManager = [];
     };
 
     "media-center" = {
-      nixos = [ ../modules/nixos/sound.nix ];
-      darwin = [ ];
-      homeManager = [ ];
+      nixos = [../modules/nixos/sound.nix];
+      darwin = [];
+      homeManager = [];
     };
 
     "home-server" = {
-      nixos = [ ];
-      darwin = [ ];
-      homeManager = [ ];
+      nixos = [];
+      darwin = [];
+      homeManager = [];
     };
 
     mobile = {
-      nixos = [ ];
-      darwin = [ ];
-      homeManager = [ ];
+      nixos = [];
+      darwin = [];
+      homeManager = [];
     };
   };
 
@@ -210,13 +207,13 @@
   environmentModules = {
     desktop = {
       gnome = {
-        nixos = [ ../modules/nixos/greetd.nix ../modules/nixos/gnome.nix ];
-        darwin = [ ];
-        homeManager = [ ];
+        nixos = [../modules/nixos/greetd.nix ../modules/nixos/gnome.nix];
+        darwin = [];
+        homeManager = [];
       };
       sway = {
-        nixos = [ ../modules/nixos/greetd.nix ../modules/nixos/sway.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/greetd.nix ../modules/nixos/sway.nix];
+        darwin = [];
         homeManager = [
           ../modules/home-manager/wl-sway.nix
           ../modules/home-manager/waybar.nix
@@ -224,63 +221,63 @@
         ];
       };
       kde = {
-        nixos = [ ];
-        darwin = [ ];
-        homeManager = [ ];
+        nixos = [];
+        darwin = [];
+        homeManager = [];
       };
       macos = {
-        nixos = [ ];
-        darwin = [ ../modules/darwin/dock.nix ../modules/darwin/finder.nix ];
-        homeManager = [ ];
+        nixos = [];
+        darwin = [../modules/darwin/dock.nix ../modules/darwin/finder.nix];
+        homeManager = [];
       };
     };
 
     shell = {
       zsh = {
-        nixos = [ ];
-        darwin = [ ];
-        homeManager = [ ];
+        nixos = [];
+        darwin = [];
+        homeManager = [];
       };
       fish = {
-        nixos = [ ];
-        darwin = [ ];
-        homeManager = [ ];
+        nixos = [];
+        darwin = [];
+        homeManager = [];
       };
       bash = {
-        nixos = [ ];
-        darwin = [ ];
-        homeManager = [ ];
+        nixos = [];
+        darwin = [];
+        homeManager = [];
       };
     };
 
     terminal = {
       alacritty = {
-        nixos = [ ];
-        darwin = [ ];
-        homeManager = [ ];
+        nixos = [];
+        darwin = [];
+        homeManager = [];
       };
       ghostty = {
-        nixos = [ ];
-        darwin = [ ];
-        homeManager = [ ../modules/home-manager/user/ghostty.nix ];
+        nixos = [];
+        darwin = [];
+        homeManager = [../modules/home-manager/user/ghostty.nix];
       };
       foot = {
-        nixos = [ ];
-        darwin = [ ];
-        homeManager = [ ../modules/home-manager/user/foot.nix ];
+        nixos = [];
+        darwin = [];
+        homeManager = [../modules/home-manager/user/foot.nix];
       };
     };
 
     windowManager = {
       sway = {
-        nixos = [ ];
-        darwin = [ ];
-        homeManager = [ ];
+        nixos = [];
+        darwin = [];
+        homeManager = [];
       };
       aerospace = {
-        nixos = [ ];
-        darwin = [ ../modules/darwin/window-manager.nix ];
-        homeManager = [ ];
+        nixos = [];
+        darwin = [../modules/darwin/window-manager.nix];
+        homeManager = [];
       };
     };
   };
@@ -289,37 +286,37 @@
   serviceModules = {
     distributedBuilds = {
       client = {
-        nixos = [ ];
-        darwin = [ ];
+        nixos = [];
+        darwin = [];
       };
       server = {
-        nixos = [ ];
-        darwin = [ ];
+        nixos = [];
+        darwin = [];
       };
       both = {
-        nixos = [ ];
-        darwin = [ ];
+        nixos = [];
+        darwin = [];
       };
     };
 
     homeAssistant = {
-      nixos = [ ../modules/nixos/homeassistant-user.nix ];
-      darwin = [ ];
+      nixos = [../modules/nixos/homeassistant-user.nix];
+      darwin = [];
     };
 
     development = {
       docker = {
-        nixos = [ ];
-        darwin = [ ];
+        nixos = [];
+        darwin = [];
       };
       databases = {
         postgresql = {
-          nixos = [ ];
-          darwin = [ ];
+          nixos = [];
+          darwin = [];
         };
         mysql = {
-          nixos = [ ];
-          darwin = [ ];
+          nixos = [];
+          darwin = [];
         };
       };
     };
@@ -329,43 +326,42 @@
   securityModules = {
     ssh = {
       server = {
-        nixos =
-          [ ../modules/nixos/openssh.nix ../modules/nixos/authorized_keys.nix ];
-        darwin = [ ];
+        nixos = [../modules/nixos/openssh.nix ../modules/nixos/authorized_keys.nix];
+        darwin = [];
       };
       client = {
-        nixos = [ ];
-        darwin = [ ../modules/darwin/ssh.nix ];
-        homeManager = [ ];
+        nixos = [];
+        darwin = [../modules/darwin/ssh.nix];
+        homeManager = [];
       };
     };
 
     firewall = {
-      nixos = [ ];
-      darwin = [ ];
+      nixos = [];
+      darwin = [];
     };
 
     secrets = {
-      nixos = [ ../modules/nixos/sops.nix ];
-      darwin = [ ../modules/darwin/sops.nix ];
-      homeManager = [ ];
+      nixos = [../modules/nixos/sops.nix];
+      darwin = [../modules/darwin/sops.nix];
+      homeManager = [];
     };
 
     vpn = {
-      nixos = [ ../modules/nixos/strongswan.nix ];
-      darwin = [ ];
+      nixos = [../modules/nixos/strongswan.nix];
+      darwin = [];
     };
   };
 
   # Virtualization module mappings
   virtualizationModules = {
     windowsGpuPassthrough = {
-      nixos = [ ../modules/nixos/virtualization/windows-gpu-passthrough.nix ];
-      darwin = [ ];
+      nixos = [../modules/nixos/virtualization/windows-gpu-passthrough.nix];
+      darwin = [];
     };
     baseVirtualization = {
-      nixos = [ ../modules/nixos/virtualization/base.nix ];
-      darwin = [ ];
+      nixos = [../modules/nixos/virtualization/base.nix];
+      darwin = [];
     };
   };
 
@@ -373,7 +369,7 @@
   specialModules = {
     homeManager = {
       path = ../modules/home-manager;
-      requiresArgs = [ "inputs" "host" "user" ];
+      requiresArgs = ["inputs" "host" "user"];
     };
 
     # nixosBase and darwinBase removed - individual modules are now imported directly

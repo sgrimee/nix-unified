@@ -27,8 +27,8 @@ in {
       #   };
       # };
 
-      sessionPath = [ ];
-      shellAliases = { };
+      sessionPath = [];
+      shellAliases = {};
     };
 
     # Nicely reload system units when changing configs

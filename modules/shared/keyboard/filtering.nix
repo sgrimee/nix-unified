@@ -1,8 +1,8 @@
-{ lib, isDarwin ? false }:
-
-with lib;
-
 {
+  lib,
+  isDarwin ? false,
+}:
+with lib; {
   # Generate device filtering configuration for various remappers
   generate = cfg: {
     kanataFilter = generateKanataFilter cfg;
@@ -10,23 +10,23 @@ with lib;
   };
 
   # Generate Kanata-specific device filtering
-  generateKanataFilter = cfg:
-    let
+  generateKanataFilter = cfg: let
+    # Filter keyboards that have names (required for macOS)
+    namedKeyboards = filter (kb: kb.name != null) cfg.excludeKeyboards;
 
-      # Filter keyboards that have names (required for macOS)
-      namedKeyboards = filter (kb: kb.name != null) cfg.excludeKeyboards;
-
-      # Extract device names for macOS filtering
-      deviceNames = map (kb: ''"${kb.name}"'') namedKeyboards;
-
-    in if cfg.excludeKeyboards == [ ] then
-      ""
-    else if isDarwin then
-      if namedKeyboards == [ ] then
-      # No valid names for macOS - emit comment with IDs
+    # Extract device names for macOS filtering
+    deviceNames = map (kb: ''"${kb.name}"'') namedKeyboards;
+  in
+    if cfg.excludeKeyboards == []
+    then ""
+    else if isDarwin
+    then
+      if namedKeyboards == []
+      then
+        # No valid names for macOS - emit comment with IDs
         let
-          unnamedIds = map (kb:
-            "product-id ${toString kb.vendor_id}:${toString kb.product_id}")
+          unnamedIds =
+            map (kb: "product-id ${toString kb.vendor_id}:${toString kb.product_id}")
             cfg.excludeKeyboards;
         in ''
           ;; Device exclusions (IDs only - names required for actual filtering):
@@ -38,25 +38,25 @@ with lib;
         )
       ''
     else
-    # Linux - use device path exclusion (implementation depends on platform wrapper)
-    ''
-      ;; Linux device filtering handled by service configuration
-    '';
+      # Linux - use device path exclusion (implementation depends on platform wrapper)
+      ''
+        ;; Linux device filtering handled by service configuration
+      '';
 
   # Generate Karabiner-specific device filtering (future implementation)
-  generateKarabinerFilter = cfg:
-    let
-      # Convert exclusion list to Karabiner device_unless conditions
-      deviceConditions = map (kb: {
+  generateKarabinerFilter = cfg: let
+    # Convert exclusion list to Karabiner device_unless conditions
+    deviceConditions =
+      map (kb: {
         vendor_id = kb.vendor_id;
         product_id = kb.product_id;
-      }) cfg.excludeKeyboards;
-
-    in {
-      # Return structured data that platform wrapper can convert to JSON
-      device_unless = deviceConditions;
-      hasExclusions = cfg.excludeKeyboards != [ ];
-    };
+      })
+      cfg.excludeKeyboards;
+  in {
+    # Return structured data that platform wrapper can convert to JSON
+    device_unless = deviceConditions;
+    hasExclusions = cfg.excludeKeyboards != [];
+  };
 
   # Utility functions for device discovery documentation
   discoveryMethods = {
@@ -74,27 +74,30 @@ with lib;
   };
 
   # Validation functions
-  validateConfiguration = cfg:
-    let
-      isDarwin = builtins.currentSystem == "aarch64-darwin"
-        || builtins.currentSystem == "x86_64-darwin";
-      macosKanataIssues = if isDarwin && cfg.remapper == "kanata"
-      && cfg.excludeKeyboards != [ ] then
-        filter (kb: kb.name == null) cfg.excludeKeyboards
-      else
-        [ ];
-    in {
-      valid = macosKanataIssues == [ ];
-      issues = macosKanataIssues;
-      warnings = if macosKanataIssues != [ ] then
-        [
-          "macOS Kanata filtering requires device names for: ${
-            concatMapStringsSep ", "
-            (kb: "${toString kb.vendor_id}:${toString kb.product_id}")
-            macosKanataIssues
-          }"
-        ]
-      else
-        [ ];
-    };
+  validateConfiguration = cfg: let
+    isDarwin =
+      builtins.currentSystem
+      == "aarch64-darwin"
+      || builtins.currentSystem == "x86_64-darwin";
+    macosKanataIssues =
+      if
+        isDarwin
+        && cfg.remapper == "kanata"
+        && cfg.excludeKeyboards != []
+      then filter (kb: kb.name == null) cfg.excludeKeyboards
+      else [];
+  in {
+    valid = macosKanataIssues == [];
+    issues = macosKanataIssues;
+    warnings =
+      if macosKanataIssues != []
+      then [
+        "macOS Kanata filtering requires device names for: ${
+          concatMapStringsSep ", "
+          (kb: "${toString kb.vendor_id}:${toString kb.product_id}")
+          macosKanataIssues
+        }"
+      ]
+      else [];
+  };
 }

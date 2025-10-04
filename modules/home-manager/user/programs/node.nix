@@ -1,8 +1,12 @@
-{ pkgs, config, ... }: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   # Install nodejs via nix on NixOS
   # Note: Darwin installation handled by modules/darwin/homebrew/brews.nix
   home.packages = pkgs.lib.optionals pkgs.stdenv.isLinux [
-    pkgs.nodejs  # includes npm
+    pkgs.nodejs # includes npm
   ];
 
   # npm configuration for global packages (NixOS only)

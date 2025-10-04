@@ -1,8 +1,8 @@
 # Window Manager Module - AeroSpace + JankyBorders
 # Combined configuration for tiling window management and window borders
-{ pkgs, ... }: {
+{pkgs, ...}: {
   # Add aerospace CLI to system packages
-  environment.systemPackages = with pkgs; [ aerospace ];
+  environment.systemPackages = with pkgs; [aerospace];
 
   # System defaults for menu bar (used by simple-bar)
   system.defaults.CustomUserPreferences = {
@@ -20,7 +20,7 @@
         # start-at-login = true; # Managed by launchd
 
         # Integration with simple-bar
-        after-login-command = [ ];
+        after-login-command = [];
         after-startup-command = [
           # Refresh simple-bar
           "exec-and-forget osascript -e 'tell application \"Übersicht\" to refresh widget id \"simple-bar\"'"
@@ -55,9 +55,9 @@
             left = 10;
             bottom = 10;
             top = [
-              { monitor."built-in" = 10; }
-              { monitor."DELL UP3214Q" = 40; }
-              { monitor."DELL S3222DGM" = 40; }
+              {monitor."built-in" = 10;}
+              {monitor."DELL UP3214Q" = 40;}
+              {monitor."DELL S3222DGM" = 40;}
               40
             ];
             right = 10;
@@ -105,16 +105,14 @@
               "alt-shift-minus" = "resize smart +50";
 
               # Monitor/workspace movement
-              "alt-shift-h" =
-                "move-node-to-monitor --focus-follows-window --wrap-around next";
+              "alt-shift-h" = "move-node-to-monitor --focus-follows-window --wrap-around next";
               "alt-h" = "workspace-back-and-forth";
 
               # Service mode
               "alt-shift-period" = "mode service";
 
               # Refresh simple-bar
-              "alt-shift-r" =
-                "exec-and-forget osascript -e 'tell application \"Übersicht\" to refresh widget id \"simple-bar\"'";
+              "alt-shift-r" = "exec-and-forget osascript -e 'tell application \"Übersicht\" to refresh widget id \"simple-bar\"'";
             };
           };
 
@@ -131,20 +129,20 @@
 
           service = {
             binding = {
-              "esc" = [ "reload-config" "mode main" ];
-              "r" = [ "flatten-workspace-tree" "mode main" ];
-              "f" = [ "layout floating tiling" "mode main" ];
-              "backspace" = [ "close-all-windows-but-current" "mode main" ];
+              "esc" = ["reload-config" "mode main"];
+              "r" = ["flatten-workspace-tree" "mode main"];
+              "f" = ["layout floating tiling" "mode main"];
+              "backspace" = ["close-all-windows-but-current" "mode main"];
 
-              "alt-shift-j" = [ "join-with left" "mode main" ];
-              "alt-shift-k" = [ "join-with down" "mode main" ];
-              "alt-shift-l" = [ "join-with up" "mode main" ];
-              "alt-shift-semicolon" = [ "join-with right" "mode main" ];
+              "alt-shift-j" = ["join-with left" "mode main"];
+              "alt-shift-k" = ["join-with down" "mode main"];
+              "alt-shift-l" = ["join-with up" "mode main"];
+              "alt-shift-semicolon" = ["join-with right" "mode main"];
 
               # Volume controls
               "down" = "volume down";
               "up" = "volume up";
-              "shift-down" = [ "volume set 0" "mode main" ];
+              "shift-down" = ["volume set 0" "mode main"];
             };
           };
         };
@@ -160,11 +158,11 @@
             "run" = "layout floating";
           }
           {
-            "if" = { app-id = "Cisco-Systems.Spark"; };
+            "if" = {app-id = "Cisco-Systems.Spark";};
             "run" = "layout tiling";
           }
           {
-            "if" = { app-id = "com.webex.meetingmanager"; };
+            "if" = {app-id = "com.webex.meetingmanager";};
             "run" = "layout floating";
           }
 
@@ -179,35 +177,35 @@
 
           # Floating apps
           {
-            "if" = { app-id = "com.apple.MobileSMS"; };
+            "if" = {app-id = "com.apple.MobileSMS";};
             "run" = "layout floating";
           }
           {
-            "if" = { app-id = "com.busymac.busycal3"; };
+            "if" = {app-id = "com.busymac.busycal3";};
             "run" = "layout floating";
           }
           {
-            "if" = { app-id = "net.whatsapp.WhatsApp"; };
+            "if" = {app-id = "net.whatsapp.WhatsApp";};
             "run" = "layout floating";
           }
           {
-            "if" = { app-id = "com.apple.FaceTime"; };
+            "if" = {app-id = "com.apple.FaceTime";};
             "run" = "layout floating";
           }
           {
-            "if" = { window-title-regex-substring = "Mini Player"; };
+            "if" = {window-title-regex-substring = "Mini Player";};
             "run" = "layout floating";
           }
           {
-            "if" = { window-title-regex-substring = "Minecraft"; };
+            "if" = {window-title-regex-substring = "Minecraft";};
             "run" = "layout floating";
           }
           {
-            "if" = { app-id = "com.cisco.anyconnect.gui"; };
+            "if" = {app-id = "com.cisco.anyconnect.gui";};
             "run" = "layout floating";
           }
           {
-            "if" = { app-id = "org.pqrs.Karabiner-EventViewer"; };
+            "if" = {app-id = "org.pqrs.Karabiner-EventViewer";};
             "run" = "layout floating";
           }
         ];

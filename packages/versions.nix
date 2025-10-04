@@ -1,7 +1,5 @@
 # packages/versions.nix
-{ lib, ... }:
-
-let
+{lib, ...}: let
   # Define package versions and channels
   packageVersions = {
     stable = {
@@ -28,23 +26,23 @@ in {
   inherit packageVersions;
 
   # Generate package with correct version
-  getPackageVersion = pkgs: unstable: name:
-    let
-      versionType = if (packageVersions.stable or { }) ? ${name} then
-        "stable"
-      else if (packageVersions.unstable or { }) ? ${name} then
-        "unstable"
-      else if (packageVersions.specific or { }) ? ${name} then
-        "specific"
-      else
-        "stable";
-    in if versionType == "stable" then
+  getPackageVersion = pkgs: unstable: name: let
+    versionType =
+      if (packageVersions.stable or {}) ? ${name}
+      then "stable"
+      else if (packageVersions.unstable or {}) ? ${name}
+      then "unstable"
+      else if (packageVersions.specific or {}) ? ${name}
+      then "specific"
+      else "stable";
+  in
+    if versionType == "stable"
+    then pkgs.${name}
+    else if versionType == "unstable"
+    then unstable.${name}
+    else if versionType == "specific"
+    then
+      # Handle specific versions (would need overlay)
       pkgs.${name}
-    else if versionType == "unstable" then
-      unstable.${name}
-    else if versionType == "specific" then
-    # Handle specific versions (would need overlay)
-      pkgs.${name}
-    else
-      pkgs.${name};
+    else pkgs.${name};
 }

@@ -1,4 +1,8 @@
-{ lib, pkgs, ... }: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
   system.stateVersion = "23.05";
   networking.hostName = "nixair";
 
@@ -35,8 +39,8 @@
   };
 
   # Enable Apple SMC kernel module for keyboard backlight control
-  boot.kernelModules = [ "applesmc" ];
-  boot.extraModulePackages = [ ];
+  boot.kernelModules = ["applesmc"];
+  boot.extraModulePackages = [];
 
   # Add keyboard backlight control utility
   environment.systemPackages = with pkgs; [

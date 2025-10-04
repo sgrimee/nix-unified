@@ -1,13 +1,18 @@
-{ lib, pkgs, config, ... }:
-with lib;
-let cfg = config.programs.custom.sway;
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
+with lib; let
+  cfg = config.programs.custom.sway;
 in {
   options.programs.custom.sway.enable =
     mkEnableOption "System-wide Sway session (installs sway + desktop file)";
 
   config = mkMerge [
     # Enable automatically when module imported (can be disabled explicitly)
-    { programs.custom.sway.enable = mkDefault true; }
+    {programs.custom.sway.enable = mkDefault true;}
 
     (mkIf cfg.enable {
       # System-wide Sway enablement ensures the sway.desktop session file is available
@@ -18,7 +23,7 @@ in {
 
       # Force-install sway and waybar binaries into the system profile so the
       # desktop entry and bar binary are present even if users don't add them explicitly.
-      environment.systemPackages = [ pkgs.sway pkgs.waybar ];
+      environment.systemPackages = [pkgs.sway pkgs.waybar];
     })
   ];
 }

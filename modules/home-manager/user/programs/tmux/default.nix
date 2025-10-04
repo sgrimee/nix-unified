@@ -1,8 +1,6 @@
-{ pkgs, ... }:
-let
-  plugins = pkgs.callPackage ./plugins.nix { };
-in
-{
+{pkgs, ...}: let
+  plugins = pkgs.callPackage ./plugins.nix {};
+in {
   programs.tmux = {
     enable = true;
     clock24 = true;
@@ -10,7 +8,8 @@ in
     shell = "${pkgs.zsh}/bin/zsh";
     shortcut = "y";
     terminal = "xterm-256color";
-    plugins = with pkgs.tmuxPlugins;with plugins; [
+    plugins = with pkgs.tmuxPlugins;
+    with plugins; [
       # theme
       {
         plugin = catppuccin;

@@ -1,7 +1,10 @@
 # packages/categories/productivity.nix
-{ pkgs, lib, hostCapabilities ? { }, ... }:
-
 {
+  pkgs,
+  lib,
+  hostCapabilities ? {},
+  ...
+}: {
   core = with pkgs; [
     glow # Markdown viewer with syntax highlighting
     neofetch # System information display tool
@@ -15,14 +18,15 @@
   browsers = with pkgs;
     [
       firefox # Mozilla Firefox web browser
-    ] ++
+    ]
+    ++
     # Chromium only available on Linux platforms
     (lib.optional pkgs.stdenv.isLinux chromium); # Open-source version of Chrome
 
   metadata = {
     description = "Productivity packages";
-    conflicts = [ ];
-    requires = [ ];
+    conflicts = [];
+    requires = [];
     size = "medium";
     priority = "medium";
   };

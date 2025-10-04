@@ -1,7 +1,10 @@
 # packages/categories/security.nix
-{ pkgs, lib, hostCapabilities ? { }, ... }:
-
 {
+  pkgs,
+  lib,
+  hostCapabilities ? {},
+  ...
+}: {
   core = with pkgs; [
     age # Modern encryption tool with small explicit keys
     sops # Secrets OPerationS - encrypted file editor
@@ -15,8 +18,8 @@
 
   metadata = {
     description = "Security packages";
-    conflicts = [ ];
-    requires = [ ];
+    conflicts = [];
+    requires = [];
     size = "medium";
     priority = "low";
   };

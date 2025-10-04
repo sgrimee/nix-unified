@@ -1,6 +1,9 @@
-{ config, lib, pkgs, ... }:
-
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: {
   # Only enable when gaming capability is active
   config = lib.mkIf (config.capabilities.features.gaming or false) {
     hardware.graphics = {
@@ -8,7 +11,7 @@
       enable32Bit = true;
       extraPackages = with pkgs; [
         mesa
-        amdvlk          # AMD Vulkan driver
+        amdvlk # AMD Vulkan driver
         libva
         vaapiVdpau
       ];

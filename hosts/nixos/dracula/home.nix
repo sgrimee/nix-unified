@@ -27,7 +27,7 @@ in {
       #   };
       # };
 
-      shellAliases = { };
+      shellAliases = {};
     };
 
     # Nicely reload system units when changing configs

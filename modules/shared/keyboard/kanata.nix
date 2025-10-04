@@ -1,86 +1,111 @@
-{ lib, pkgs ? null, isDarwin ? false }:
-
-with lib;
-
 {
+  lib,
+  pkgs ? null,
+  isDarwin ? false,
+}:
+with lib; {
   # Generate Kanata configuration based on keyboard options
-  generate = cfg:
-    let
-      # Extract timing values
-      tapTime = toString cfg.timing.tapMs;
-      holdTime = toString cfg.timing.holdMs;
+  generate = cfg: let
+    # Extract timing values
+    tapTime = toString cfg.timing.tapMs;
+    holdTime = toString cfg.timing.holdMs;
 
-      # Determine which keys need to be remapped
-      needsCaps = cfg.features.remapCapsLock;
-      needsHomerow = cfg.features.homerowMods;
-      needsSpaceMew = cfg.features.mapSpaceToMew;
-      needsSwapAltCmd = cfg.features.swapAltCommand;
+    # Determine which keys need to be remapped
+    needsCaps = cfg.features.remapCapsLock;
+    needsHomerow = cfg.features.homerowMods;
+    needsSpaceMew = cfg.features.mapSpaceToMew;
+    needsSwapAltCmd = cfg.features.swapAltCommand;
 
-      # Build defsrc based on enabled features
-      defsrc = let
-        baseKeys = if needsHomerow then
-          "caps a s d f j k l ;"
-        else if needsCaps then
-          "caps"
-        else
-          "";
-        spaceKey = if needsSpaceMew then " spc" else "";
-        altCmdKeys = if needsSwapAltCmd then " lalt lmet ralt rmet" else "";
-      in if baseKeys != "" || spaceKey != "" || altCmdKeys != "" then
-        baseKeys + spaceKey + altCmdKeys
-      else
-        ""; # No remapping
+    # Build defsrc based on enabled features
+    defsrc = let
+      baseKeys =
+        if needsHomerow
+        then "caps a s d f j k l ;"
+        else if needsCaps
+        then "caps"
+        else "";
+      spaceKey =
+        if needsSpaceMew
+        then " spc"
+        else "";
+      altCmdKeys =
+        if needsSwapAltCmd
+        then " lalt lmet ralt rmet"
+        else "";
+    in
+      if baseKeys != "" || spaceKey != "" || altCmdKeys != ""
+      then baseKeys + spaceKey + altCmdKeys
+      else ""; # No remapping
 
-      # Generate aliases based on enabled features
-      aliases = concatStringsSep "\n  "
-        (optional needsCaps "escctrl (tap-hold $tap-time $hold-time esc lctl)"
-          ++ optionals needsHomerow [
-            "a (tap-hold $tap-time $hold-time a lctrl)"
-            "s (tap-hold $tap-time $hold-time s lalt)"
-            "d (tap-hold $tap-time $hold-time d lmet)"
-            "f (tap-hold $tap-time $hold-time f lsft)"
-            "j (tap-hold $tap-time $hold-time j rsft)"
-            "k (tap-hold $tap-time $hold-time k rmet)"
-            "l (tap-hold $tap-time $hold-time l ralt)"
-            "; (tap-hold $tap-time $hold-time ; rctrl)"
-          ] ++ optionals needsSpaceMew [
-            "mew (multi lctl lalt lsft)"
-            "spcmew (tap-hold-release $tap-time $hold-time spc @mew)"
-          ] ++ optionals needsSwapAltCmd [
-            "swaplalt lmet"
-            "swaplmet lalt"
-            "swapralt rmet"
-            "swaprmet ralt"
-          ]);
+    # Generate aliases based on enabled features
+    aliases =
+      concatStringsSep "\n  "
+      (optional needsCaps "escctrl (tap-hold $tap-time $hold-time esc lctl)"
+        ++ optionals needsHomerow [
+          "a (tap-hold $tap-time $hold-time a lctrl)"
+          "s (tap-hold $tap-time $hold-time s lalt)"
+          "d (tap-hold $tap-time $hold-time d lmet)"
+          "f (tap-hold $tap-time $hold-time f lsft)"
+          "j (tap-hold $tap-time $hold-time j rsft)"
+          "k (tap-hold $tap-time $hold-time k rmet)"
+          "l (tap-hold $tap-time $hold-time l ralt)"
+          "; (tap-hold $tap-time $hold-time ; rctrl)"
+        ]
+        ++ optionals needsSpaceMew [
+          "mew (multi lctl lalt lsft)"
+          "spcmew (tap-hold-release $tap-time $hold-time spc @mew)"
+        ]
+        ++ optionals needsSwapAltCmd [
+          "swaplalt lmet"
+          "swaplmet lalt"
+          "swapralt rmet"
+          "swaprmet ralt"
+        ]);
 
-      # Build deflayer based on enabled features
-      deflayer = let
-        capsPart = if needsCaps then "@escctrl" else "";
-        homerowPart = if needsHomerow then " @a @s @d @f @j @k @l @;" else "";
-        spacePart = if needsSpaceMew then " @spcmew" else "";
-        altCmdPart = if needsSwapAltCmd then " @swaplalt @swaplmet @swapralt @swaprmet" else "";
-      in if capsPart != "" || homerowPart != "" || spacePart != "" || altCmdPart != "" then
-        capsPart + homerowPart + spacePart + altCmdPart
-      else
-        "";
+    # Build deflayer based on enabled features
+    deflayer = let
+      capsPart =
+        if needsCaps
+        then "@escctrl"
+        else "";
+      homerowPart =
+        if needsHomerow
+        then " @a @s @d @f @j @k @l @;"
+        else "";
+      spacePart =
+        if needsSpaceMew
+        then " @spcmew"
+        else "";
+      altCmdPart =
+        if needsSwapAltCmd
+        then " @swaplalt @swaplmet @swapralt @swaprmet"
+        else "";
+    in
+      if capsPart != "" || homerowPart != "" || spacePart != "" || altCmdPart != ""
+      then capsPart + homerowPart + spacePart + altCmdPart
+      else "";
 
-      # Generate device filtering section
-      deviceFilter = import ./filtering.nix {
-        inherit lib;
-        isDarwin = if pkgs != null then pkgs.stdenv.isDarwin else false;
-      };
-      filterSection = deviceFilter.generateKanataFilter cfg;
-
-    in if needsCaps || needsHomerow || needsSpaceMew || needsSwapAltCmd then ''
+    # Generate device filtering section
+    deviceFilter = import ./filtering.nix {
+      inherit lib;
+      isDarwin =
+        if pkgs != null
+        then pkgs.stdenv.isDarwin
+        else false;
+    };
+    filterSection = deviceFilter.generateKanataFilter cfg;
+  in
+    if needsCaps || needsHomerow || needsSpaceMew || needsSwapAltCmd
+    then ''
       ;; Kanata configuration for cross-platform keyboard remapping
       ;; Generated automatically from unified keyboard module
 
       (defcfg
         process-unmapped-keys yes
         ${
-          optionalString (pkgs != null && pkgs.stdenv.isDarwin or false)
-          "danger-enable-cmd yes"
-        }
+        optionalString (pkgs != null && pkgs.stdenv.isDarwin or false)
+        "danger-enable-cmd yes"
+      }
         ${filterSection}
       )
 
@@ -104,7 +129,8 @@ with lib;
       (deflayer base
         ${deflayer}
       )
-    '' else ''
+    ''
+    else ''
       ;; Kanata configuration disabled - no features enabled
       ;; This configuration does nothing
 

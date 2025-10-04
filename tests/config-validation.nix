@@ -1,4 +1,8 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 # Simple validation tests without evalModules
 {
   # Test basic Nix functionality
@@ -26,12 +30,12 @@
 
   # Test configuration structure validation
   testAttrSetStructure = {
-    expr = builtins.hasAttr "hostName" { hostName = "test-host"; };
+    expr = builtins.hasAttr "hostName" {hostName = "test-host";};
     expected = true;
   };
 
   testAttrSetMissing = {
-    expr = builtins.hasAttr "missing" { hostName = "test-host"; };
+    expr = builtins.hasAttr "missing" {hostName = "test-host";};
     expected = false;
   };
 

@@ -1,14 +1,14 @@
 # Test for keyboard Alt/Command swap feature
 # Verifies that the swapAltCommand feature works correctly
-
-{ lib, pkgs, ... }:
-
-let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   keyboardLib = import ../modules/shared/keyboard/lib.nix {
     inherit lib pkgs;
     isDarwin = false;
   };
-
 in rec {
   # Test that swapAltCommand feature is disabled by default
   testSwapAltCommandDisabledByDefault = let
@@ -24,7 +24,7 @@ in rec {
         tapMs = 150;
         holdMs = 200;
       };
-      excludeKeyboards = [ ];
+      excludeKeyboards = [];
     };
     utils = keyboardLib.mkKeyboardUtils defaultConfig;
     config = utils.generateKanataConfig;
@@ -47,7 +47,7 @@ in rec {
         tapMs = 150;
         holdMs = 200;
       };
-      excludeKeyboards = [ ];
+      excludeKeyboards = [];
     };
     utils = keyboardLib.mkKeyboardUtils enabledConfig;
     config = utils.generateKanataConfig;
@@ -70,7 +70,7 @@ in rec {
         tapMs = 150;
         holdMs = 200;
       };
-      excludeKeyboards = [ ];
+      excludeKeyboards = [];
     };
     utils = keyboardLib.mkKeyboardUtils enabledConfig;
     config = utils.generateKanataConfig;
@@ -93,13 +93,14 @@ in rec {
         tapMs = 150;
         holdMs = 200;
       };
-      excludeKeyboards = [ ];
+      excludeKeyboards = [];
     };
     utils = keyboardLib.mkKeyboardUtils combinedConfig;
     config = utils.generateKanataConfig;
   in {
-    expr = (builtins.match ".*@a @s @d @f.*" config != null) &&
-           (builtins.match ".*swaplalt.*" config != null);
+    expr =
+      (builtins.match ".*@a @s @d @f.*" config != null)
+      && (builtins.match ".*swaplalt.*" config != null);
     expected = true; # Should contain both homerow and swap features
   };
 
@@ -109,6 +110,7 @@ in rec {
       testSwapAltCommandDisabledByDefault
       testSwapAltCommandEnabled
       testSwapAltCommandAliases
-      testSwapAltCommandWithHomerowMods;
+      testSwapAltCommandWithHomerowMods
+      ;
   };
 }

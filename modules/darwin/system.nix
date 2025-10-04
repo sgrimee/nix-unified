@@ -2,7 +2,7 @@
   system = {
     primaryUser = "sgrimee";
     defaults = {
-      LaunchServices = { LSQuarantine = false; };
+      LaunchServices = {LSQuarantine = false;};
       loginwindow = {
         DisableConsoleAccess = true;
         GuestEnabled = false;
@@ -23,7 +23,7 @@
         "com.apple.sound.beep.feedback" =
           0; # disable sound when changing volume
       };
-      screencapture = { location = "~/Downloads"; };
+      screencapture = {location = "~/Downloads";};
     };
   };
 }

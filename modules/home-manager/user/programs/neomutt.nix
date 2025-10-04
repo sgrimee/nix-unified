@@ -47,10 +47,12 @@
       color_sidebar_indicator = "black yellow";
     };
 
-    macros = [{
-      map = [ "index" "pager" ];
-      key = "\\Cb";
-      action = "<pipe-message> urlscan<Enter>";
-    }];
+    macros = [
+      {
+        map = ["index" "pager"];
+        key = "\\Cb";
+        action = "<pipe-message> urlscan<Enter>";
+      }
+    ];
   };
 }

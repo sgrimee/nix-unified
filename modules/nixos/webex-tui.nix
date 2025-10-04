@@ -1,8 +1,8 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   # Create webex-tui config symlink for user
   systemd.services.webex-tui-config = {
     description = "Setup webex-tui config";
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = ["multi-user.target"];
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;

@@ -1,5 +1,5 @@
-{ pkgs, ... }: {
-  users.groups.shutdown = { };
+{pkgs, ...}: {
+  users.groups.shutdown = {};
   users.users.homeassistant = {
     group = "shutdown";
     isNormalUser = true;
@@ -10,12 +10,16 @@
 
   security.sudo = {
     enable = true;
-    extraRules = [{
-      commands = [{
-        command = "/run/current-system/sw/bin/shutdown";
-        options = [ "NOPASSWD" ];
-      }];
-      groups = [ "shutdown" ];
-    }];
+    extraRules = [
+      {
+        commands = [
+          {
+            command = "/run/current-system/sw/bin/shutdown";
+            options = ["NOPASSWD"];
+          }
+        ];
+        groups = ["shutdown"];
+      }
+    ];
   };
 }

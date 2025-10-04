@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   programs.waybar = {
     enable = true;
     style = ''
@@ -96,10 +96,10 @@
         layer = "top";
         position = "top";
         height = 24;
-        output = [ "eDP-1" "HDMI-A-1" ];
-        modules-left = [ "sway/workspaces" "sway/mode" "wlr/taskbar" ];
-        modules-center = [ "sway/window" ];
-        modules-right = [ "cpu" "memory" "pulseaudio" "network" "battery" "clock" ];
+        output = ["eDP-1" "HDMI-A-1"];
+        modules-left = ["sway/workspaces" "sway/mode" "wlr/taskbar"];
+        modules-center = ["sway/window"];
+        modules-right = ["cpu" "memory" "pulseaudio" "network" "battery" "clock"];
 
         "sway/workspaces" = {
           disable-scroll = true;

@@ -1,23 +1,28 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 # Core Configuration Validation Tests
 # Tests fundamental configuration patterns and structure integrity
 let
   # Test configuration structure patterns used across the codebase
-
   # Discover hosts for validation
-  discoverHosts = hostsDir:
-    let
-      platforms = builtins.attrNames (builtins.readDir hostsDir);
-      hostsByPlatform = lib.genAttrs platforms (platform:
-        let platformDir = hostsDir + "/${platform}";
-        in if builtins.pathExists platformDir then
-          builtins.attrNames (builtins.readDir platformDir)
-        else
-          [ ]);
-    in hostsByPlatform;
+  discoverHosts = hostsDir: let
+    platforms = builtins.attrNames (builtins.readDir hostsDir);
+    hostsByPlatform = lib.genAttrs platforms (platform: let
+      platformDir = hostsDir + "/${platform}";
+    in
+      if builtins.pathExists platformDir
+      then builtins.attrNames (builtins.readDir platformDir)
+      else []);
+  in
+    hostsByPlatform;
 
   allHosts =
-    if builtins.pathExists ../hosts then discoverHosts ../hosts else { };
+    if builtins.pathExists ../hosts
+    then discoverHosts ../hosts
+    else {};
 
   # Validate critical system paths and structure
   validateSystemStructure = {
@@ -39,10 +44,10 @@ let
 
   # Validate flake.nix structure and key components
   validateFlakeStructure = let
-    flakeContent = if builtins.pathExists ../flake.nix then
-      builtins.readFile ../flake.nix
-    else
-      "";
+    flakeContent =
+      if builtins.pathExists ../flake.nix
+      then builtins.readFile ../flake.nix
+      else "";
 
     hasInputs = lib.hasInfix "inputs = {" flakeContent;
     hasOutputs = lib.hasInfix "outputs = {" flakeContent;
@@ -51,15 +56,27 @@ let
     hasChecks = lib.hasInfix "checks = {" flakeContent;
     hasHomeManager = lib.hasInfix "home-manager" flakeContent;
     hasSopsNix = lib.hasInfix "sops-nix" flakeContent;
-    hasStableInputs = lib.hasInfix "stable-nixos" flakeContent
+    hasStableInputs =
+      lib.hasInfix "stable-nixos" flakeContent
       && lib.hasInfix "stable-darwin" flakeContent;
-
   in {
-    inherit hasInputs hasOutputs hasNixOSConfigurations hasDarwinConfigurations
-      hasChecks hasHomeManager hasSopsNix hasStableInputs;
+    inherit
+      hasInputs
+      hasOutputs
+      hasNixOSConfigurations
+      hasDarwinConfigurations
+      hasChecks
+      hasHomeManager
+      hasSopsNix
+      hasStableInputs
+      ;
 
-    flakeComplete = hasInputs && hasOutputs && hasNixOSConfigurations
-      && hasDarwinConfigurations && hasHomeManager;
+    flakeComplete =
+      hasInputs
+      && hasOutputs
+      && hasNixOSConfigurations
+      && hasDarwinConfigurations
+      && hasHomeManager;
   };
 
   flakeStructure = validateFlakeStructure;
@@ -69,13 +86,12 @@ let
     expectedStateVersion = "23.05";
 
     # Check flake.nix for state version
-    flakeContent = if builtins.pathExists ../flake.nix then
-      builtins.readFile ../flake.nix
-    else
-      "";
+    flakeContent =
+      if builtins.pathExists ../flake.nix
+      then builtins.readFile ../flake.nix
+      else "";
     flakeHasStateVersion =
       lib.hasInfix ''stateVersion = "${expectedStateVersion}"'' flakeContent;
-
   in {
     expectedVersion = expectedStateVersion;
     flakeUsesExpectedVersion = flakeHasStateVersion;
@@ -88,32 +104,32 @@ let
 
   # Test host configuration patterns
   validateHostPatterns = let
-    nixosHosts = allHosts.nixos or [ ];
-    darwinHosts = allHosts.darwin or [ ];
+    nixosHosts = allHosts.nixos or [];
+    darwinHosts = allHosts.darwin or [];
 
     # Test that each host has required files
-    testHostFiles = platform: hostName:
-      let
-        hostDir = ../hosts/${platform}/${hostName};
-        requiredFiles =
-          [ "capabilities.nix" "system.nix" "home.nix" "packages.nix" ];
-        fileExists =
-          map (file: builtins.pathExists (hostDir + "/${file}")) requiredFiles;
-      in {
-        hostName = hostName;
-        platform = platform;
-        hasAllRequiredFiles = lib.all (x: x) fileExists;
-        missingFiles = lib.subtractLists
-          (lib.filter (f: builtins.pathExists (hostDir + "/${f}"))
-            requiredFiles) requiredFiles;
-      };
+    testHostFiles = platform: hostName: let
+      hostDir = ../hosts/${platform}/${hostName};
+      requiredFiles = ["capabilities.nix" "system.nix" "home.nix" "packages.nix"];
+      fileExists =
+        map (file: builtins.pathExists (hostDir + "/${file}")) requiredFiles;
+    in {
+      hostName = hostName;
+      platform = platform;
+      hasAllRequiredFiles = lib.all (x: x) fileExists;
+      missingFiles =
+        lib.subtractLists
+        (lib.filter (f: builtins.pathExists (hostDir + "/${f}"))
+          requiredFiles)
+        requiredFiles;
+    };
 
     nixosHostValidation = map (testHostFiles "nixos") nixosHosts;
     darwinHostValidation = map (testHostFiles "darwin") darwinHosts;
 
-    allHostsHaveFiles = lib.all (h: h.hasAllRequiredFiles)
+    allHostsHaveFiles =
+      lib.all (h: h.hasAllRequiredFiles)
       (nixosHostValidation ++ darwinHostValidation);
-
   in {
     nixosHostCount = lib.length nixosHosts;
     darwinHostCount = lib.length darwinHosts;
@@ -124,7 +140,6 @@ let
   };
 
   hostPatternValidation = validateHostPatterns;
-
 in {
   # System structure tests
   testFlakeExists = {
@@ -133,13 +148,18 @@ in {
   };
 
   testCriticalDirectoriesExist = {
-    expr = systemStructure.hasHostsDir && systemStructure.hasModulesDir
-      && systemStructure.hasTestsDir && systemStructure.hasLibDir;
+    expr =
+      systemStructure.hasHostsDir
+      && systemStructure.hasModulesDir
+      && systemStructure.hasTestsDir
+      && systemStructure.hasLibDir;
     expected = true;
   };
 
   testInfrastructureFilesExist = {
-    expr = systemStructure.hasJustfile && systemStructure.hasCIConfig
+    expr =
+      systemStructure.hasJustfile
+      && systemStructure.hasCIConfig
       && systemStructure.hasGitIgnore;
     expected = true;
   };
@@ -151,13 +171,16 @@ in {
   };
 
   testFlakeHasHostConfigurations = {
-    expr = flakeStructure.hasNixOSConfigurations
+    expr =
+      flakeStructure.hasNixOSConfigurations
       && flakeStructure.hasDarwinConfigurations;
     expected = true;
   };
 
   testFlakeHasEssentialInputs = {
-    expr = flakeStructure.hasHomeManager && flakeStructure.hasSopsNix
+    expr =
+      flakeStructure.hasHomeManager
+      && flakeStructure.hasSopsNix
       && flakeStructure.hasStableInputs;
     expected = true;
   };
@@ -190,7 +213,9 @@ in {
   };
 
   testBothPlatformsPresent = {
-    expr = hostPatternValidation.nixosHostCount > 0
+    expr =
+      hostPatternValidation.nixosHostCount
+      > 0
       && hostPatternValidation.darwinHostCount > 0;
     expected = true;
   };
@@ -218,7 +243,9 @@ in {
 
   # Library and utilities availability
   testLibFunctionsAvailable = {
-    expr = lib.hasAttr "hasAttr" lib && lib.hasAttr "filterAttrs" lib
+    expr =
+      lib.hasAttr "hasAttr" lib
+      && lib.hasAttr "filterAttrs" lib
       && lib.hasAttr "mapAttrs" lib;
     expected = true;
   };
@@ -239,7 +266,8 @@ in {
       hasHostName = builtins.hasAttr "hostName" testConfig;
       hasStateVersion = builtins.hasAttr "stateVersion" testConfig;
       stateVersionValid = testConfig.stateVersion == "23.05";
-    in hasHostName && hasStateVersion && stateVersionValid;
+    in
+      hasHostName && hasStateVersion && stateVersionValid;
     expected = true;
   };
 }

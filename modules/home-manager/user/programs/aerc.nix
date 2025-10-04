@@ -1,7 +1,7 @@
 {
   programs.aerc = {
     enable = true;
-    extraConfig = { general = { unsafe-accounts-conf = true; }; };
+    extraConfig = {general = {unsafe-accounts-conf = true;};};
     extraAccounts = ''
       [Gmail]
       source        = imaps://sgrimee%40gmail.com@imap.gmail.com:993

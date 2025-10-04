@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   # Create webex-tui config symlink for user using launchd
   launchd.user.agents.webex-tui-config = {
     serviceConfig = {
