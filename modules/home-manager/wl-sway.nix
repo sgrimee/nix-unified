@@ -42,6 +42,17 @@ in {
           "${cfg.modifier}+Shift+k" = "move down";
           "${cfg.modifier}+Shift+l" = "move up";
           "${cfg.modifier}+Shift+semicolon" = "move right";
+
+          "XF86MonBrightnessUp" = "exec brightnessctl -d intel_backlight s +10%";
+          "XF86MonBrightnessDown" = "exec brightnessctl -d intel_backlight s 10%-";
+          "XF86KbdBrightnessUp" = "exec brightnessctl -d smc::kbd_backlight s +20";
+          "XF86KbdBrightnessDown" = "exec brightnessctl -d smc::kbd_backlight s 20-";
+          "XF86AudioRaiseVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ +5%";
+          "XF86AudioLowerVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ -5%";
+          "XF86AudioMute" = "exec pactl set-sink-mute @DEFAULT_SINK@ toggle";
+          "XF86AudioPlay" = "exec playerctl play-pause";
+          "XF86AudioNext" = "exec playerctl next";
+          "XF86AudioPrev" = "exec playerctl previous";
         };
       };
     };
