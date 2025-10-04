@@ -42,8 +42,8 @@ fi
 # Format Nix files if they exist in the commit
 nix_files=$(git diff --cached --name-only --diff-filter=AM | grep "\.nix$" || true)
 if [ -n "$nix_files" ]; then
-    print_status "$BLUE" "🎨 Formatting Nix files..."
-    echo "$nix_files" | xargs nix run nixpkgs#nixfmt-classic --
+    print_status "$BLUE" "🎨 Formatting Nix files with alejandra..."
+    echo "$nix_files" | xargs nix run nixpkgs#alejandra --
     
     # Add formatted files back to staging
     echo "$nix_files" | xargs git add
