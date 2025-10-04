@@ -43,6 +43,12 @@ let
     pkgs = pkgsWithOverlays;
   };
 
+  # Test keyboard features (Alt/Command swap)
+  keyboardSwapAltCmdTests = import ./keyboard-swap-alt-cmd-test.nix {
+    inherit lib;
+    pkgs = pkgsWithOverlays;
+  };
+
   # ===== INTEGRATION TESTS =====  
   # Test that configurations actually work together
   integrationTests = import ./integration-tests.nix {
@@ -81,7 +87,7 @@ let
   # Organize tests by category for better maintainability and understanding
 
   unitTests = basicConfigTests // moduleTests // hostTests // utilityTests;
-  systemTests = packageManagementTests // autoCategoryMappingTests;
+  systemTests = packageManagementTests // autoCategoryMappingTests // keyboardSwapAltCmdTests;
   integrationTestSuite = integrationTests;
   consistencyTests = hostCapabilityConsistencyTests;
   propertyTests = capabilityPropertyTests;
