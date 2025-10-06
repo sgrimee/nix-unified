@@ -4,7 +4,7 @@
   # ];
 
   system.defaults.dock = {
-    autohide = false;
+    autohide = true;
     launchanim = true;
     magnification = false; # don't magnify on hover
     orientation = "bottom";
