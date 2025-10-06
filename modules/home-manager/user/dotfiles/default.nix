@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   # Dynamically read all karabiner rule files from assets/complex_modifications/
@@ -69,33 +70,41 @@
     ];
   };
 in {
-  home.file = {
-    # Symlink most of .config, but exclude karabiner directory
-    ".config/aerospace" = {
-      source = ./config/aerospace;
-      recursive = true;
-    };
-    ".config/skhd" = {
-      source = ./config/skhd;
-      recursive = true;
-    };
-    ".config/yabai" = {
-      source = ./config/yabai;
-      recursive = true;
-    };
-    ".config/starship.toml" = {source = ./config/starship.toml;};
+  home.file =
+    {
+      # Symlink most of .config, but exclude karabiner directory
+      ".config/aerospace" = {
+        source = ./config/aerospace;
+        recursive = true;
+      };
+      ".config/skhd" = {
+        source = ./config/skhd;
+        recursive = true;
+      };
+      ".config/yabai" = {
+        source = ./config/yabai;
+        recursive = true;
+      };
+      ".config/starship.toml" = {source = ./config/starship.toml;};
 
-    # Handle karabiner directory separately
-    ".config/karabiner/assets" = {
-      source = ./config/karabiner/assets;
-      recursive = true;
-    };
+      # Handle karabiner directory separately
+      ".config/karabiner/assets" = {
+        source = ./config/karabiner/assets;
+        recursive = true;
+      };
 
-    # Generate karabiner.json dynamically from separate rule files
-    ".config/karabiner/karabiner.json" = {
-      text = builtins.toJSON karabinerConfig;
-    };
+      # Generate karabiner.json dynamically from separate rule files
+      ".config/karabiner/karabiner.json" = {
+        text = builtins.toJSON karabinerConfig;
+      };
 
-    ".ssh/config" = {source = ./ssh/config;};
-  };
+      ".ssh/config" = {source = ./ssh/config;};
+    }
+    // lib.optionalAttrs pkgs.stdenv.isDarwin {
+      # Darwin-only configurations
+      ".config/borders" = {
+        source = ./config/borders;
+        recursive = true;
+      };
+    };
 }

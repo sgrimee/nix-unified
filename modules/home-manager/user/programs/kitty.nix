@@ -1,4 +1,4 @@
-{
+{pkgs, ...}: {
   programs.kitty = {
     enable = true;
     font.name = "MesloLGS NF";
@@ -6,6 +6,6 @@
     keybindings = {
       "f1" = "new_window_with_cwd";
     };
-    theme = "Dracula";
+    themeFile = "Dracula";
   };
 }
