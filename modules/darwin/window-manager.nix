@@ -225,9 +225,10 @@
       };
     };
 
-    # JankyBorders for window borders
+    # JankyBorders disabled - using Homebrew borders (v1.8.4) instead of Nix JankyBorders (v1.7.0)
+    # The Homebrew version is more recent and actively maintained
     jankyborders = {
-      enable = true;
+      enable = false;
       active_color = "0xffff0000"; # Red for active window
       inactive_color = "0xff494d64"; # Dark gray for inactive windows
       width = 10.0;
