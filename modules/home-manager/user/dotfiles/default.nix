@@ -102,9 +102,9 @@ in {
     }
     // lib.optionalAttrs pkgs.stdenv.isDarwin {
       # Darwin-only configurations
-      ".config/borders" = {
-        source = ./config/borders;
-        recursive = true;
+      ".config/borders/bordersrc" = {
+        source = ./config/borders/bordersrc;
+        executable = true;
       };
     };
 }
