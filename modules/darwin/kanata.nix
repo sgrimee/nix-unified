@@ -47,7 +47,7 @@ in {
     # Create launch daemon for kanata service
     launchd.daemons.kanata = {
       serviceConfig = {
-        ProgramArguments = ["${cfg.package}/bin/kanata" "-c" "/etc/kanata/kanata.kbd"];
+        ProgramArguments = ["/run/current-system/sw/bin/kanata" "-c" "/etc/kanata/kanata.kbd"];
         Label = "org.nixos.kanata";
         RunAtLoad = true;
         KeepAlive = true;

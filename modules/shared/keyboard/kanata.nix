@@ -16,7 +16,15 @@ with lib; {
     needsSpaceMew = cfg.features.mapSpaceToMew;
     needsSwapAltCmd = cfg.features.swapAltCommand;
 
-    # Build defsrc based on enabled features
+    # On Darwin we attempt explicit media keys; correct token names use capitalized format in Kanata.
+    # Temporarily disabled due to compatibility issues with kanata 1.8.1
+    darwinMediaKeysEnabled = false; # pkgs != null && pkgs.stdenv.isDarwin;
+    mediaKeys =
+      if darwinMediaKeysEnabled
+      then " BrightnessDown BrightnessUp KbdIllumDown KbdIllumUp VolUp VolDown MediaMute"
+      else "";
+
+    # Build defsrc based on enabled features plus optional media keys
     defsrc = let
       baseKeys =
         if needsHomerow
@@ -33,8 +41,8 @@ with lib; {
         then " lalt lmet ralt rmet"
         else "";
     in
-      if baseKeys != "" || spaceKey != "" || altCmdKeys != ""
-      then baseKeys + spaceKey + altCmdKeys
+      if baseKeys != "" || spaceKey != "" || altCmdKeys != "" || mediaKeys != ""
+      then baseKeys + spaceKey + altCmdKeys + mediaKeys
       else ""; # No remapping
 
     # Generate aliases based on enabled features
@@ -60,9 +68,19 @@ with lib; {
           "swaplmet lalt"
           "swapralt rmet"
           "swaprmet ralt"
+        ]
+        # Media keys are identity mappings; listing them in defsrc/deflayer should force re-emission.
+        ++ optionals darwinMediaKeysEnabled [
+          "BrightnessDown BrightnessDown"
+          "BrightnessUp BrightnessUp"
+          "KbdIllumDown KbdIllumDown"
+          "KbdIllumUp KbdIllumUp"
+          "VolUp VolUp"
+          "VolDown VolDown"
+          "MediaMute MediaMute"
         ]);
 
-    # Build deflayer based on enabled features
+    # Build deflayer based on enabled features (media keys map to themselves implicitly by position)
     deflayer = let
       capsPart =
         if needsCaps
@@ -80,9 +98,13 @@ with lib; {
         if needsSwapAltCmd
         then " @swaplalt @swaplmet @swapralt @swaprmet"
         else "";
+      mediaPart =
+        if darwinMediaKeysEnabled
+        then " BrightnessDown BrightnessUp KbdIllumDown KbdIllumUp VolUp VolDown MediaMute"
+        else "";
     in
-      if capsPart != "" || homerowPart != "" || spacePart != "" || altCmdPart != ""
-      then capsPart + homerowPart + spacePart + altCmdPart
+      if capsPart != "" || homerowPart != "" || spacePart != "" || altCmdPart != "" || mediaPart != ""
+      then capsPart + homerowPart + spacePart + altCmdPart + mediaPart
       else "";
 
     # Generate device filtering section
@@ -95,7 +117,7 @@ with lib; {
     };
     filterSection = deviceFilter.generateKanataFilter cfg;
   in
-    if needsCaps || needsHomerow || needsSpaceMew || needsSwapAltCmd
+    if needsCaps || needsHomerow || needsSpaceMew || needsSwapAltCmd || darwinMediaKeysEnabled
     then ''
       ;; Kanata configuration for cross-platform keyboard remapping
       ;; Generated automatically from unified keyboard module
@@ -109,7 +131,7 @@ with lib; {
         ${filterSection}
       )
 
-      ;; Define keys to remap based on enabled features
+      ;; Define keys to remap (and explicitly pass through media keys on Darwin)
       (defsrc
        ${defsrc}
       )
@@ -120,12 +142,12 @@ with lib; {
         hold-time ${holdTime}
       )
 
-      ;; Key aliases for tap-hold behavior
+      ;; Key aliases for tap-hold behavior and identity media mappings
       (defalias
         ${aliases}
       )
 
-      ;; Main layer with remapped keys
+      ;; Main layer with remapped keys (media keys retained)
       (deflayer base
         ${deflayer}
       )
