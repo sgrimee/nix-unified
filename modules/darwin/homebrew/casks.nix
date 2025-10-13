@@ -10,7 +10,7 @@
   "itermai" # AI-powered development assistant
   "gitup-app" # Git repository management application
   "mongodb-compass" # MongoDB GUI client
-  "neo4j-desktop" # Neo4j graph database desktop client
+  # "neo4j-desktop" # Neo4j graph database desktop client
 
   # Web Browsers
   "firefox" # Mozilla Firefox web browser
@@ -18,14 +18,14 @@
   "arc" # Arc browser by The Browser Company
 
   # Communication & Social
-  "discord" # Voice and text chat for communities
-  "slack" # Team communication platform
+  # "discord" # Voice and text chat for communities
+  # "slack" # Team communication platform
   "microsoft-teams" # Microsoft Teams collaboration platform
-  "signal" # Secure messaging application
+  # "signal" # Secure messaging application
   "whatsapp" # WhatsApp messaging application
 
   # Productivity & Office
-  "alfred" # Productivity app and launcher
+  # "alfred" # Productivity app and launcher
   "raycast" # Extensible launcher and productivity app
   "obsidian" # Note-taking and knowledge management
   "omnifocus" # Task and project management
@@ -46,7 +46,6 @@
   "vlc" # VLC media player
   "plex" # Media server and streaming platform
   "sonos" # Sonos speaker system controller
-  "ableton-live-suite" # Digital audio workstation
   "guitar-pro" # Guitar tablature editor
   "loopback" # Virtual audio routing
   "midi-monitor" # MIDI message monitoring tool
@@ -55,14 +54,15 @@
   # Gaming
   "steam" # Steam gaming platform
   "curseforge" # Minecraft mod manager
+
   "utm" # Virtual machine manager
 
   # System Utilities
-  "karabiner-elements" # Keyboard customization tool
+  # "karabiner-elements" # Keyboard customization tool
   "battery" # Battery health monitoring
-  "menuwhere" # Menu bar organization tool
+  # "menuwhere" # Menu bar organization tool
   "ubersicht" # Desktop widget platform
-  "etrecheckpro" # System maintenance and optimization
+  # "etrecheckpro" # System maintenance and optimization
   "ghostty" # Fast terminal emulator
   "iterm2" # Terminal emulator
 
@@ -83,11 +83,12 @@
 
   # 3D Printing & Design
   "bambu-studio" # Bambu Lab 3D printer software
-  "inkscape" # Vector graphics editor
+  # "inkscape" # Vector graphics editor
   # "orcaslicer"                           # Alternative 3D printer slicer
 
   # Music Production
   "arturia-software-center" # Arturia software and driver manager
+  "ableton-live-suite" # Digital audio workstation
 
   # Smart Home & IoT
   "home-assistant" # Home automation platform
