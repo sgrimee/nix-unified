@@ -281,37 +281,41 @@ in rec {
 
   # Build success validation
   testBuildSuccess = {
-    nixos = lib.mapAttrs (hostName: _: let
-      buildResult = buildWithCapabilities hostName "nixos";
-    in {
-      hostName = hostName;
-      platform = "nixos";
-      success = buildResult.success;
-      error =
-        if !buildResult.success
-        then buildResult.error
-        else null;
-      moduleCount =
-        if buildResult.success
-        then lib.length (buildResult.debug.moduleBreakdown or {})
-        else 0;
-    }) preAnalysis.baseline.nixos;
+    nixos =
+      lib.mapAttrs (hostName: _: let
+        buildResult = buildWithCapabilities hostName "nixos";
+      in {
+        hostName = hostName;
+        platform = "nixos";
+        success = buildResult.success;
+        error =
+          if !buildResult.success
+          then buildResult.error
+          else null;
+        moduleCount =
+          if buildResult.success
+          then lib.length (buildResult.debug.moduleBreakdown or {})
+          else 0;
+      })
+      preAnalysis.baseline.nixos;
 
-    darwin = lib.mapAttrs (hostName: _: let
-      buildResult = buildWithCapabilities hostName "darwin";
-    in {
-      hostName = hostName;
-      platform = "darwin";
-      success = buildResult.success;
-      error =
-        if !buildResult.success
-        then buildResult.error
-        else null;
-      moduleCount =
-        if buildResult.success
-        then lib.length (buildResult.debug.moduleBreakdown or {})
-        else 0;
-    }) preAnalysis.baseline.darwin;
+    darwin =
+      lib.mapAttrs (hostName: _: let
+        buildResult = buildWithCapabilities hostName "darwin";
+      in {
+        hostName = hostName;
+        platform = "darwin";
+        success = buildResult.success;
+        error =
+          if !buildResult.success
+          then buildResult.error
+          else null;
+        moduleCount =
+          if buildResult.success
+          then lib.length (buildResult.debug.moduleBreakdown or {})
+          else 0;
+      })
+      preAnalysis.baseline.darwin;
   };
 
   # Summary statistics

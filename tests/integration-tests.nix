@@ -288,14 +288,15 @@
   # Generate individual host tests
   generateHostTests = platform: hosts:
     lib.listToAttrs (map (hostName: let
-      result = testHostEvaluation platform hostName;
-    in {
-      name = "${platform}-${hostName}-integration";
-      value = {
-        expr = result.overallSuccess;
-        expected = true;
-      };
-    }) hosts);
+        result = testHostEvaluation platform hostName;
+      in {
+        name = "${platform}-${hostName}-integration";
+        value = {
+          expr = result.overallSuccess;
+          expected = true;
+        };
+      })
+      hosts);
 
   # Generate all host integration tests
   allHostIntegrationTests = lib.flatten [

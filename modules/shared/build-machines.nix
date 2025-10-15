@@ -55,7 +55,8 @@
         toString machine.maxJobs
       } ${toString machine.speedFactor} ${
         lib.concatStringsSep "," machine.supportedFeatures
-      }") machines;
+      }")
+    machines;
   in
     lib.concatStringsSep " ; " machineStrings;
 

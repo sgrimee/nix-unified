@@ -269,7 +269,8 @@
       consistencyTests = generateConsistencyTests platform hosts;
     in
       lib.mapAttrsToList (name: value: {inherit name value;})
-      consistencyTests) allHosts)
+      consistencyTests)
+    allHosts)
   ];
 
   # Summary analysis across all hosts

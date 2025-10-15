@@ -193,7 +193,8 @@
         (lib.filter (host: hostMappings.${host}.platform == platform)
           allHosts);
     in
-      acc // {${platform} = count;}) {} platforms;
+      acc // {${platform} = count;}) {}
+    platforms;
 
     # Category usage statistics
     categoryUsage = lib.foldl' (acc: category: let
@@ -201,7 +202,8 @@
         (host: lib.elem category hostMappings.${host}.categories)
         allHosts);
     in
-      acc // {${category} = usage;}) {} allCategories;
+      acc // {${category} = usage;}) {}
+    allCategories;
 
     # Package usage statistics
     packageUsage = lib.foldl' (acc: package: let
@@ -220,7 +222,8 @@
           hosts = hosts;
           percentage = (usage * 100) / (lib.length allHosts);
         };
-      }) {} allPackages;
+      }) {}
+    allPackages;
   in {
     # Basic counts
     hostCount = lib.length allHosts;

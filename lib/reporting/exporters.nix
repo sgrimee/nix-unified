@@ -28,7 +28,8 @@
         host = hostName;
         category = "feature";
       })
-      features) hostMappings);
+      features)
+    hostMappings);
 
     # Category nodes (grouped by host)
     categoryNodes = lib.flatten (lib.mapAttrsToList (hostName: hostData:
@@ -73,7 +74,8 @@
         target = "${hostName}:cap:${capName}";
         type = "has_capability";
       })
-      features) hostMappings);
+      features)
+    hostMappings);
 
     # Host → Category edges (direct, since we don't track capability → category mapping yet)
     hostToCatEdges = lib.flatten (lib.mapAttrsToList (hostName: hostData:

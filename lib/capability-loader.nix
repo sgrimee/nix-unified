@@ -445,7 +445,8 @@ in rec {
             else fieldValue
           )
           fieldPath
-          fieldSchema) schema);
+          fieldSchema)
+      schema);
 
     errors = validateCapabilities capabilities "" schema;
   in {

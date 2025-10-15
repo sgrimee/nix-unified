@@ -26,13 +26,15 @@
       == line
       && lib.hasInfix ":" line
       && !lib.hasPrefix "#" line
-      && !lib.hasPrefix "default" line) lines;
+      && !lib.hasPrefix "default" line)
+    lines;
 
     # Extract recipe names (everything before the colon)
     recipeNames = map (line: let
       parts = lib.splitString ":" line;
     in
-      lib.strings.trim (lib.head parts)) recipeLines;
+      lib.strings.trim (lib.head parts))
+    recipeLines;
   in
     lib.unique recipeNames;
 
@@ -65,11 +67,13 @@
     lines = lib.splitString "\n" justfileContent;
 
     # Find the command definition line
-    commandLine = lib.findFirst (line: let
-      trimmed = lib.strings.trim line;
-    in
-      lib.hasPrefix "${command}" trimmed && lib.hasInfix ":" trimmed) null
-    lines;
+    commandLine =
+      lib.findFirst (line: let
+        trimmed = lib.strings.trim line;
+      in
+        lib.hasPrefix "${command}" trimmed && lib.hasInfix ":" trimmed)
+      null
+      lines;
 
     # Extract any parameters or dependencies mentioned in the command line
     hasDependencies =

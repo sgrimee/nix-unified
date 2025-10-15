@@ -1,10 +1,9 @@
-{ lib, ... }:
-let
+{lib, ...}: let
   pamU2fPath = "/opt/homebrew/opt/pam-u2f/lib/pam/pam_u2f.so";
   pamU2fExists = builtins.pathExists pamU2fPath;
 in {
   # Install pam-u2f via homebrew for YubiKey support
-  homebrew.brews = [ "pam-u2f" ];
+  homebrew.brews = ["pam-u2f"];
 
   # Configure sudo with extended credential caching timeout (15 minutes)
   # Since nix-darwin doesn't have security.sudo options, we use environment.etc

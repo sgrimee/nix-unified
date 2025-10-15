@@ -18,7 +18,7 @@
   # Enable Apple SMC kernel module for keyboard backlight control
   boot.kernelModules = ["applesmc"];
   boot.extraModulePackages = [];
-  
+
   # Configure Apple keyboard to expose F1-F12 as function keys
   boot.extraModprobeConfig = ''
     options hid_apple fnmode=2

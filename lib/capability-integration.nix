@@ -135,22 +135,24 @@ in {
       (_hostName: config: config._capabilityInfo.usingCapabilities or false)
       configurations;
 
-    validationResults = lib.mapAttrs (hostName: config: let
-      buildResult = builtins.tryEval config;
-    in {
-      hostName = hostName;
-      platform = config._capabilityInfo.platform;
-      buildSuccess = buildResult.success;
-      buildError =
-        if !buildResult.success
-        then buildResult.value
-        else null;
-      usingCapabilities = config._capabilityInfo.usingCapabilities;
-      moduleCount =
-        if config._capabilityInfo.debug != null
-        then config._capabilityInfo.debug.totalModules or 0
-        else 0;
-    }) capabilityHosts;
+    validationResults =
+      lib.mapAttrs (hostName: config: let
+        buildResult = builtins.tryEval config;
+      in {
+        hostName = hostName;
+        platform = config._capabilityInfo.platform;
+        buildSuccess = buildResult.success;
+        buildError =
+          if !buildResult.success
+          then buildResult.value
+          else null;
+        usingCapabilities = config._capabilityInfo.usingCapabilities;
+        moduleCount =
+          if config._capabilityInfo.debug != null
+          then config._capabilityInfo.debug.totalModules or 0
+          else 0;
+      })
+      capabilityHosts;
   in {
     capabilityHosts = capabilityHosts;
     validationResults = validationResults;
