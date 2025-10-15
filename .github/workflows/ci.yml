@@ -65,7 +65,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Discover NixOS hosts
         id: discover
         run: |
@@ -96,14 +96,15 @@ jobs:
       - name: Setup Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@main
 
-      - name: Install just
-        run: nix profile install nixpkgs#just
+       - name: Install just
+         run: nix profile install nixpkgs#just
 
-      - name: Build ${{ matrix.host }}
-        run: just build ${{ matrix.host }}
+       - name: Build ${{ matrix.host }}
+         run: |
+           # Disable distributed builds in CI to prevent connection failures
+           export NIX_CONFIG="builders = $NIX_CONFIG"
+           just build ${{ matrix.host }}
 
-      - name: Cleanup build artifacts
-        run: nix store gc --option keep-outputs false || true
 
   discover-darwin-hosts:
     name: Discover Darwin Hosts
@@ -113,7 +114,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Discover Darwin hosts
         id: discover
         run: |
