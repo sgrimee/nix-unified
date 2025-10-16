@@ -6,13 +6,24 @@
   ...
 }: let
   cfg = config.sway-config;
-  barChoice = hostCapabilities.environment.bar or "waybar";
-  barCommand =
-    if barChoice == "quickshell"
-    then "quickshell"
-    else if barChoice == "caelestia"
-    then "caelestia shell"
-    else "waybar";
+  
+  # Default bar choice from capabilities (used as fallback)
+  defaultBar = hostCapabilities.environment.bars.default or "waybar";
+  
+  # Create a fallback script for the default bar
+  defaultBarScript = pkgs.writeShellScript "start-default-bar" (
+    if defaultBar == "waybar"
+    then "exec waybar"
+    else if defaultBar == "caelestia"
+    then "exec caelestia shell"
+    else if defaultBar == "quickshell"
+    then "exec quickshell"
+    else "exec ${defaultBar}"
+  );
+  
+  # Bar command - reads from session environment variable (script path), falls back to default script
+  # The session wrapper scripts set NIXOS_SESSION_BAR to a script path
+  barCommand = "\${NIXOS_SESSION_BAR:-${defaultBarScript}}";
 in {
   imports = [];
 

@@ -5,8 +5,8 @@
   ...
 }:
 with lib; let
-  barChoice = hostCapabilities.environment.bar or "waybar";
-  shouldEnable = barChoice == "waybar";
+  availableBars = hostCapabilities.environment.bars.available or [];
+  shouldEnable = builtins.elem "waybar" availableBars;
 in {
   programs.waybar = {
     enable = mkDefault shouldEnable;

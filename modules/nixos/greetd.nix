@@ -4,27 +4,27 @@
   pkgs,
   ...
 }:
-with lib; {
+with lib; let
+  # Import session generator
+  sessionGenerator = import ../../lib/session-generator.nix {inherit lib pkgs;};
+
+  # Get host capabilities
+  hostCapabilities = config._module.args.hostCapabilities or {};
+
+  # Determine default session from capabilities
+  defaultDesktop = hostCapabilities.environment.desktops.default or "sway";
+  defaultBar = hostCapabilities.environment.bars.default or "waybar";
+
+  # Construct default session command
+  defaultSessionCmd =
+    if defaultDesktop == "gnome"
+    then "gnome"
+    else if (builtins.elem defaultDesktop (hostCapabilities.environment.desktops.available or []))
+    then "sway-${defaultBar}"
+    else "sway-waybar"; # Fallback
+in {
   options.services.custom.greetd = {
     enable = mkEnableOption "greetd display manager with tuigreet";
-
-    defaultSession = mkOption {
-      type = types.str;
-      default = "sway";
-      description = "Default session to launch";
-    };
-
-    generateDesktopSessions = mkOption {
-      type = types.bool;
-      default = true;
-      description = "Generate .desktop session files for listed environments (skips sway if a system sway.desktop exists).";
-    };
-
-    environments = mkOption {
-      type = types.listOf types.str;
-      default = ["sway" "zsh" "bash" "fish"];
-      description = "Available environments in greetd";
-    };
   };
 
   config = mkMerge [
@@ -33,9 +33,6 @@ with lib; {
       services.custom.greetd.enable = mkDefault true;
     }
     (mkIf config.services.custom.greetd.enable {
-      # Auto-generate .desktop files for shell/command sessions so tuigreet F3 can list them.
-      # We exclude sway if its desktop file will already be provided by programs.sway.enable (system-wide)
-      # to avoid duplicate entries; if sway is only user-level you can still include it in environments.
       services.greetd = {
         enable = true;
         settings = {
@@ -47,51 +44,25 @@ with lib; {
               --user-menu \
               --remember \
               --remember-user-session \
-              --sessions /etc/greetd/sessions:/run/current-system/sw/share/wayland-sessions:/run/current-system/sw/share/xsessions \
+              --sessions /etc/greetd/sessions \
               --greeting 'Welcome to NixOS' \
               --width 80 \
               --theme 'border=yellow;text=white;prompt=yellow;time=yellow;action=white;button=yellow;container=black;input=white' \
-              --cmd ${config.services.custom.greetd.defaultSession}
+              --cmd ${defaultSessionCmd}
           '';
           default_session.user = "greeter";
         };
       };
 
-      environment.etc = let
-        cfg = config.services.custom.greetd;
-        envs = cfg.environments;
-        # Determine if system sway session will exist (programs.sway.enable)
-        swaySystem = config.programs.sway.enable or false;
-        mkDesktop = env: let
-          pkg =
-            if lib.hasAttr env pkgs
-            then builtins.getAttr env pkgs
-            else null;
-          exec =
-            if pkg != null
-            then "${pkg}/bin/${env}"
-            else env;
-        in
-          nameValuePair "greetd/sessions/${env}.desktop" {
-            text = ''
-              [Desktop Entry]
-              Name=${env}
-              Exec=${exec}
-              Type=Application
-            '';
-          };
-        # Filter sway out of generation if system session present to avoid duplication
-        genList = builtins.filter (e: !(e == "sway" && swaySystem)) envs;
-      in
-        (lib.optionalAttrs cfg.generateDesktopSessions (builtins.listToAttrs (map mkDesktop genList)))
-        // {
-          "greetd/environments".text = concatStringsSep "\n" envs;
-        }
-        // lib.optionalAttrs swaySystem {
-          # Explicitly expose sway.desktop so tuigreet can list it even if
-          # the system profile does not link wayland-sessions from the sway package.
-          "greetd/sessions/sway.desktop".source = "${pkgs.sway}/share/wayland-sessions/sway.desktop";
-        };
+      # Generate session files from host capabilities
+      environment.etc =
+        if (hostCapabilities ? environment.desktops && hostCapabilities ? environment.bars)
+        then
+          sessionGenerator.generateSessions {
+            desktops = hostCapabilities.environment.desktops;
+            bars = hostCapabilities.environment.bars;
+          }
+        else {};
     })
   ];
 }

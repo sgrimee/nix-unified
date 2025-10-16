@@ -9,8 +9,8 @@
 }:
 with lib; let
   cfg = config.programs.quickshell;
-  barChoice = hostCapabilities.environment.bar or "waybar";
-  shouldEnable = barChoice == "quickshell";
+  availableBars = hostCapabilities.environment.bars.available or [];
+  shouldEnable = builtins.elem "quickshell" availableBars;
 in {
   options.programs.quickshell = {
     enable =
