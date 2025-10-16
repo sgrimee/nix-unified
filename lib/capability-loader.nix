@@ -188,6 +188,17 @@ in rec {
         then (moduleMapping.environmentModules.windowManager.${resolvedCapabilities.environment.windowManager}.${platform} or [])
         else []
       )
+
+      # Status bar
+      (
+        if
+          (resolvedCapabilities.environment.bar or null)
+          != null
+          && moduleMapping.environmentModules.bar
+          ? ${resolvedCapabilities.environment.bar or null}
+        then (moduleMapping.environmentModules.bar.${resolvedCapabilities.environment.bar or null}.${platform} or [])
+        else []
+      )
     ];
 
     environmentHomeModules = lib.flatten [
@@ -233,6 +244,17 @@ in rec {
           && moduleMapping.environmentModules.windowManager
         ? ${resolvedCapabilities.environment.windowManager}
         then (moduleMapping.environmentModules.windowManager.${resolvedCapabilities.environment.windowManager}.homeManager or [])
+        else []
+      )
+
+      # Status bar
+      (
+        if
+          (resolvedCapabilities.environment.bar or null)
+          != null
+          && moduleMapping.environmentModules.bar
+          ? ${resolvedCapabilities.environment.bar or null}
+        then (moduleMapping.environmentModules.bar.${resolvedCapabilities.environment.bar or null}.homeManager or [])
         else []
       )
     ];
@@ -342,8 +364,12 @@ in rec {
       ++ serviceModules
       ++ securitySystemModules ++ virtualizationModules ++ specialModules;
 
-    # Combine home-manager modules
-    allHomeModules = featureHomeModules ++ roleHomeModules ++ environmentHomeModules ++ securityHomeModules;
+    # Combine home-manager modules - always include base user configuration
+    allHomeModules =
+      [
+        ../modules/home-manager/user/default.nix # Base user configuration with all programs
+      ]
+      ++ featureHomeModules ++ roleHomeModules ++ environmentHomeModules ++ securityHomeModules;
 
     # Remove duplicates and sort system modules
     # Note: Special modules (functions) can't be sorted with paths, so we separate them
@@ -395,13 +421,19 @@ in rec {
   # Helper function to generate a capability-aware host configuration
   generateHostConfig = hostCapabilities: inputs: hostName: _hostSpecificConfig: let
     moduleImports = generateModuleImports hostCapabilities inputs hostName;
+
+    # Conditionally import external home-manager modules
+    externalHomeManagerModules =
+      lib.optional
+      ((hostCapabilities.environment.bar or null) == "caelestia")
+      inputs.caelestia-shell.homeManagerModules.default;
   in {
     imports =
       moduleImports.imports
       ++ [
         # Inject home-manager modules via sharedModules as a separate module
         {
-          home-manager.sharedModules = moduleImports.homeManagerModules;
+          home-manager.sharedModules = externalHomeManagerModules ++ moduleImports.homeManagerModules;
         }
       ];
 

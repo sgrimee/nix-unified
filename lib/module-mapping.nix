@@ -281,6 +281,24 @@
         homeManager = [];
       };
     };
+
+    bar = {
+      waybar = {
+        nixos = [];
+        darwin = [];
+        homeManager = [../modules/home-manager/waybar.nix];
+      };
+      quickshell = {
+        nixos = [];
+        darwin = [];
+        homeManager = [../modules/home-manager/quickshell.nix];
+      };
+      caelestia = {
+        nixos = [];
+        darwin = [];
+        homeManager = [../modules/home-manager/user/programs/caelestia.nix];
+      };
+    };
   };
 
   # Service-specific module mappings - mostly empty
