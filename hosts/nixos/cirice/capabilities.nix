@@ -51,6 +51,7 @@
     };
     terminal = "alacritty"; # Preferred terminal emulator
     windowManager = "sway"; # Sway is both desktop and window manager
+    bar = "caelestia"; # Caelestia status bar
   };
 
   # Service configurations

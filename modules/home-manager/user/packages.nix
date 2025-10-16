@@ -13,5 +13,5 @@
       inputs.mactelnet.packages.${system}.mactelnet # external input package
       unstable.vscode-langservers-extracted # language servers (keep unstable)
     ]
-    ++ lib.optionals pkgs.stdenv.isLinux [ethtool unstable.qdmr];
+    ++ lib.optionals pkgs.stdenv.isLinux [ethtool];
 }

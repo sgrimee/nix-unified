@@ -2,7 +2,10 @@
   user = "sgrimee";
 in {
   home-manager.users.${user} = {
-    imports = [./packages.nix];
+    imports = [
+      ../../../modules/home-manager/user
+      ./packages.nix
+    ];
 
     home = {
       sessionVariables = {

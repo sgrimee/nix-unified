@@ -17,6 +17,7 @@ in {
 
   home-manager.users.${user} = {
     imports = [
+      ../../../modules/home-manager/user
       ./packages.nix
     ];
 

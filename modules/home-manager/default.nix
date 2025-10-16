@@ -12,7 +12,6 @@
   unstable,
   config,
   lib,
-  hostCapabilities ? null,
   ...
 }: let
   home =
@@ -35,17 +34,13 @@ in {
 
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
+
+  # Set default stateVersion for home-manager
+  home-manager.users.${user}.home.stateVersion = stateVersion;
   home-manager.extraSpecialArgs = {
-    inherit home inputs stateVersion system user unstable hostCapabilities;
+    inherit home inputs stateVersion system user unstable;
+    hostCapabilities = config._module.args.hostCapabilities or null;
   };
   # sharedModules will be set by the capability system via generateHostConfig
-  # This line allows capability modules to append to sharedModules
-  home-manager.sharedModules = lib.mkBefore [];
-
-  home-manager.users.${user} =
-    import ./user {inherit inputs home pkgs stateVersion system unstable;};
-
-  home-manager.backupFileExtension = "nixbup";
-
-  imports = [];
+  # External modules like caelestia-shell are handled there
 }
