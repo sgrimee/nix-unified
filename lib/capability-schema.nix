@@ -199,8 +199,8 @@
 
       # Status bar for Wayland/X11
       bar = {
-        type = lib.types.enum ["waybar" "quickshell"];
-        default = "waybar";
+        type = lib.types.nullOr (lib.types.enum ["waybar" "quickshell" "caelestia"]);
+        default = null;
         description = "Status bar implementation";
       };
     };
