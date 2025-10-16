@@ -28,6 +28,12 @@
       url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
       inputs.nixpkgs.follows = "stable-nixos";
     };
+
+    caelestia-shell = {
+      url = "github:caelestia-dots/shell";
+      # tracking stable disabled because of https://github.com/caelestia-dots/shell/issues/638
+      # inputs.nixpkgs.follows = "stable-nixos";
+    };
   };
 
   outputs = {
@@ -38,6 +44,7 @@
     self,
     sops-nix,
     determinate,
+    caelestia-shell,
     ...
   } @ inputs: let
     lib = inputs.stable-nixos.lib;
