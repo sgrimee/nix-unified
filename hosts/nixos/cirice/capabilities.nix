@@ -16,6 +16,7 @@
     corporate = false; # No corporate tools
     ai = false; # No specialized AI/ML setup needed
     ham = true; # Amateur radio tooling enabled
+    gnome = false; # GNOME available but minimal packages
   };
 
   # Hardware-specific capabilities
@@ -44,14 +45,19 @@
 
   # Environment preferences
   environment = {
-    desktop = "sway"; # Sway Wayland compositor
+    desktops = {
+      available = ["sway" "gnome"]; # Both desktops available
+      default = "sway"; # Default to sway
+    };
+    bars = {
+      available = ["caelestia" "waybar" "quickshell"]; # All bars available
+      default = "caelestia"; # Default bar
+    };
     shell = {
       primary = "zsh"; # Primary shell
       additional = ["fish"]; # Additional shells available
     };
     terminal = "alacritty"; # Preferred terminal emulator
-    windowManager = "sway"; # Sway is both desktop and window manager
-    bar = "caelestia"; # Caelestia status bar
   };
 
   # Service configurations

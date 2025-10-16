@@ -15,6 +15,7 @@
     server = false; # Not a server host
     corporate = false; # No corporate tools
     ai = false; # No AI/ML specific setup (resource constrained)
+    gnome = false; # No GNOME
   };
 
   # Hardware-specific capabilities
@@ -44,13 +45,19 @@
 
   # Environment preferences
   environment = {
-    desktop = "sway"; # Sway Wayland compositor
+    desktops = {
+      available = ["sway"]; # Only sway available
+      default = "sway";
+    };
+    bars = {
+      available = ["waybar"]; # Only waybar available
+      default = "waybar";
+    };
     shell = {
       primary = "zsh"; # Primary shell
       additional = ["fish"]; # Additional shells available
     };
     terminal = "ghostty"; # Preferred terminal emulator
-    windowManager = "sway"; # Sway is both desktop and window manager
   };
 
   # Service configurations

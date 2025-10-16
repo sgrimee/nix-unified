@@ -9,12 +9,13 @@
   # Feature flags for major functionality groups
   features = {
     development = true; # Full development environment
-    desktop = true; # GNOME desktop environment
+    desktop = true; # Sway desktop environment
     gaming = true; # Lunar Client (Minecraft)
     multimedia = true; # Media players and codecs
     server = false; # Not a server host
     corporate = false; # No corporate tools
     ai = false; # No AI/ML specific setup
+    gnome = false; # No GNOME
   };
 
   # Hardware-specific capabilities
@@ -44,15 +45,19 @@
 
   # Environment preferences
   environment = {
-    desktop = "sway"; # Sway Wayland compositor
+    desktops = {
+      available = ["sway"]; # Only sway available
+      default = "sway";
+    };
+    bars = {
+      available = ["waybar"]; # Only waybar available
+      default = "waybar";
+    };
     shell = {
       primary = "zsh"; # Primary shell
       additional = ["fish"]; # Additional shells available
     };
     terminal = "alacritty"; # Default terminal emulator
-    windowManager = "sway"; # Sway is both desktop and window manager
-    # bar = "quickshell"; # Use quickshell status bar
-    bar = "waybar";
   };
 
   # Service configurations

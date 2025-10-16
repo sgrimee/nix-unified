@@ -15,6 +15,7 @@
     server = true; # Build server and HomeAssistant user
     corporate = false; # No corporate tools
     ai = true; # NVIDIA GPU for potential AI/ML workloads
+    gnome = true; # Full GNOME packages installed
   };
 
   # Hardware-specific capabilities
@@ -43,13 +44,19 @@
 
   # Environment preferences
   environment = {
-    desktop = "gnome"; # GNOME desktop environment
+    desktops = {
+      available = ["gnome" "sway"]; # Both desktops available
+      default = "gnome"; # Default to GNOME
+    };
+    bars = {
+      available = ["waybar"]; # Waybar for sway sessions
+      default = "waybar";
+    };
     shell = {
       primary = "zsh"; # Primary shell
       additional = ["fish"]; # Additional shells available
     };
     terminal = "alacritty"; # Default terminal emulator
-    windowManager = null; # Using GNOME's default window manager
   };
 
   # Service configurations
