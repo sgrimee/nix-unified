@@ -74,6 +74,13 @@
         default = false;
         description = "Amateur (ham) radio tools";
       };
+
+      # GNOME package installation (NixOS only)
+      gnome = {
+        type = lib.types.bool;
+        default = false;
+        description = "Install full GNOME desktop packages (NixOS only, requires gnome in desktops.available)";
+      };
     };
 
     # Hardware-specific capabilities
@@ -159,12 +166,34 @@
 
     # Environment preferences
     environment = {
-      # Desktop environment selection
-      desktop = {
-        type =
-          lib.types.nullOr (lib.types.enum ["gnome" "sway" "kde" "macos"]);
-        default = null;
-        description = "Desktop environment choice";
+      # Desktop environments - multi-session support (NixOS only)
+      desktops = {
+        available = {
+          type = lib.types.listOf (lib.types.enum ["gnome" "sway" "kde" "macos"]);
+          default = [];
+          description = "Available desktop environments for session selection";
+        };
+
+        default = {
+          type = lib.types.nullOr (lib.types.enum ["gnome" "sway" "kde" "macos"]);
+          default = null;
+          description = "Default desktop environment at login";
+        };
+      };
+
+      # Status bars - multi-session support (NixOS only, for Wayland sessions)
+      bars = {
+        available = {
+          type = lib.types.listOf (lib.types.enum ["waybar" "quickshell" "caelestia"]);
+          default = [];
+          description = "Available status bars for Wayland sessions";
+        };
+
+        default = {
+          type = lib.types.nullOr (lib.types.enum ["waybar" "quickshell" "caelestia"]);
+          default = null;
+          description = "Default status bar";
+        };
       };
 
       # Shell configuration
@@ -185,23 +214,16 @@
       # Terminal emulator
       terminal = {
         type =
-          lib.types.enum ["alacritty" "wezterm" "kitty" "iterm2" "terminal"];
+          lib.types.enum ["alacritty" "wezterm" "kitty" "iterm2" "terminal" "ghostty" "foot"];
         default = "alacritty";
         description = "Preferred terminal emulator";
       };
 
-      # Window manager (for desktop environments that support it)
+      # Window manager (Darwin only - for window management overlay)
       windowManager = {
         type = lib.types.nullOr (lib.types.enum ["aerospace" "i3" "sway"]);
         default = null;
-        description = "Window manager overlay";
-      };
-
-      # Status bar for Wayland/X11
-      bar = {
-        type = lib.types.nullOr (lib.types.enum ["waybar" "quickshell" "caelestia"]);
-        default = null;
-        description = "Status bar implementation";
+        description = "Window manager (Darwin only)";
       };
     };
 

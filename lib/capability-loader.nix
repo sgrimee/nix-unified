@@ -144,16 +144,12 @@ in rec {
 
     # Environment modules - separate system and home-manager
     environmentSystemModules = lib.flatten [
-      # Desktop environment
-      (
-        if
-          resolvedCapabilities.environment.desktop
-          != null
-          && moduleMapping.environmentModules.desktop
-        ? ${resolvedCapabilities.environment.desktop}
-        then (moduleMapping.environmentModules.desktop.${resolvedCapabilities.environment.desktop}.${platform} or [])
-        else []
-      )
+      # Desktop environments (all available)
+      (lib.flatten (map (desktop:
+        if moduleMapping.environmentModules.desktop ? ${desktop}
+        then (moduleMapping.environmentModules.desktop.${desktop}.${platform} or [])
+        else [])
+      (resolvedCapabilities.environment.desktops.available or [])))
 
       # Shell configuration
       (
@@ -178,40 +174,32 @@ in rec {
         else []
       )
 
-      # Window manager (if specified)
+      # Window manager (Darwin only - for window management overlay)
       (
         if
-          resolvedCapabilities.environment.windowManager
+          (resolvedCapabilities.environment.windowManager or null)
           != null
           && moduleMapping.environmentModules.windowManager
         ? ${resolvedCapabilities.environment.windowManager}
         then (moduleMapping.environmentModules.windowManager.${resolvedCapabilities.environment.windowManager}.${platform} or [])
         else []
       )
-
-      # Status bar
-      (
-        if
-          (resolvedCapabilities.environment.bar or null)
-          != null
-          && moduleMapping.environmentModules.bar
-          ? ${resolvedCapabilities.environment.bar or null}
-        then (moduleMapping.environmentModules.bar.${resolvedCapabilities.environment.bar or null}.${platform} or [])
-        else []
-      )
     ];
 
     environmentHomeModules = lib.flatten [
-      # Desktop environment
-      (
-        if
-          resolvedCapabilities.environment.desktop
-          != null
-          && moduleMapping.environmentModules.desktop
-        ? ${resolvedCapabilities.environment.desktop}
-        then (moduleMapping.environmentModules.desktop.${resolvedCapabilities.environment.desktop}.homeManager or [])
-        else []
-      )
+      # Desktop environments (all available)
+      (lib.flatten (map (desktop:
+        if moduleMapping.environmentModules.desktop ? ${desktop}
+        then (moduleMapping.environmentModules.desktop.${desktop}.homeManager or [])
+        else [])
+      (resolvedCapabilities.environment.desktops.available or [])))
+
+      # Status bars (all available)
+      (lib.flatten (map (bar:
+        if moduleMapping.environmentModules.bar ? ${bar}
+        then (moduleMapping.environmentModules.bar.${bar}.homeManager or [])
+        else [])
+      (resolvedCapabilities.environment.bars.available or [])))
 
       # Shell configuration
       (
@@ -236,25 +224,14 @@ in rec {
         else []
       )
 
-      # Window manager (if specified)
+      # Window manager (Darwin only)
       (
         if
-          resolvedCapabilities.environment.windowManager
+          (resolvedCapabilities.environment.windowManager or null)
           != null
           && moduleMapping.environmentModules.windowManager
         ? ${resolvedCapabilities.environment.windowManager}
         then (moduleMapping.environmentModules.windowManager.${resolvedCapabilities.environment.windowManager}.homeManager or [])
-        else []
-      )
-
-      # Status bar
-      (
-        if
-          (resolvedCapabilities.environment.bar or null)
-          != null
-          && moduleMapping.environmentModules.bar
-          ? ${resolvedCapabilities.environment.bar or null}
-        then (moduleMapping.environmentModules.bar.${resolvedCapabilities.environment.bar or null}.homeManager or [])
         else []
       )
     ];
@@ -422,10 +399,11 @@ in rec {
   generateHostConfig = hostCapabilities: inputs: hostName: _hostSpecificConfig: let
     moduleImports = generateModuleImports hostCapabilities inputs hostName;
 
-    # Conditionally import external home-manager modules
+    # Conditionally import external home-manager modules based on available bars
+    availableBars = hostCapabilities.environment.bars.available or [];
     externalHomeManagerModules =
       lib.optional
-      ((hostCapabilities.environment.bar or null) == "caelestia")
+      (builtins.elem "caelestia" availableBars)
       inputs.caelestia-shell.homeManagerModules.default;
   in {
     imports =

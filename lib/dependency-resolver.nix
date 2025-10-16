@@ -262,21 +262,24 @@ in {
       filteredRoles =
         lib.filter (role: lib.elem role supportedRoles) caps.roles;
 
-      # Filter desktop environment
+      # Filter desktop environments (new multi-desktop structure)
       supportedDesktops = platformInfo.supports.desktop;
-      filteredDesktop =
-        if
-          caps.environment.desktop
-          != null
-          && !(lib.elem caps.environment.desktop supportedDesktops)
-        then null
-        else caps.environment.desktop;
+      filteredDesktops =
+        if caps.environment ? desktops
+        then {
+          available = lib.filter (desktop: lib.elem desktop supportedDesktops) caps.environment.desktops.available;
+          default =
+            if caps.environment.desktops.default != null && lib.elem caps.environment.desktops.default supportedDesktops
+            then caps.environment.desktops.default
+            else null;
+        }
+        else caps.environment.desktops or {};
     in
       caps
       // {
         features = filteredFeatures;
         roles = filteredRoles;
-        environment = caps.environment // {desktop = filteredDesktop;};
+        environment = caps.environment // {desktops = filteredDesktops;};
         _unsupported = {features = lib.attrNames unsupportedFeatures;};
       };
 
