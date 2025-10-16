@@ -10,6 +10,8 @@
   barCommand =
     if barChoice == "quickshell"
     then "quickshell"
+    else if barChoice == "caelestia"
+    then "caelestia shell"
     else "waybar";
 in {
   imports = [];
