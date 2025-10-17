@@ -159,10 +159,7 @@ in {
                 if keyboardCfg.excludeKeyboards == []
                 then filteredDevices
                 else [];
-              extraDefCfg =
-                if keyboardCfg.excludeKeyboards == []
-                then "process-unmapped-keys yes"
-                else "";
+              extraDefCfg = "";
               config = kanataConfigText;
             }
             // lib.optionalAttrs (keyboardCfg.excludeKeyboards != []) {

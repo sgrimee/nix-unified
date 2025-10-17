@@ -123,7 +123,6 @@ with lib; {
       ;; Generated automatically from unified keyboard module
 
       (defcfg
-        process-unmapped-keys yes
         ${
         optionalString (pkgs != null && pkgs.stdenv.isDarwin or false)
         "danger-enable-cmd yes"
@@ -157,7 +156,6 @@ with lib; {
       ;; This configuration does nothing
 
       (defcfg
-        process-unmapped-keys yes
       )
 
       (defsrc)
