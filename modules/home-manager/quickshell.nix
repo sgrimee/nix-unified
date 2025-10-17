@@ -75,23 +75,7 @@ in {
     #   recursive = true;
     # };
 
-    # Systemd service to start quickshell (when using with Sway)
-    systemd.user.services.quickshell = {
-      Unit = {
-        Description = "Quickshell status bar";
-        PartOf = ["graphical-session.target"];
-        After = ["graphical-session.target"];
-      };
-
-      Service = {
-        ExecStart = "${cfg.package}/bin/quickshell";
-        Restart = "on-failure";
-        RestartSec = 3;
-      };
-
-      Install = {
-        WantedBy = ["graphical-session.target"];
-      };
-    };
+    # Note: quickshell is started by sway's startup command via session selection
+    # Do NOT auto-start via systemd to avoid conflicts with other bars
   };
 }
