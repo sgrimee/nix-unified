@@ -58,7 +58,7 @@
   "utm" # Virtual machine manager
 
   # System Utilities
-  # "karabiner-elements" # Keyboard customization tool
+  "karabiner-elements" # Keyboard customization tool REQUIRED BY KANATA
   "battery" # Battery health monitoring
   # "menuwhere" # Menu bar organization tool
   "ubersicht" # Desktop widget platform

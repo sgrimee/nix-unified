@@ -9,7 +9,7 @@
     localHostName = "SGRIMEE-M-4HJT";
   };
 
-  # Switch back to Kanata with corrected Glove80 device name
+  # Use kanata with karabiner driver (requires karabiner-elements)
   keyboard.remapper = "kanata";
 
   # Enable spacebar-to-mew feature (tap = space, hold = Ctrl+Alt+Shift)

@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Service configuration
 NIXOS_SERVICE_NAME="kanata-internalKeyboard"
-MACOS_SERVICE_LABEL="com.kanata.service"  # This will need to match actual plist label
+MACOS_SERVICE_LABEL="org.nixos.kanata"
 MACOS_PLIST_PATH="/Library/LaunchDaemons/${MACOS_SERVICE_LABEL}.plist"
 MACOS_USER_PLIST_PATH="$HOME/Library/LaunchAgents/${MACOS_SERVICE_LABEL}.plist"
 
