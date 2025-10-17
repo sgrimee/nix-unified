@@ -1,6 +1,9 @@
-{pkgs, ...}: {
-  # Enable fontconfig for better font management
-  fonts.fontconfig.enable = true;
+{pkgs, lib, ...}: {
+  fonts.fontconfig = {
+    enable = true;
+    # Prevent fontconfig from trying to write cache during Nix build
+    defaultFonts = lib.mkDefault {};
+  };
 
   # Install fonts via home-manager packages
   # This works on both Darwin and NixOS
