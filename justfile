@@ -184,7 +184,7 @@ install-hooks:
 # Format Nix files
 fmt:
     @echo "Formatting Nix files..."
-    find . -name "*.nix" -exec nix fmt {} \;
+    NIX_CONFIG="warn-dirty = false" find . -name "*.nix" -exec nix fmt {} -- --quiet \;
 
 # Lint and auto-fix Nix files with deadnix
 lint:
@@ -764,7 +764,7 @@ secret-edit-host HOST:
     fi
     sops "secrets/{{HOST}}/secrets.yaml"
 
-# Validate secret files  
+# Validate secret files
 secret-validate:
     @echo "🔍 Validating secret files..."
     @if [ -f "secrets/shared/sgrimee.yaml" ]; then \
