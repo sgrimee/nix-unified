@@ -10,18 +10,24 @@
     hostCapabilities = capabilities;
   };
 
-  # Auto-derived categories (only host currently using auto mapping)
-  auto = packageManager.deriveCategories {
-    explicit = [];
-    options = {
-      enable = true;
-      # Remove any stray gaming category since features.gaming=false
-      exclude = [];
-      force = [];
-    };
-  };
-
-  requestedCategories = auto.categories;
+  # Explicit package categories based on host capabilities
+  # Derived from: features.{development, desktop, gaming, multimedia, ham}
+  # Roles: mobile, workstation
+  # Services: docker, postgresql, sqlite, distributedBuilds (server)
+  # Security: vpn
+  requestedCategories = [
+    "core" # Always included
+    "development" # features.development + docker + databases
+    "gaming" # features.gaming
+    "multimedia" # features.multimedia
+    "productivity" # features.desktop + role:workstation
+    "security" # security.ssh + security.firewall + security.secrets + security.vpn
+    "system" # role:workstation + services.distributedBuilds (server)
+    "fonts" # features.desktop + hardware.hidpi
+    "k8s-clients" # features.development (k8s tools)
+    "vpn" # security.vpn + role:mobile
+    "ham" # features.ham
+  ];
   validation = packageManager.validatePackages requestedCategories;
   systemPackages =
     if validation.valid
@@ -30,10 +36,6 @@
 in {
   home.packages =
     systemPackages
-    ++ [
-      # Debug output of auto mapping warnings (soft)
-      # (lib.warn "cirice auto-category warnings: ${toString auto.warnings}" null)
-    ]
     ++ [
       # Host-specific packages not covered by categories
 

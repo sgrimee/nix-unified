@@ -11,16 +11,21 @@
     hostCapabilities = capabilities;
   };
 
-  # Use automatic category derivation based on host capabilities
-  auto = packageManager.deriveCategories {
-    explicit = [];
-    options = {
-      enable = true;
-      exclude = [];
-      force = [];
-    };
-  };
-  requestedCategories = auto.categories;
+  # Explicit package categories based on host capabilities
+  # Derived from: features.{development, desktop, multimedia}
+  # Roles: mobile, workstation
+  # Security: vpn
+  requestedCategories = [
+    "core" # Always included
+    "development" # features.development
+    "multimedia" # features.multimedia
+    "productivity" # features.desktop + role:workstation
+    "security" # security.ssh + security.firewall + security.secrets + security.vpn
+    "system" # role:workstation
+    "fonts" # features.desktop
+    "k8s-clients" # features.development (k8s tools)
+    "vpn" # security.vpn + role:mobile
+  ];
 
   # Generate package list
   validation = packageManager.validatePackages requestedCategories;

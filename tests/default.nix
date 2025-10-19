@@ -41,11 +41,6 @@
     pkgs = pkgsWithOverlays;
   };
 
-  autoCategoryMappingTests = import ./auto-category-mapping.nix {
-    inherit lib;
-    pkgs = pkgsWithOverlays;
-  };
-
   # Test keyboard features (Alt/Command swap)
   keyboardSwapAltCmdTests = import ./keyboard-swap-alt-cmd-test.nix {
     inherit lib;
@@ -90,7 +85,7 @@
   # Organize tests by category for better maintainability and understanding
 
   unitTests = basicConfigTests // moduleTests // hostTests // utilityTests;
-  systemTests = packageManagementTests // autoCategoryMappingTests // keyboardSwapAltCmdTests;
+  systemTests = packageManagementTests // keyboardSwapAltCmdTests;
   integrationTestSuite = integrationTests;
   consistencyTests = hostCapabilityConsistencyTests;
   propertyTests = capabilityPropertyTests;

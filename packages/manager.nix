@@ -48,29 +48,6 @@ in {
   # Export categories for external access
   inherit categories;
 
-  # Auto category derivation helper
-  deriveCategories = {
-    explicit ? [],
-    options ? {},
-  }: let
-    mapper = import ./auto-category-mapping.nix {
-      inherit lib hostCapabilities;
-      explicitRequested = explicit;
-      options = options;
-    };
-  in
-    mapper;
-
-  autoGenerateCategories = {
-    explicit ? [],
-    options ? {},
-  }:
-    (import ./auto-category-mapping.nix {
-      inherit lib hostCapabilities;
-      explicitRequested = explicit;
-      options = options;
-    }).categories;
-
   # Generate package list based on capabilities
   generatePackages = requestedCategories: let
     # Get packages for each requested category

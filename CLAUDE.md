@@ -152,32 +152,28 @@ just copy-host source-host target-host
 
 The configuration uses a **mandatory** capability-based approach where modules are automatically imported based on host capability declarations in `capabilities.nix`. This eliminates manual module imports and provides intelligent configuration based on hardware and feature requirements. ALL hosts must have a `capabilities.nix` file - traditional module imports via `default.nix` files have been removed.
 
-## Automatic Package Categories
+## Package Management
 
-The repository includes an automatic category derivation system (`packages/auto-category-mapping.nix`).
+Package categories are explicitly defined in each host's `packages.nix` file based on host capabilities. Each host declares the specific package categories it needs:
 
-Usage example (enabled first on host `cirice` only):
+```nix
+# Example from hosts/nixos/cirice/packages.nix
+requestedCategories = [
+  "core"          # Always included
+  "development"   # features.development
+  "gaming"        # features.gaming
+  "multimedia"    # features.multimedia
+  "productivity"  # features.desktop + role:workstation
+  "security"      # security configuration
+  "system"        # system utilities
+  "fonts"         # fonts for desktop
+  "k8s-clients"   # kubernetes tools
+  "vpn"           # VPN client tools
+  "ham"           # amateur radio tools
+];
 ```
-let
-  capabilities = import ./capabilities.nix;
-  packageManager = import ../../../packages/manager.nix { inherit lib pkgs; hostCapabilities = capabilities; };
-  auto = packageManager.deriveCategories {
-    explicit = [ ];
-    options = { enable = true; exclude = [ ]; force = [ ]; };
-  };
-  requestedCategories = auto.categories;
-  validation = packageManager.validatePackages requestedCategories;
-  systemPackages = if validation.valid then packageManager.generatePackages requestedCategories else throw "Invalid combination";
-in { home.packages = systemPackages; }
-```
 
-Features:
-- Deterministic ordered derivation with provenance trace.
-- Supports overrides: `exclude`, `force`, `explicit`.
-- Soft warnings for contradictory categories (gaming without feature, vpn w/out flag, k8s missing docker+development).
-- New capability flag: `features.ham` adds `ham` category when true.
-
-Rollout: staged; only migrate hosts intentionally. Keep non-migrated hosts on manual `requestedCategories`.
+Available categories: core, development, gaming, multimedia, productivity, security, system, fonts, k8s-clients, vpn, ham
 
 ## Testing
 
