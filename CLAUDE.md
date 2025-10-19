@@ -5,19 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Table of Contents
 
 - [Quick Start](#quick-start)
-- [Nix Configuration Overview](#nix-configuration-overview)
+- [Documentation](#documentation)
 - [Common Commands](#common-commands)
-  - [Building and Switching](#building-and-switching-configurations)
-  - [Development and Maintenance](#development-and-maintenance)
-  - [Flake Operations](#flake-operations)
-  - [Host Management](#host-management)
-- [Module Structure](#module-structure)
-- [Package Management](#automatic-package-categories)
-- [Testing](#testing)
-- [Task Automation](#task-automation)
-- [CI/CD](#cicd)
-- [Git Hooks](#git-hooks)
-- [Additional Guidance](#additional-guidance)
+- [Architecture Overview](#architecture-overview)
+- [Development Guidelines](#development-guidelines)
+- [AI Assistant Operational Guidelines](#ai-assistant-operational-guidelines)
 
 ## Quick Start
 
@@ -40,295 +32,232 @@ just fmt
 just install-hooks
 ```
 
-## Nix Configuration Overview
+## Documentation
 
-This is a unified Nix configuration repository that manages both NixOS (Linux) and nix-darwin (macOS) systems using flakes. The configuration supports multiple hosts across different platforms.
+**For detailed information, refer to:**
 
-### Architecture
+- **[README.md](README.md)** - Project overview, quick start, common commands
+- **[docs/architecture.md](docs/architecture.md)** - System design, capability system, design decisions
+- **[docs/package-management.md](docs/package-management.md)** - Adding/managing packages, categories, best practices
 
-- **flake.nix**: Main entry point coordinating all subsystems
-- **lib/**: Core library functions
-  - `capability-system.nix`: Unified capability-based configuration system
-  - `capability-schema.nix`: Schema definition for host capabilities
-  - `host-discovery.nix`: Automatic host discovery and configuration generation
-  - `module-mapping/`: Capability-to-module mappings organized by category
-- **hosts/**: Platform-organized host configurations (nixos/, darwin/)
-- **modules/**: Organized by platform (darwin/, nixos/, home-manager/)
-- **packages/**: Centralized package management with categories
-- **overlays/**: Custom package overlays
-- **secrets/**: SOPS-encrypted secrets management
-- **utils/**: Helper scripts for system management
+## Architecture Overview
 
-### Host Configurations
+This is a unified Nix configuration managing both NixOS (Linux) and nix-darwin (macOS) using a capability-based system.
 
-The flake uses automatic host discovery from directory structure:
-- **NixOS systems**: Discovered from `hosts/nixos/` (nixair, dracula, legion, cirice)
-- **Darwin systems**: Discovered from `hosts/darwin/` (SGRIMEE-M-4HJT)
+### Key Concepts
 
-Each host directory contains system.nix, home.nix, packages.nix, and a **mandatory** capabilities.nix file. All hosts MUST use the capability-based configuration system - traditional default.nix imports have been removed.
+1. **Capability-based configuration** - Hosts declare capabilities (hardware, features, role) instead of manually importing modules
+2. **Automatic host discovery** - Hosts discovered from `hosts/{nixos,darwin}/` directory structure
+3. **Category-based packages** - Packages organized in explicit categories, hosts request categories they need
+4. **Module mapping** - Capabilities automatically mapped to appropriate modules via `lib/module-mapping/`
+
+### Structure
+
+```
+lib/                      # Core libraries
+  capability-system.nix   # Capability resolution
+  capability-schema.nix   # Type definitions
+  host-discovery.nix      # Host discovery
+  module-mapping/         # Capability → Module mappings
+hosts/{nixos,darwin}/     # Host configurations with capabilities.nix
+modules/{nixos,darwin,home-manager,shared}/  # Module definitions
+packages/categories/      # Package category definitions
+```
+
+### Mandatory Files Per Host
+
+- **capabilities.nix** - Hardware, features, role, environment declarations
+- **packages.nix** - Requested package categories
+- **system.nix** - System-level configuration
+- **home.nix** - User-level configuration
+
+**Important**: ALL hosts MUST have `capabilities.nix` - no traditional `default.nix` imports.
 
 ## Common Commands
 
-### Building and Switching Configurations
+See [README.md](README.md) for complete command reference. Key commands:
 
-**NixOS systems:**
 ```bash
-sudo nixos-rebuild switch --flake .#<hostname>
+# Testing & Validation
+just test                   # Quick validation
+just check                  # Check for errors
+just test-linux            # Test NixOS configs
+just test-darwin           # Test Darwin configs
+
+# Building (DO NOT run switch commands - requires sudo)
+just build <hostname>      # Build configuration
+just dry-run              # Preview changes
+
+# Package Management
+just search-packages <term>           # Find packages
+just list-package-categories          # List categories
+just package-info <hostname>          # Show host packages
+
+# Maintenance
+just update                # Update flake inputs
+just gc                    # Garbage collect
+just fmt                   # Format Nix files
+just lint                  # Check for dead code
+
+# Host Management
+just list-hosts            # Show all hosts
+just new-nixos-host <name> # Create NixOS host
+just validate-host <name>  # Validate configuration
 ```
 
-**Darwin systems:**
+## Development Guidelines
+
+### Code Organization
+
+1. **Capability system** (`lib/capability-system.nix`, `lib/module-mapping/`)
+   - Add new capability mappings to appropriate category file in `module-mapping/`
+   - Update schema in `capability-schema.nix` when adding new capability types
+
+2. **Modules** (`modules/{nixos,darwin,home-manager,shared}/`)
+   - Platform-specific modules in their respective directories
+   - Shared logic in `shared/`
+   - Each module should be self-contained and reusable
+
+3. **Packages** (`packages/categories/`)
+   - Add packages to existing categories or create new ones
+   - See [docs/package-management.md](docs/package-management.md) for details
+
+4. **Hosts** (`hosts/{nixos,darwin}/`)
+   - Must have `capabilities.nix` (mandatory)
+   - Must have `packages.nix` with `requestedCategories`
+   - May have `system.nix` and `home.nix` for customization
+
+### Best Practices
+
+**When modifying configurations:**
+1. Run `just test` before committing
+2. Run `just check` to validate syntax
+3. Build affected hosts: `just build <hostname>`
+4. Format code: `just fmt`
+5. Add tests for new features
+
+**When adding packages:**
+- Add to appropriate category in `packages/categories/`
+- Use platform guards for platform-specific packages
+- Pin versions in `packages/versions.nix` if needed
+- See [docs/package-management.md](docs/package-management.md)
+
+**When adding modules:**
+- Create module in appropriate platform directory
+- Add capability mapping in `lib/module-mapping/<category>.nix`
+- Update schema if adding new capability type
+- Add test case
+
+**When creating hosts:**
+- Use `just new-nixos-host <name>` or `just new-darwin-host <name>`
+- Define capabilities in `capabilities.nix`
+- Request package categories in `packages.nix`
+- Never create `default.nix` files
+
+### Testing Strategy
+
+Always run after making changes:
 ```bash
-darwin-rebuild switch --flake .#<hostname>
+just test        # Quick validation
+just check       # Syntax and evaluation
+just build <host> # Test specific host builds
 ```
 
-### Development and Maintenance
-
-**Install git hooks:**
+For comprehensive testing:
 ```bash
-just install-hooks
+just test-comprehensive  # Full test suite
+just test-integration   # Module interaction tests
 ```
 
-**Clear evaluation cache:**
-```bash
-./utils/clear-eval-cache.sh
-```
+### Git Workflow
 
-**Garbage collection:**
-```bash
-./utils/garbage-collect.sh
-```
+1. **Install hooks**: `just install-hooks` (once per clone)
+2. **Make changes** and test locally
+3. **Commit** with descriptive messages (never mention AI)
+4. **Push** - CI will run tests and builds
+5. **Never commit unless explicitly instructed**
 
-**Bootstrap new Darwin system:**
-```bash
-./utils/darwin-bootstrap.sh
-```
+## AI Assistant Operational Guidelines
 
-### Flake Operations
+### Command Limitations
 
-**Update flake inputs:**
-```bash
-nix flake update
-```
+**CANNOT run (require sudo/interaction):**
+- `just switch`
+- `nixos-rebuild switch`
+- `darwin-rebuild switch`
+- Any `sudo` command
 
-**Check flake:**
-```bash
-nix flake check
-```
+**CAN run:**
+- `just test`, `just check`, `just build`
+- `nix build`, `nix flake check`
+- Git commands (except push without permission)
+- File operations, searches, analysis
 
-**Show system info:**
-```bash
-nix flake show
-```
+**When system switching is needed:** Always tell the user to run the command themselves.
 
-### Host Management
+### Configuration Rules
 
-**List all discovered hosts:**
-```bash
-just list-hosts
-```
+**Always:**
+- Run `just check` or validation after making changes
+- Use capability system for all hosts (mandatory `capabilities.nix`)
+- Add tests for new features
+- Format with `just fmt` before committing
+- Reference documentation in docs/ for detailed info
 
-**Create new host from template:**
-```bash
-just new-nixos-host hostname
-just new-darwin-host hostname
-```
+**Never:**
+- Create `default.nix` files for hosts or manual module imports
+- Add `nix = { ... }` configuration blocks to Darwin systems (uses Determinate Nix)
+- Mention AI agent in commit messages or PRs
+- Commit to git unless specifically instructed
+- Run interactive commands (sudo, switches, etc.)
 
-**Validate host configuration:**
-```bash
-just validate-host hostname
-```
+### Platform-Specific
 
-**Get host information:**
-```bash
-just host-info hostname
-```
+**Darwin (macOS):**
+- Install GUI apps via homebrew casks (in modules/darwin/homebrew/)
+- Uses Determinate Nix (no `nix` config blocks)
+- System architecture: `aarch64-darwin`
 
-**Copy configuration between hosts:**
-```bash
-just copy-host source-host target-host
-```
-
-## Module Structure
-
-- **darwin/**: macOS-specific modules (homebrew, dock, finder, etc.)
-- **nixos/**: Linux-specific modules (display, sound, hardware, etc.)  
-- **home-manager/**: User-specific configurations and dotfiles
-- **hosts/**: Per-host customizations with capability-based configuration
-- **packages/**: Centralized package management with categories (core, development, gaming, multimedia, productivity, security, system, fonts, k8s, vpn, ham)
-
-The configuration uses a **mandatory** capability-based approach where modules are automatically imported based on host capability declarations in `capabilities.nix`. This eliminates manual module imports and provides intelligent configuration based on hardware and feature requirements. ALL hosts must have a `capabilities.nix` file - traditional module imports via `default.nix` files have been removed.
-
-## Package Management
-
-Package categories are explicitly defined in each host's `packages.nix` file based on host capabilities. Each host declares the specific package categories it needs:
-
-```nix
-# Example from hosts/nixos/cirice/packages.nix
-requestedCategories = [
-  "core"          # Always included
-  "development"   # features.development
-  "gaming"        # features.gaming
-  "multimedia"    # features.multimedia
-  "productivity"  # features.desktop + role:workstation
-  "security"      # security configuration
-  "system"        # system utilities
-  "fonts"         # fonts for desktop
-  "k8s-clients"   # kubernetes tools
-  "vpn"           # VPN client tools
-  "ham"           # amateur radio tools
-];
-```
-
-Available categories: core, development, gaming, multimedia, productivity, security, system, fonts, k8s-clients, vpn, ham
-
-## Testing
-
-### Unit Tests
-
-The repository includes comprehensive unit tests for configuration validation:
-
-**Test Structure:**
-- `tests/default.nix` - Main test runner with comprehensive coverage
-- `tests/config-validation.nix` - Configuration validation tests
-- `tests/module-tests.nix` - Module import and structure tests  
-- `tests/host-tests.nix` - Host-specific configuration tests
-- `tests/capability-tests.nix` - Capability system validation
-- `tests/package-management.nix` - Package system tests
-- `tests/utility-tests.nix` - Utility function tests
-
-**Running Tests:**
-```bash
-just test                    # Basic validation (syntax + flake check)
-just test-comprehensive      # Full enhanced test suite for CI/releases  
-just test-verbose           # Core tests with detailed output
-just test-properties        # Property-based tests (module combinations)
-just test-platform-compatibility  # Cross-platform compatibility tests
-just test-performance       # Performance regression tests
-just test-integration       # Module interaction tests
-just test-scenarios         # Real-world scenario tests
-just test-linux            # Linux-specific configuration tests
-just test-darwin           # Darwin-specific configuration tests
-```
-
-Tests are automatically run via `nix flake check` and integrated into the flake's `checks` output.
-
-## Task Automation
-
-The `justfile` provides common development tasks:
-
-**Testing:**
-- `just test` - Run all configuration tests
-- `just check` - Check flake for errors
-
-**Building & Switching:**
-- `just build <host>` - Build specific host configuration
-- `just switch` - Switch current host to latest config. DO NOT attempt to use this, it requires interactive sudo.
-- `just dry-run` - Preview changes without applying
-
-**Maintenance:**  
-- `just update` - Update all flake inputs
-- `just gc` - Garbage collect old generations
-- `just optimize` - Optimize Nix store
-
-**Package Management:**
-- `just list-package-categories` - List available package categories
-- `just search-packages <term>` - Search for packages across categories
-- `just validate-packages <host>` - Validate package combinations for host
-- `just package-info <host>` - Show package information for host
-
-**Development:**
-- `just fmt` - Format Nix files
-- `just lint` - Lint and auto-fix dead code with deadnix
-- `just lint-check` - Check for dead code without fixing (for CI)
-- `just dev` - Enter development shell
-- `just analyze-performance` - Analyze build performance
-- `just format-docs` - Format markdown documentation
-
-## CI/CD
-
-The repository includes GitHub Actions workflows:
-
-**`.github/workflows/ci.yml`:**
-- **test**: Runs comprehensive test suite with enhanced coverage
-- **lint**: Checks for dead code and formatting
-- **build-nixos**: Builds all NixOS configurations (nixair, dracula, legion, cirice)
-- **build-darwin**: Builds Darwin configuration (SGRIMEE-M-4HJT)
-
-The CI uses dynamic host discovery and automatically adapts when new hosts are added.
-
-The CI automatically runs on pushes to main and pull requests.
-
-## Git Hooks
-
-The repository includes git hooks to maintain code quality and prevent common issues:
-
-### Available Hooks
-
-**Pre-commit hook** (`hooks/pre-commit`):
-- Scans for secrets using gitleaks
-- Checks for large files (>1MB)
-- Formats Nix files with nixfmt-classic
-- Validates Nix syntax
-- Checks for problematic patterns (TODO/FIXME, debugging code)
-
-**Pre-push hook** (`hooks/pre-push`):
-- Runs lint checks before pushing to origin
-- Prevents pushing code that would fail CI
-
-**Post-merge hook** (`hooks/post-merge`):
-- Runs after successful merge operations
-
-### Setup
-
-**Install hooks for new contributors:**
-```bash
-just install-hooks
-```
-
-**Manual installation:**
-```bash
-./utils/install-hooks.sh
-```
-
-### Hook Management
-
-- Hooks are stored in `hooks/` directory and version controlled
-- Use `just install-hooks` to install/update hooks
-- Hooks can be bypassed with `--no-verify` flag if needed
-- CI/CD provides the same validation as hooks for comprehensive testing
-
-## Additional Guidance
-
-### Commit and PR Guidelines
-
-- Never mention the AI agent in commit messages and PR messages
-- Never commit to git unless specifically instructed to do so.
+**NixOS (Linux):**
+- Can use system packages or home-manager
+- Prefer home-manager for user-specific apps
+- System architecture: `x86_64-linux`
 
 ### Rebuilding Systems
 
-- When rebuilding a system, use `nixos-rebuild switch --flake .#{the_hostname} --use-remote-sudo --fast`
+**Recommended command for users:**
+```bash
+# NixOS
+nixos-rebuild switch --flake .#<hostname> --use-remote-sudo --fast
 
-## Nix Configuration Best Practices
+# Darwin
+darwin-rebuild switch --flake .#<hostname>
+```
 
-- When available, prefer using a home manager program instead of just declaring a nixos package to install an application.
+### Adding Features
 
-## Darwin-Specific Guidelines
+1. Identify appropriate location (module, capability, package category)
+2. Make changes following existing patterns
+3. Add unit test in `tests/`
+4. Run `just test` to validate
+5. Document in commit message
 
-- On darwin, always install GUI applications using homebrew casks
-- When creating new specs, allways use the `00-spec-template.md` to ensure consistency.
-- Darwin hosts use **Determinate Nix** instead of upstream Nix - do NOT add `nix` configuration blocks to Darwin systems as they are managed by Determinate Nix
+### Common Tasks
 
-## OpenCode Operational Guidelines
+**Add package to host:**
+1. Find/create category in `packages/categories/`
+2. Add package to category list
+3. Add category to host's `packages.nix` requestedCategories
+4. Test: `just build <hostname>`
 
-- **Interactive Command Limitations**: You cannot run interactive commands. This includes:
-  - `sudo` commands (interactive and will not work)
-  - Any command requiring user input or confirmation
-  - Always ask the user to run these commands on your behalf
-- Never run `just switch`, `nixos-rebuild switch`, `darwin-rebuild switch`, or any other system switching commands - these require sudo access which is not available
-- Always tell the user to run these commands themselves when system switching is needed
-- You can use `nix build` to test configurations and verify they compile correctly without switching
-- When you make changes to the nixos config, always run 'just check-host' when your changes are done to catch issues.
-- When adding a new feature, always add a unit test for it.
-- All hosts must use the capability system - never create traditional `default.nix` files for hosts or modules
-- When creating a new host, always create a `capabilities.nix` file instead of `default.nix`
-- Darwin hosts use Determinate Nix - never add `nix = { ... }` configuration blocks to Darwin systems
+**Add capability mapping:**
+1. Edit appropriate file in `lib/module-mapping/`
+2. Add mapping: `capability.path = [ "module/path.nix" ];`
+3. Test: `just check`
+
+**Create new host:**
+```bash
+just new-nixos-host <name>  # or new-darwin-host
+# Edit capabilities.nix and packages.nix
+just build <name>
+```
