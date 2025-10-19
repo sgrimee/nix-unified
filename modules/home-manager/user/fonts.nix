@@ -1,4 +1,8 @@
-{pkgs, lib, ...}: {
+{
+  pkgs,
+  lib,
+  ...
+}: {
   fonts.fontconfig = {
     enable = true;
     # Prevent fontconfig from trying to write cache during Nix build

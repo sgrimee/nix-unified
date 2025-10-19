@@ -17,6 +17,15 @@
       required = true;
     };
 
+    # User configuration
+    user = {
+      name = {
+        type = lib.types.str;
+        default = "sgrimee";
+        description = "Primary user account name";
+      };
+    };
+
     # Feature flags for major functionality groups
     features = {
       # Development and productivity

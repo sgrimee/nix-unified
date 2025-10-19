@@ -1,6 +1,23 @@
 # packages/auto-category-mapping.nix
 # Derives package categories from hostCapabilities and user overrides.
 # Provides deterministic, explainable category selection.
+#
+# USAGE NOTES:
+# - This system automatically derives package categories from host capabilities
+# - The 'trace' output provides full provenance of why each category was selected
+# - Provenance trace includes: orderedDerived (auto-detected), excluded, forced, explicit, and final categories
+# - Warnings indicate potential misconfigurations (e.g., gaming category without gaming feature)
+# - Categories can be overridden using: exclude (block auto), force (always include), explicit (manual add)
+#
+# WHEN TO USE:
+# - Use auto-derivation for consistency across similar hosts
+# - Use explicit categories when you need precise control
+# - Use exclude/force for fine-tuning auto-derived results
+#
+# OUTPUT STRUCTURE:
+# - categories: Final list of package categories to use
+# - warnings: List of potential configuration issues
+# - trace: Full derivation provenance for debugging
 {
   lib,
   hostCapabilities,

@@ -10,8 +10,8 @@
   createSpecialModules = hostCapabilities: inputs: hostName: let
     platform = hostCapabilities.platform;
 
-    # Extract user and host from host name
-    user = "sgrimee"; # This should be configurable
+    # Extract user from capabilities, with fallback to default
+    user = hostCapabilities.user.name or "sgrimee";
     host = hostName;
   in [
     # Home Manager module (platform-specific)
@@ -42,10 +42,27 @@
   ];
 in rec {
   # Main function to generate module imports based on capabilities
+  # This function processes host capabilities and generates the appropriate module imports
+  # for both system-level and home-manager configurations.
+  #
+  # Module Generation Strategy:
+  # 1. Core modules are always imported (networking, environment, etc.)
+  # 2. Feature modules are imported based on capability flags (development, gaming, etc.)
+  # 3. Hardware modules are imported based on detected hardware (CPU, GPU, etc.)
+  # 4. Role modules provide preset configurations (workstation, server, etc.)
+  # 5. Environment modules configure desktop/shell/terminal preferences
+  # 6. Service modules enable specific services (docker, databases, etc.)
+  # 7. Security modules handle SSH, firewall, secrets management
+  #
+  # Modules are separated into two categories:
+  # - System modules: Applied to NixOS/Darwin system configuration
+  # - Home-manager modules: Applied to user's home-manager configuration
+  # This separation ensures proper module application at the correct level.
   generateModuleImports = hostCapabilities: inputs: hostName: let
     platform = hostCapabilities.platform;
 
     # Resolve dependencies and conflicts
+    # This ensures required capabilities are enabled and conflicts are detected
     resolvedCapabilities =
       dependencyResolver.resolveDependencies hostCapabilities;
 

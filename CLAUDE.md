@@ -2,6 +2,44 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Nix Configuration Overview](#nix-configuration-overview)
+- [Common Commands](#common-commands)
+  - [Building and Switching](#building-and-switching-configurations)
+  - [Development and Maintenance](#development-and-maintenance)
+  - [Flake Operations](#flake-operations)
+  - [Host Management](#host-management)
+- [Module Structure](#module-structure)
+- [Package Management](#automatic-package-categories)
+- [Testing](#testing)
+- [Task Automation](#task-automation)
+- [CI/CD](#cicd)
+- [Git Hooks](#git-hooks)
+- [Additional Guidance](#additional-guidance)
+
+## Quick Start
+
+**Most common operations:**
+
+```bash
+# Test configuration changes
+just test
+
+# Build a host (without switching)
+just build <hostname>
+
+# Check for errors
+just check
+
+# Format code
+just fmt
+
+# Install git hooks (do this once after cloning)
+just install-hooks
+```
+
 ## Nix Configuration Overview
 
 This is a unified Nix configuration repository that manages both NixOS (Linux) and nix-darwin (macOS) systems using flakes. The configuration supports multiple hosts across different platforms.
