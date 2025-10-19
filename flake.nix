@@ -50,82 +50,26 @@
     lib = inputs.stable-nixos.lib;
     stateVersion = "23.05";
 
-    # Import unified capability system
-    capabilitySystem =
-      import ./lib/capability-system.nix {inherit lib inputs;};
-
     # Configure unstable with allowUnfree
     unstableConfig = {allowUnfree = true;};
 
     # Configure stable packages with allowUnfree
     stableConfig = {allowUnfree = true;};
 
-    # Dynamic host discovery functions
-    discoverHosts = hostsDir: let
-      platforms = builtins.attrNames (builtins.readDir hostsDir);
+    # Import overlays
+    overlays = import ./overlays;
 
-      hostsByPlatform = lib.genAttrs platforms (platform: let
-        platformDir = hostsDir + "/${platform}";
-      in
-        if builtins.pathExists platformDir
-        then builtins.attrNames (builtins.readDir platformDir)
-        else []);
-    in
-      hostsByPlatform;
+    # Import unified capability system
+    capabilitySystem =
+      import ./lib/capability-system.nix {inherit lib inputs;};
 
-    # Enhanced system configuration generator with capability support
-    makeHostConfig = platform: hostName: system: let
-      overlays = import ./overlays;
-      unstable = import inputs.unstable {
-        inherit system;
-        config = unstableConfig;
-      };
-      # Import stable packages with allowUnfree config and overlays
-      stable =
-        if platform == "darwin"
-        then
-          import inputs.stable-darwin {
-            inherit system overlays;
-            config = stableConfig;
-          }
-        else
-          import inputs.stable-nixos {
-            inherit system overlays;
-            config = stableConfig;
-          };
-      specialArgs = {
-        inherit inputs system stateVersion overlays unstable;
-        stable = stable;
-      };
-    in
-      capabilitySystem.buildSystemConfig platform hostName system
-      specialArgs;
-    # Get default system architecture for platform
-    getHostSystem = platform: let
-      defaultSystems = {
-        "nixos" = "x86_64-linux";
-        "darwin" = "aarch64-darwin";
-      };
-    in
-      defaultSystems.${platform} or "x86_64-linux";
+    # Import host discovery system
+    hostDiscovery = import ./lib/host-discovery.nix {
+      inherit lib inputs capabilitySystem;
+    };
 
-    # Discover all hosts across all platforms (only if hosts/ directory exists)
-    allHosts =
-      if builtins.pathExists ./hosts
-      then discoverHosts ./hosts
-      else {};
-
-    # Generate configurations for discovered hosts
-    generateConfigurations = platform: let
-      hosts = allHosts.${platform} or [];
-      configs =
-        map (hostName: {
-          name = hostName;
-          value = makeHostConfig platform hostName (getHostSystem platform);
-        })
-        hosts;
-    in
-      lib.listToAttrs configs;
+    # Discover all hosts across all platforms
+    allHosts = hostDiscovery.discoverAllHosts ./hosts;
 
     # Import package manager
     packageManager = import ./packages/manager.nix {
@@ -138,18 +82,30 @@
     packageDiscovery = import ./packages/discovery.nix {inherit lib;};
   in {
     # Generate configurations using dynamic host discovery
-    nixosConfigurations = generateConfigurations "nixos";
-    darwinConfigurations = generateConfigurations "darwin";
+    nixosConfigurations = hostDiscovery.generateConfigurations {
+      platform = "nixos";
+      inherit allHosts overlays stableConfig unstableConfig stateVersion;
+    };
+    darwinConfigurations = hostDiscovery.generateConfigurations {
+      platform = "darwin";
+      inherit allHosts overlays stableConfig unstableConfig stateVersion;
+    };
 
     # Capability system status and validation
     capabilityStatus = capabilitySystem.getCapabilityStatus allHosts;
     capabilityValidation = {
       nixos =
         capabilitySystem.validateCapabilityHosts
-        (generateConfigurations "nixos");
+        (hostDiscovery.generateConfigurations {
+          platform = "nixos";
+          inherit allHosts overlays stableConfig unstableConfig stateVersion;
+        });
       darwin =
         capabilitySystem.validateCapabilityHosts
-        (generateConfigurations "darwin");
+        (hostDiscovery.generateConfigurations {
+          platform = "darwin";
+          inherit allHosts overlays stableConfig unstableConfig stateVersion;
+        });
     };
 
     # Package management outputs

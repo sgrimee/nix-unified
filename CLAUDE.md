@@ -46,9 +46,15 @@ This is a unified Nix configuration repository that manages both NixOS (Linux) a
 
 ### Architecture
 
-- **flake.nix**: Main entry point with dynamic host discovery
+- **flake.nix**: Main entry point coordinating all subsystems
+- **lib/**: Core library functions
+  - `capability-system.nix`: Unified capability-based configuration system
+  - `capability-schema.nix`: Schema definition for host capabilities
+  - `host-discovery.nix`: Automatic host discovery and configuration generation
+  - `module-mapping/`: Capability-to-module mappings organized by category
 - **hosts/**: Platform-organized host configurations (nixos/, darwin/)
 - **modules/**: Organized by platform (darwin/, nixos/, home-manager/)
+- **packages/**: Centralized package management with categories
 - **overlays/**: Custom package overlays
 - **secrets/**: SOPS-encrypted secrets management
 - **utils/**: Helper scripts for system management
