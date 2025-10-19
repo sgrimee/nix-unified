@@ -215,7 +215,7 @@
             exit 1
           fi
 
-          if [ -f lib/module-mapping.nix ]; then
+          if [ -d lib/module-mapping ] && [ -f lib/module-mapping/default.nix ]; then
             echo "✓ module mapping exists" >> $out
           else
             echo "✗ module mapping missing" >> $out

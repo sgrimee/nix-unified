@@ -6,7 +6,7 @@
   inputs,
   ...
 }: let
-  moduleMapping = import ./module-mapping.nix {inherit lib;};
+  moduleMapping = import ./module-mapping {inherit lib;};
   capabilitySchema = import ./capability-schema.nix {inherit lib;};
 
   # ============================================================================
