@@ -154,7 +154,7 @@
         swapAltCommand = {
           type = lib.types.bool;
           default = false;
-          description = "Swap Alt and Command keys (useful for Mac keyboards on NixOS)";
+          description = "Swap Alt and Command keys (useful for macOS keyboards on NixOS)";
         };
       };
     };
@@ -178,15 +178,15 @@
       # Desktop environments - multi-session support (NixOS only)
       desktops = {
         available = {
-          type = lib.types.listOf (lib.types.enum ["gnome" "sway" "kde" "macos"]);
+          type = lib.types.listOf (lib.types.enum ["gnome" "sway" "kde" "darwin"]);
           default = [];
-          description = "Available desktop environments for session selection";
+          description = "Available desktop environments for session selection (use 'darwin' for macOS)";
         };
 
         default = {
-          type = lib.types.nullOr (lib.types.enum ["gnome" "sway" "kde" "macos"]);
+          type = lib.types.nullOr (lib.types.enum ["gnome" "sway" "kde" "darwin"]);
           default = null;
-          description = "Default desktop environment at login";
+          description = "Default desktop environment at login (use 'darwin' for macOS)";
         };
       };
 

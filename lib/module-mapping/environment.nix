@@ -29,7 +29,7 @@
         darwin = [];
         homeManager = [];
       };
-      macos = {
+      darwin = {
         nixos = [];
         darwin = [
           ../../modules/darwin/dock.nix

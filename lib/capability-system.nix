@@ -43,7 +43,7 @@
       };
 
       conflicts = {
-        environment = {desktop = ["macos"];};
+        environment = {desktop = ["darwin"];};
         hardware = {
           cpu = ["apple"];
           gpu = ["apple"];
@@ -55,7 +55,7 @@
       supports = {
         features = ["ai" "multimedia" "desktop" "corporate" "development"];
         roles = ["workstation" "build-server" "mobile"];
-        desktop = ["macos"];
+        desktop = ["darwin"];
         hardware = {
           cpu = ["intel" "apple"];
           gpu = ["apple" "intel"];
@@ -449,6 +449,16 @@
 
     # Validate resolved capabilities
     validation = validateCapabilities resolvedCapabilities;
+
+    # Enforce validation: abort build if there are errors
+    _ = assert validation.valid
+    || throw ''
+      ❌ Capability validation failed for host '${hostName}':
+
+      ${lib.concatMapStringsSep "\n" (err: "  • ${err}") validation.errors}
+
+      Please fix the capability declarations in hosts/${platform}/${hostName}/capabilities.nix
+    ''; null;
 
     # Validate that capabilities have corresponding module mappings
     mappingValidation =
