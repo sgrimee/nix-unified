@@ -50,9 +50,9 @@
     lib = inputs.stable-nixos.lib;
     stateVersion = "23.05";
 
-    # Import capability system integration
-    capabilityIntegration =
-      import ./lib/capability-integration.nix {inherit lib inputs;};
+    # Import unified capability system
+    capabilitySystem =
+      import ./lib/capability-system.nix {inherit lib inputs;};
 
     # Configure unstable with allowUnfree
     unstableConfig = {allowUnfree = true;};
@@ -98,7 +98,7 @@
         stable = stable;
       };
     in
-      capabilityIntegration.buildSystemConfig platform hostName system
+      capabilitySystem.buildSystemConfig platform hostName system
       specialArgs;
     # Get default system architecture for platform
     getHostSystem = platform: let
@@ -142,13 +142,13 @@
     darwinConfigurations = generateConfigurations "darwin";
 
     # Capability system status and validation
-    capabilityStatus = capabilityIntegration.getCapabilityStatus allHosts;
+    capabilityStatus = capabilitySystem.getCapabilityStatus allHosts;
     capabilityValidation = {
       nixos =
-        capabilityIntegration.validateCapabilityHosts
+        capabilitySystem.validateCapabilityHosts
         (generateConfigurations "nixos");
       darwin =
-        capabilityIntegration.validateCapabilityHosts
+        capabilitySystem.validateCapabilityHosts
         (generateConfigurations "darwin");
     };
 
@@ -208,17 +208,10 @@
             exit 1
           fi
 
-          if [ -f lib/capability-loader.nix ]; then
-            echo "✓ capability loader exists" >> $out
+          if [ -f lib/capability-system.nix ]; then
+            echo "✓ unified capability system exists" >> $out
           else
-            echo "✗ capability loader missing" >> $out
-            exit 1
-          fi
-
-          if [ -f lib/dependency-resolver.nix ]; then
-            echo "✓ dependency resolver exists" >> $out
-          else
-            echo "✗ dependency resolver missing" >> $out
+            echo "✗ capability system missing" >> $out
             exit 1
           fi
 
