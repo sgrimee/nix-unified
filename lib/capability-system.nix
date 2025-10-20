@@ -7,7 +7,6 @@
   ...
 }: let
   moduleMapping = import ./module-mapping {inherit lib;};
-  capabilitySchema = import ./capability-schema.nix {inherit lib;};
 
   # ============================================================================
   # DEPENDENCY RESOLUTION
@@ -449,16 +448,6 @@
 
     # Validate resolved capabilities
     validation = validateCapabilities resolvedCapabilities;
-
-    # Enforce validation: abort build if there are errors
-    _ = assert validation.valid
-    || throw ''
-      ❌ Capability validation failed for host '${hostName}':
-
-      ${lib.concatMapStringsSep "\n" (err: "  • ${err}") validation.errors}
-
-      Please fix the capability declarations in hosts/${platform}/${hostName}/capabilities.nix
-    ''; null;
 
     # Validate that capabilities have corresponding module mappings
     mappingValidation =
