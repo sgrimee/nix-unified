@@ -65,6 +65,7 @@
   # "etrecheckpro" # System maintenance and optimization
   "ghostty" # Fast terminal emulator
   "iterm2" # Terminal emulator
+  "itermbrowserplugin" # iTerm2 browser plugin
 
   # Networking & System Tools
   "wifi-explorer" # WiFi network analysis tool
