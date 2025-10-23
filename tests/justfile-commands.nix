@@ -25,15 +25,17 @@
       trimmed
       == line
       && lib.hasInfix ":" line
-      && !lib.hasPrefix "#" line
-      && !lib.hasPrefix "default" line)
+      && !lib.hasPrefix "#" line)
     lines;
 
-    # Extract recipe names (everything before the colon)
+    # Extract recipe names (everything before the colon, removing parameters)
     recipeNames = map (line: let
       parts = lib.splitString ":" line;
+      beforeColon = lib.head parts;
+      # Remove parameters like *ARGS, HOST, etc.
+      nameOnly = lib.head (lib.splitString " " beforeColon);
     in
-      lib.strings.trim (lib.head parts))
+      lib.strings.trim nameOnly)
     recipeLines;
   in
     lib.unique recipeNames;
@@ -70,8 +72,9 @@
     commandLine =
       lib.findFirst (line: let
         trimmed = lib.strings.trim line;
+        # Match command at start, optionally followed by space and parameters
       in
-        lib.hasPrefix "${command}" trimmed && lib.hasInfix ":" trimmed)
+        (lib.hasPrefix "${command}:" trimmed || lib.hasPrefix "${command} " trimmed) && lib.hasInfix ":" trimmed)
       null
       lines;
 
@@ -99,7 +102,7 @@
         lib.hasInfix ":" line
         && !lib.hasInfix " = " line
         && # Not a variable assignment
-        (lib.hasPrefix command line || lib.hasPrefix " ${command}" line)
+        (lib.hasPrefix command line || lib.hasPrefix "${command} " line || lib.hasPrefix " ${command}" line)
       else false;
   in {
     command = command;

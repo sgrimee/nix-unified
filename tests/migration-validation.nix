@@ -7,8 +7,11 @@
   ...
 }: let
   # Import our capability system
-  capabilityLoader = import ../lib/capability-loader.nix {inherit lib;};
   preAnalysis = import ./pre-migration-analysis.nix {inherit lib pkgs;};
+  capabilitySystem = import ../lib/capability-system.nix {
+    inherit lib;
+    inputs = {};
+  };
 
   # Discover hosts directly from filesystem instead of using flake
 
@@ -24,9 +27,9 @@
     capabilitiesPath = ../hosts/${platform}/${hostName}/capabilities.nix;
     capabilities = import capabilitiesPath;
 
-    # Generate configuration using capability loader
+    # Generate configuration using capability system
     capabilityConfig =
-      capabilityLoader.generateHostConfig capabilities.hostCapabilities {};
+      capabilitySystem.generateHostConfig capabilities.hostCapabilities {} hostName {};
 
     # Build the configuration
     buildResult = safeBuild capabilityConfig;

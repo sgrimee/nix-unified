@@ -35,11 +35,6 @@
     expected = true;
   };
 
-  testNixOSNixExists = {
-    expr = builtins.pathExists ../modules/nixos/nix.nix;
-    expected = true;
-  };
-
   testNixOSFontsExists = {
     expr = builtins.pathExists ../modules/nixos/fonts.nix;
     expected = true;
@@ -70,8 +65,8 @@
     expected = true;
   };
 
-  testDarwinBootstrapScript = {
-    expr = builtins.pathExists ../utils/darwin-bootstrap.sh;
+  testInstallHooksScript = {
+    expr = builtins.pathExists ../utils/install-hooks.sh;
     expected = true;
   };
 }

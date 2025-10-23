@@ -6,9 +6,11 @@
   pkgs,
   ...
 }: let
-  capabilityLoader = import ../lib/capability-loader.nix {inherit lib;};
-  dependencyResolver = import ../lib/dependency-resolver.nix {inherit lib;};
-  moduleMapping = import ../lib/module-mapping.nix {inherit lib;};
+  capabilitySystem = import ../lib/capability-system.nix {
+    inherit lib;
+    inputs = {};
+  };
+  moduleMapping = import ../lib/module-mapping {inherit lib;};
 in rec {
   # Test capability resolution
   testCapabilityResolution = {
@@ -53,7 +55,7 @@ in rec {
         };
       };
 
-      result = capabilityLoader.generateModuleImports input;
+      result = capabilitySystem.generateModuleImports input;
     in {
       input = input;
       success = result ? imports;
@@ -110,8 +112,8 @@ in rec {
         };
       };
 
-      resolved = dependencyResolver.resolveDependencies input;
-      result = capabilityLoader.generateModuleImports resolved;
+      resolved = capabilitySystem.resolveDependencies input;
+      result = capabilitySystem.generateModuleImports resolved;
     in {
       input = input;
       resolved = resolved;
@@ -120,7 +122,7 @@ in rec {
         resolved.features.multimedia or false; # Should be auto-enabled by gaming
       hasDevelopment =
         resolved.features.development or false; # Should be auto-enabled by ai
-      validation = dependencyResolver.validateCapabilities resolved;
+      validation = capabilitySystem.validateCapabilities resolved;
     };
 
     # Test virtualization capabilities
@@ -169,7 +171,7 @@ in rec {
         virtualization = {windowsGpuPassthrough = true;};
       };
 
-      result = capabilityLoader.generateModuleImports input;
+      result = capabilitySystem.generateModuleImports input;
     in {
       input = input;
       success = result ? imports;
@@ -227,8 +229,8 @@ in rec {
         };
       };
 
-      resolved = dependencyResolver.resolveDependencies input;
-      validation = dependencyResolver.validateCapabilities resolved;
+      resolved = capabilitySystem.resolveDependencies input;
+      validation = capabilitySystem.validateCapabilities resolved;
     in {
       input = input;
       resolved = resolved;
@@ -273,8 +275,8 @@ in rec {
         };
       };
 
-      resolved = dependencyResolver.resolveDependencies input;
-      validation = dependencyResolver.validateCapabilities resolved;
+      resolved = capabilitySystem.resolveDependencies input;
+      validation = capabilitySystem.validateCapabilities resolved;
     in {
       input = input;
       resolved = resolved;
@@ -323,8 +325,8 @@ in rec {
         };
       };
 
-      resolved = dependencyResolver.resolveDependencies input;
-      validation = dependencyResolver.validateCapabilities resolved;
+      resolved = capabilitySystem.resolveDependencies input;
+      validation = capabilitySystem.validateCapabilities resolved;
     in {
       input = input;
       resolved = resolved;
@@ -383,7 +385,7 @@ in rec {
         };
       };
 
-      validation = capabilityLoader.validateCapabilityDeclaration input;
+      validation = capabilitySystem.validateCapabilities input;
     in {
       input = input;
       valid = validation.valid;
@@ -399,7 +401,7 @@ in rec {
         features = {development = true;};
       };
 
-      validation = capabilityLoader.validateCapabilityDeclaration input;
+      validation = capabilitySystem.validateCapabilities input;
     in {
       input = input;
       valid = validation.valid;
@@ -445,10 +447,10 @@ in rec {
           builtins.tryEval (let
             capabilities = import capabilityPath;
             validation =
-              capabilityLoader.validateCapabilityDeclaration capabilities;
+              capabilitySystem.validateCapabilities capabilities;
             moduleGenResult =
               builtins.tryEval
-              (capabilityLoader.generateModuleImports capabilities);
+              (capabilitySystem.generateModuleImports capabilities);
           in {
             hostName = hostName;
             platform = capabilities.platform;

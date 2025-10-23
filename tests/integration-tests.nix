@@ -25,19 +25,19 @@
 
   # Test that a host configuration can be successfully evaluated
   testHostEvaluation = platform: hostName: let
-    hostPath = ../hosts/${platform}/${hostName}/default.nix;
+    capabilitiesPath = ../hosts/${platform}/${hostName}/capabilities.nix;
     systemPath = ../hosts/${platform}/${hostName}/system.nix;
 
-    hostExists = builtins.pathExists hostPath;
+    capabilitiesExists = builtins.pathExists capabilitiesPath;
     systemExists = builtins.pathExists systemPath;
 
-    # Try to evaluate the host default.nix
-    hostEvalResult =
-      if hostExists
-      then builtins.tryEval (import hostPath {inputs = {};})
+    # Try to evaluate the host capabilities.nix
+    capabilitiesEvalResult =
+      if capabilitiesExists
+      then builtins.tryEval (import capabilitiesPath)
       else {
         success = false;
-        value = "Host file not found";
+        value = "Capabilities file not found";
       };
 
     # Try to evaluate system.nix (requires different parameters)
@@ -56,19 +56,19 @@
   in {
     hostName = hostName;
     platform = platform;
-    hostExists = hostExists;
+    capabilitiesExists = capabilitiesExists;
     systemExists = systemExists;
-    hostEvaluates = hostEvalResult.success;
+    capabilitiesEvaluates = capabilitiesEvalResult.success;
     systemEvaluates = systemEvalResult.success;
-    hostEvalError =
-      if !hostEvalResult.success
-      then hostEvalResult.value
+    capabilitiesEvalError =
+      if !capabilitiesEvalResult.success
+      then capabilitiesEvalResult.value
       else null;
     systemEvalError =
       if !systemEvalResult.success
       then systemEvalResult.value
       else null;
-    overallSuccess = hostExists && systemExists && hostEvalResult.success;
+    overallSuccess = capabilitiesExists && systemExists && capabilitiesEvalResult.success;
   };
 
   # Test flake outputs and build targets
@@ -104,33 +104,17 @@
     nixosModulesExist = builtins.pathExists nixosModulesDir;
     homeManagerModulesExist = builtins.pathExists homeManagerModulesDir;
 
-    # Check that default.nix files exist in module directories
-    darwinDefaultExists =
-      builtins.pathExists (darwinModulesDir + "/default.nix");
-    nixosDefaultExists = builtins.pathExists (nixosModulesDir + "/default.nix");
+    # Check that home-manager default.nix exists (still needed for capability system)
     homeManagerDefaultExists =
       builtins.pathExists (homeManagerModulesDir + "/default.nix");
 
-    # Simplified: just check if module files can be imported (without full evaluation)
-    darwinDefaultEval =
-      if darwinDefaultExists
-      then
-        builtins.tryEval
-        (builtins.isFunction (import (darwinModulesDir + "/default.nix")))
-      else {
-        success = false;
-        value = "File not found";
-      };
+    # Check that darwin and nixos default.nix files are removed (capability system handles imports)
+    darwinDefaultGone = !(builtins.pathExists (darwinModulesDir + "/default.nix"));
+    nixosDefaultGone = !(builtins.pathExists (nixosModulesDir + "/default.nix"));
 
-    nixosDefaultEval =
-      if nixosDefaultExists
-      then
-        builtins.tryEval
-        (builtins.isFunction (import (nixosModulesDir + "/default.nix")))
-      else {
-        success = false;
-        value = "File not found";
-      };
+    # Check if some key modules exist in each directory
+    darwinKeyModuleExists = builtins.pathExists (darwinModulesDir + "/system.nix");
+    nixosKeyModuleExists = builtins.pathExists (nixosModulesDir + "/networking.nix");
 
     homeManagerDefaultEval =
       if homeManagerDefaultExists
@@ -146,32 +130,27 @@
       darwinModulesExist
       && nixosModulesExist
       && homeManagerModulesExist;
-    defaultFilesExist =
-      darwinDefaultExists
-      && nixosDefaultExists
+    defaultFilesCorrect =
+      darwinDefaultGone
+      && nixosDefaultGone
       && homeManagerDefaultExists;
-    darwinEvaluates = darwinDefaultEval.success;
-    nixosEvaluates = nixosDefaultEval.success;
     homeManagerEvaluates = homeManagerDefaultEval.success;
-    allModulesEvaluate =
-      darwinDefaultEval.success
-      && nixosDefaultEval.success
-      && homeManagerDefaultEval.success;
+    allModulesEvaluate = homeManagerDefaultEval.success && darwinKeyModuleExists && nixosKeyModuleExists;
 
     errors = lib.filter (e: e != null) [
       (
-        if !darwinDefaultEval.success
-        then "Darwin: ${darwinDefaultEval.value}"
-        else null
-      )
-      (
-        if !nixosDefaultEval.success
-        then "NixOS: ${nixosDefaultEval.value}"
-        else null
-      )
-      (
         if !homeManagerDefaultEval.success
         then "Home Manager: ${homeManagerDefaultEval.value}"
+        else null
+      )
+      (
+        if !darwinDefaultGone
+        then "Darwin default.nix should be removed"
+        else null
+      )
+      (
+        if !nixosDefaultGone
+        then "NixOS default.nix should be removed"
         else null
       )
     ];
@@ -222,10 +201,10 @@
 
     capabilityFiles = [
       "capability-schema.nix"
-      "capability-loader.nix"
-      "dependency-resolver.nix"
-      "module-mapping.nix"
-      "capability-integration.nix"
+      "capability-system.nix"
+      "host-discovery.nix"
+      "module-mapping/default.nix"
+      "session-generator.nix"
     ];
 
     filesExist =
@@ -243,20 +222,23 @@
         value = "Schema not found";
       };
 
-    loaderEval =
+    systemEval =
       if lib.length filesExist > 1 && lib.elem true (lib.take 2 filesExist)
       then
         builtins.tryEval
-        (import (libDir + "/capability-loader.nix") {inherit lib;})
+        (import (libDir + "/capability-system.nix") {
+          inherit lib;
+          inputs = {};
+        })
       else {
         success = false;
-        value = "Loader not found";
+        value = "Capability system not found";
       };
   in {
     capabilitySystemExists = libExists && allFilesExist;
     schemaEvaluates = schemaEval.success;
-    loaderEvaluates = loaderEval.success;
-    capabilitySystemWorking = schemaEval.success && loaderEval.success;
+    systemEvaluates = systemEval.success;
+    capabilitySystemWorking = schemaEval.success && systemEval.success;
     missingFiles = lib.subtractLists filesExist capabilityFiles;
   };
 
@@ -267,9 +249,9 @@
 
     expectedScripts = [
       "garbage-collect.sh"
-      "darwin-bootstrap.sh"
       "install-hooks.sh"
       "clear-eval-cache.sh"
+      "toggle-kanata.sh"
     ];
 
     scriptsExist =
@@ -332,7 +314,7 @@ in
     testModuleSystemIntegration = {
       expr =
         moduleTestResult.directoriesExist
-        && moduleTestResult.defaultFilesExist;
+        && moduleTestResult.defaultFilesCorrect;
       expected = true;
     };
 
@@ -439,7 +421,7 @@ in
           flakeTestResult.flakeEvaluates
           && moduleTestResult.allModulesEvaluate;
         hostsIntegrated =
-          lib.all (r: r.hostExists && r.systemExists) hostTestResults;
+          lib.all (r: r.capabilitiesExists && r.systemExists) hostTestResults;
       in
         systemsIntegrated && hostsIntegrated;
       expected = true;

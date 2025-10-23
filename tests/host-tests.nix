@@ -69,7 +69,7 @@ in
 
     # Test secrets structure
     testSecretsExists = {
-      expr = builtins.pathExists ../secrets/sgrimee.yaml;
+      expr = builtins.pathExists ../secrets/shared/sgrimee.yaml;
       expected = true;
     };
 
@@ -180,14 +180,15 @@ in
     # Test capability system configuration structure
     testCapabilitySystemStructure = {
       expr = let
-        capabilityLoaderExists = builtins.pathExists ../lib/capability-loader.nix;
-        capabilityIntegrationExists =
-          builtins.pathExists ../lib/capability-integration.nix;
-        moduleMappingExists = builtins.pathExists ../lib/module-mapping.nix;
+        capabilitySystemExists = builtins.pathExists ../lib/capability-system.nix;
+        capabilitySchemaExists = builtins.pathExists ../lib/capability-schema.nix;
+        moduleMappingExists = builtins.pathExists ../lib/module-mapping/default.nix;
+        hostDiscoveryExists = builtins.pathExists ../lib/host-discovery.nix;
       in
-        capabilityLoaderExists
-        && capabilityIntegrationExists
-        && moduleMappingExists;
+        capabilitySystemExists
+        && capabilitySchemaExists
+        && moduleMappingExists
+        && hostDiscoveryExists;
       expected = true;
     };
   }
