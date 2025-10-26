@@ -81,14 +81,14 @@ in {
     timing = {
       tapMs = mkOption {
         type = types.ints.positive;
-        default = 150;
-        description = "Tap threshold in milliseconds for tap-hold keys";
+        default = 200;
+        description = "Tap threshold in milliseconds for tap-hold keys (increased for fast typing)";
       };
 
       holdMs = mkOption {
         type = types.ints.positive;
-        default = 200;
-        description = "Hold threshold in milliseconds for tap-hold keys";
+        default = 280;
+        description = "Hold threshold in milliseconds for tap-hold keys (increased for fast typing)";
       };
     };
 

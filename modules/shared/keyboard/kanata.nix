@@ -48,16 +48,16 @@ with lib; {
     # Generate aliases based on enabled features
     aliases =
       concatStringsSep "\n  "
-      (optional needsCaps "escctrl (tap-hold $tap-time $hold-time esc lctl)"
+      (optional needsCaps "escctrl (tap-hold-release $tap-time $hold-time esc lctl)"
         ++ optionals needsHomerow [
-          "a (tap-hold $tap-time $hold-time a lctrl)"
-          "s (tap-hold $tap-time $hold-time s lalt)"
-          "d (tap-hold $tap-time $hold-time d lmet)"
-          "f (tap-hold $tap-time $hold-time f lsft)"
-          "j (tap-hold $tap-time $hold-time j rsft)"
-          "k (tap-hold $tap-time $hold-time k rmet)"
-          "l (tap-hold $tap-time $hold-time l ralt)"
-          "; (tap-hold $tap-time $hold-time ; rctrl)"
+          "a (tap-hold-release $tap-time $hold-time a lctrl)"
+          "s (tap-hold-release $tap-time $hold-time s lalt)"
+          "d (tap-hold-release $tap-time $hold-time d lmet)"
+          "f (tap-hold-release $tap-time $hold-time f lsft)"
+          "j (tap-hold-release $tap-time $hold-time j rsft)"
+          "k (tap-hold-release $tap-time $hold-time k rmet)"
+          "l (tap-hold-release $tap-time $hold-time l ralt)"
+          "; (tap-hold-release $tap-time $hold-time ; rctrl)"
         ]
         ++ optionals needsSpaceMew [
           "mew (multi lctl lalt lsft)"
@@ -126,6 +126,15 @@ with lib; {
         ${
         optionalString (pkgs != null && pkgs.stdenv.isDarwin or false)
         "danger-enable-cmd yes"
+      }
+        ${
+        optionalString (pkgs != null && pkgs.stdenv.isLinux or false)
+        ''
+          concurrent-tap-hold yes
+          process-unmapped-keys yes
+          rapid-event-delay 2
+          delegate-to-first-layer-timeout 500
+          linux-x11-repeat-delay-rate 400,50''
       }
         ${filterSection}
       )
