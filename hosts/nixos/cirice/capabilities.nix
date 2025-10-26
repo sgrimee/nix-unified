@@ -32,7 +32,7 @@
     wifi = true; # Built-in WiFi
     printer = true; # CUPS printing support
     keyboard = {
-      advanced = true; # Kanata keyboard remapping with home row mods
+      remapping = true; # Kanata keyboard remapping with homerow mods
       devices = ["/dev/input/by-path/platform-i8042-serio-0-event-kbd"];
     };
     # Resource capabilities for Nix configuration

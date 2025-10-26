@@ -9,8 +9,7 @@
     localHostName = "SGRIMEE-M-4HJT";
   };
 
-  # Use kanata with karabiner driver (requires karabiner-elements)
-  keyboard.remapper = "kanata";
+  # Keyboard remapper choice now set in capabilities.nix (hardware.keyboard.remapper)
 
   # Enable spacebar-to-mew feature (tap = space, hold = Ctrl+Alt+Shift)
   keyboard.features.mapSpaceToMew = true;

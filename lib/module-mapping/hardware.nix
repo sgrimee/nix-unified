@@ -57,9 +57,9 @@
     };
 
     keyboard = {
-      advanced = {
+      remapping = {
         nixos = [../../modules/nixos/kanata.nix];
-        darwin = [../../modules/darwin/kanata.nix];
+        darwin = [../../modules/darwin/keyboard.nix];
       };
     };
   };

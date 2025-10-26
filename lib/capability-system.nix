@@ -519,9 +519,9 @@
       (
         if
           resolvedCapabilities.hardware ? keyboard
-          && resolvedCapabilities.hardware.keyboard ? advanced
-          && resolvedCapabilities.hardware.keyboard.advanced
-        then moduleMapping.hardwareModules.keyboard.advanced.${platform} or []
+          && resolvedCapabilities.hardware.keyboard ? remapping
+          && resolvedCapabilities.hardware.keyboard.remapping
+        then moduleMapping.hardwareModules.keyboard.remapping.${platform} or []
         else []
       )
     ];

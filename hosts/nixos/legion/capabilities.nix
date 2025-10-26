@@ -31,7 +31,7 @@
     wifi = true; # WiFi hardware support
     printer = true; # CUPS printing support
     keyboard = {
-      advanced = true; # Kanata keyboard remapping with home row mods
+      remapping = true; # Kanata keyboard remapping with homerow mods
       devices = ["/dev/input/by-path/pci-0000:00:14.0-usbv2-0:8:1.0-event-kbd"];
     };
     # Resource capabilities for Nix configuration

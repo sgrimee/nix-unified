@@ -151,10 +151,28 @@
       };
 
       keyboard = {
+        remapping = {
+          type = lib.types.bool;
+          default = false;
+          description = "Enable keyboard remapping with homerow modifiers and tap-hold functionality (Kanata on NixOS/Linux, configurable on macOS)";
+        };
+
+        remapper = {
+          type = lib.types.nullOr (lib.types.enum ["kanata" "karabiner"]);
+          default = null;
+          description = "Keyboard remapper to use (macOS only: kanata or karabiner; NixOS always uses kanata when remapping is enabled)";
+        };
+
         swapAltCommand = {
           type = lib.types.bool;
           default = false;
           description = "Swap Alt and Command keys (useful for macOS keyboards on NixOS)";
+        };
+
+        devices = {
+          type = lib.types.nullOr (lib.types.listOf lib.types.str);
+          default = null;
+          description = "List of keyboard device paths (NixOS only, e.g., /dev/input/by-path/...)";
         };
       };
     };

@@ -31,6 +31,10 @@
     bluetooth = true; # Built-in Bluetooth
     wifi = true; # Built-in WiFi
     printer = true; # CUPS printing support
+    keyboard = {
+      remapping = true; # Enable keyboard remapping with homerow mods
+      remapper = "karabiner"; # Use Karabiner-Elements on macOS
+    };
     # Resource capabilities for Nix configuration
     large-ram = true; # High memory system, use larger download buffers
     large-disk = false; # Standard SSD storage, keep default settings
