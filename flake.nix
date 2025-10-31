@@ -54,7 +54,11 @@
     unstableConfig = {allowUnfree = true;};
 
     # Configure stable packages with allowUnfree
-    stableConfig = {allowUnfree = true;};
+    # Note: Only global settings here. Module-specific settings (cargo, pulseaudio)
+    # belong in their respective modules
+    stableConfig = {
+      allowUnfree = true;
+    };
 
     # Import overlays
     overlays = import ./overlays;

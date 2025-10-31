@@ -991,7 +991,14 @@ in {
           {
             nixpkgs = {
               overlays = import ../overlays;
-              config.allowUnfree = true;
+              config = {
+                allowUnfree = true;
+                # Global insecure package exceptions
+                permittedInsecurePackages = [
+                  "mbedtls-2.28.10" # Required by strongswan (VPN), dolphin-emu (gaming)
+                  "broadcom-sta-6.30.223.271-57-6.12.39" # Old WiFi hardware
+                ];
+              };
             };
           }
         ];

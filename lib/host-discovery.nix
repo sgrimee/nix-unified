@@ -59,8 +59,8 @@
         };
 
     specialArgs = {
-      inherit inputs system stateVersion overlays unstable;
-      stable = stable;
+      inherit inputs system stateVersion overlays unstable stable;
+      # Don't pass pkgs here - let module system create it with overlays + module configs
     };
   in
     capabilitySystem.buildSystemConfig platform hostName system specialArgs;
