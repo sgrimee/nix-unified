@@ -21,7 +21,7 @@
     ]
     ++
     # Chromium only available on Linux platforms
-    (lib.optional pkgs.stdenv.isLinux chromium); # Open-source version of Chrome
+    (lib.optional pkgs.stdenv.isLinux ungoogled-chromium); # Privacy-focused Chromium, usually better cached
 
   metadata = {
     description = "Productivity packages";
