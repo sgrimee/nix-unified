@@ -132,8 +132,7 @@ with lib; {
         ''
           concurrent-tap-hold yes
           process-unmapped-keys yes
-          rapid-event-delay 2
-          linux-x11-repeat-delay-rate 400,50''
+          rapid-event-delay 2''
       }
         ${filterSection}
       )
