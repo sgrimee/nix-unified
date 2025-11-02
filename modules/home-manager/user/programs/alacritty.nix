@@ -12,6 +12,13 @@
           x = 24;
           y = 24;
         };
+        dynamic_padding = true;
+        decorations = "full";
+        title = "Terminal";
+        class = {
+          instance = "Alacritty";
+          general = "Alacritty";
+        };
       };
 
       font = {
@@ -19,14 +26,6 @@
           family = "MesloLGS NF";
           style = "Regular";
         };
-      };
-
-      dynamic_padding = true;
-      decorations = "full";
-      title = "Terminal";
-      class = {
-        instance = "Alacritty";
-        general = "Alacritty";
       };
 
       colors = {
