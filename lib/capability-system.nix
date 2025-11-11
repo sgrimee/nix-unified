@@ -996,8 +996,12 @@ in {
                 # Global insecure package exceptions
                 permittedInsecurePackages = [
                   "mbedtls-2.28.10" # Required by strongswan (VPN), dolphin-emu (gaming)
-                  "broadcom-sta-6.30.223.271-57-6.12.39" # Old WiFi hardware
                 ];
+                # Allow all versions of certain insecure packages
+                allowInsecurePredicate = pkg:
+                  builtins.elem (lib.getName pkg) [
+                    "broadcom-sta" # Old WiFi hardware - allow all versions
+                  ];
               };
             };
           }
