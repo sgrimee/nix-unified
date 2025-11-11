@@ -70,9 +70,7 @@ in {
 
       # Warnings for configuration
       warnings =
-        optional (keyboardUtils.hasActiveFeatures && useKarabiner)
-        "Karabiner-Elements selected: Please configure homerow mods manually in Karabiner-Elements app"
-        ++ optional (keyboardUtils.hasActiveFeatures && selectedRemapper == null)
+        optional (keyboardUtils.hasActiveFeatures && selectedRemapper == null)
         "Keyboard remapping enabled but no remapper selected. Set hardware.keyboard.remapper to 'kanata' or 'karabiner' in capabilities.nix";
     }
   ];
