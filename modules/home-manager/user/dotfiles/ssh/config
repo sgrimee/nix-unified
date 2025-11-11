@@ -29,6 +29,11 @@ Host *.github.com
     AddKeysToAgent yes
     UseKeychain yes
 
+# NixOS hosts - force IPv4 and disable canonicalization
+Host *.local legion cirice dracula nixair
+  AddressFamily inet
+  CanonicalizeHostname no
+
 Host legion.local
 Host pi3b.local
 Host hass
