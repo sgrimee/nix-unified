@@ -30,9 +30,16 @@ in {
       default = null;
       description = "Path to quickshell configuration directory";
     };
+
+    # Add configs option for DankMaterialShell compatibility
+    configs = mkOption {
+      type = types.attrsOf types.path;
+      default = {};
+      description = "Quickshell configuration directories (used by DankMaterialShell)";
+    };
   };
 
-  config = mkIf cfg.enable {
+  config = mkIf (cfg.enable && !(config.programs.dankMaterialShell.enable or false)) {
     home.packages = [cfg.package];
 
     # Create a basic quickshell config if none provided

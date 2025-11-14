@@ -46,8 +46,8 @@
   # Environment preferences
   environment = {
     desktops = {
-      available = ["sway" "gnome"]; # Both desktops available
-      default = "sway"; # Default to sway
+      available = ["sway" "gnome" "niri"]; # All desktops available
+      default = "niri"; # Default to niri
     };
     bars = {
       available = ["caelestia" "waybar" "quickshell"]; # All bars available

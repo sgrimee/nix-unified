@@ -1,6 +1,8 @@
 {
   lib,
   pkgs,
+  niriPackage ? null,
+  dmsCliPackage ? null,
 }: let
   generateSessionFile = {
     name,
@@ -55,12 +57,50 @@
     comment = "GNOME Desktop Environment";
   };
 
+  generateNiriSession =
+    if niriPackage != null
+    then
+      generateSessionFile {
+        name = "niri";
+        exec = "${pkgs.writeShellScript "niri" ''
+          export XDG_SESSION_TYPE=wayland
+          export XDG_CURRENT_DESKTOP=niri
+          # niri-session handles starting niri as a systemd service
+          exec ${niriPackage}/bin/niri-session
+        ''}";
+        desktopName = "Niri";
+        comment = "Niri scrollable-tiling Wayland compositor with waybar/rofi";
+      }
+    else null;
+
+  generateNiriDmsSession =
+    if niriPackage != null && dmsCliPackage != null
+    then
+      generateSessionFile {
+        name = "niri-dms";
+        exec = "${pkgs.writeShellScript "niri-dms" ''
+          export XDG_SESSION_TYPE=wayland
+          export XDG_CURRENT_DESKTOP=niri
+          # Start niri-session which sets up the wayland environment
+          ${niriPackage}/bin/niri-session &
+          # Wait for niri to be ready
+          sleep 2
+          # Start DankMaterialShell manually (since systemd auto-start is disabled)
+          exec ${dmsCliPackage}/bin/dms run
+        ''}";
+        desktopName = "Niri (DankMaterialShell)";
+        comment = "Niri scrollable-tiling Wayland compositor with DankMaterialShell";
+      }
+    else null;
+
   generateSessions = {
     desktops,
     bars,
+    enableDms ? false,
   }: let
     hasGnome = builtins.elem "gnome" desktops.available;
     hasSway = builtins.elem "sway" desktops.available;
+    hasNiri = builtins.elem "niri" desktops.available;
 
     swaySessions =
       if hasSway
@@ -72,7 +112,17 @@
       then [generateGnomeSession]
       else [];
 
-    allSessions = swaySessions ++ gnomeSessions;
+    niriSessions =
+      if hasNiri && generateNiriSession != null
+      then [generateNiriSession]
+      else [];
+
+    niriDmsSessions =
+      if hasNiri && enableDms && generateNiriDmsSession != null
+      then [generateNiriDmsSession]
+      else [];
+
+    allSessions = swaySessions ++ gnomeSessions ++ niriSessions ++ niriDmsSessions;
   in
     builtins.listToAttrs allSessions;
 in {

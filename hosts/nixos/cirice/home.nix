@@ -19,7 +19,14 @@ in {
     imports = [
       ../../../modules/home-manager/user
       ./packages.nix
+      ../../../modules/home-manager/dank-material-shell.nix
     ];
+
+    # Enable DankMaterialShell (available via "Niri (DankMaterialShell)" session in greetd)
+    programs.dankMaterialShell.enable = true;
+
+    # Enable niri window manager
+    programs.niri.enable = true;
 
     home = {
       # file = {

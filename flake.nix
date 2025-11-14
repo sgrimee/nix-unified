@@ -34,6 +34,16 @@
       # tracking stable disabled because of https://github.com/caelestia-dots/shell/issues/638
       # inputs.nixpkgs.follows = "stable-nixos";
     };
+
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "stable-nixos";
+    };
+
+    dank-material-shell = {
+      url = "github:AvengeMedia/DankMaterialShell";
+      inputs.nixpkgs.follows = "stable-nixos";
+    };
   };
 
   outputs = {
@@ -45,6 +55,8 @@
     sops-nix,
     determinate,
     caelestia-shell,
+    niri,
+    dank-material-shell,
     ...
   } @ inputs: let
     lib = inputs.stable-nixos.lib;
@@ -61,7 +73,12 @@
     };
 
     # Import overlays
-    overlays = import ./overlays;
+    overlays =
+      (import ./overlays)
+      ++ [
+        # Niri compositor overlay from niri-flake
+        niri.overlays.niri
+      ];
 
     # Import unified capability system
     capabilitySystem =

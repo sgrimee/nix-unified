@@ -2,11 +2,31 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 with lib; let
+  # Check if DankMaterialShell is enabled in any user's home-manager config
+  hmUsers = config.home-manager.users or {};
+  dmsEnabled = lib.any (userCfg: userCfg.programs.dankMaterialShell.enable or false) (lib.attrValues hmUsers);
+
+  # Get dms-cli from the dank-material-shell flake if DMS is enabled
+  dmsCliPackage =
+    if dmsEnabled
+    then let
+      system = pkgs.stdenv.hostPlatform.system;
+      dmsPkgs = {
+        dmsCli = inputs.dank-material-shell.inputs.dms-cli.packages.${system}.default;
+      };
+    in
+      dmsPkgs.dmsCli
+    else null;
+
   # Import session generator
-  sessionGenerator = import ../../lib/session-generator.nix {inherit lib pkgs;};
+  sessionGenerator = import ../../lib/session-generator.nix {
+    inherit lib pkgs dmsCliPackage;
+    niriPackage = config.programs.niri.package or null;
+  };
 
   # Get host capabilities
   hostCapabilities = config._module.args.hostCapabilities or {};
@@ -19,6 +39,8 @@ with lib; let
   defaultSessionCmd =
     if defaultDesktop == "gnome"
     then "gnome"
+    else if defaultDesktop == "niri"
+    then "niri"
     else if (builtins.elem defaultDesktop (hostCapabilities.environment.desktops.available or []))
     then "sway-${defaultBar}"
     else "sway-waybar"; # Fallback
@@ -61,6 +83,8 @@ in {
           sessionGenerator.generateSessions {
             desktops = hostCapabilities.environment.desktops;
             bars = hostCapabilities.environment.bars;
+            # Enable DMS session if any user has it enabled
+            enableDms = dmsEnabled;
           }
         else {};
     })

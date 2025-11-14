@@ -31,5 +31,6 @@
     ./yazi.nix
     ./zsh.nix
     ./zoxide.nix
+    ../../niri.nix
   ];
 }

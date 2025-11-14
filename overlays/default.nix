@@ -1,1 +1,3 @@
-[(import ./update-coding-agents.nix)]
+[
+  (import ./update-coding-agents.nix)
+]

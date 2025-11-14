@@ -33,7 +33,7 @@
           "home-server"
           "mobile"
         ];
-        desktop = ["gnome" "sway" "kde"];
+        desktop = ["gnome" "sway" "kde" "niri"];
         hardware = {
           cpu = ["intel" "amd"];
           gpu = ["nvidia" "amd" "intel"];
@@ -990,7 +990,7 @@ in {
           # Central nixpkgs configuration
           {
             nixpkgs = {
-              overlays = import ../overlays;
+              overlays = (import ../overlays) ++ specialArgs.overlays;
               config = {
                 allowUnfree = true;
                 # Global insecure package exceptions

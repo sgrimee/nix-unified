@@ -196,13 +196,13 @@
       # Desktop environments - multi-session support (NixOS only)
       desktops = {
         available = {
-          type = lib.types.listOf (lib.types.enum ["gnome" "sway" "kde" "darwin"]);
+          type = lib.types.listOf (lib.types.enum ["gnome" "sway" "kde" "niri" "darwin"]);
           default = [];
           description = "Available desktop environments for session selection (use 'darwin' for macOS)";
         };
 
         default = {
-          type = lib.types.nullOr (lib.types.enum ["gnome" "sway" "kde" "darwin"]);
+          type = lib.types.nullOr (lib.types.enum ["gnome" "sway" "kde" "niri" "darwin"]);
           default = null;
           description = "Default desktop environment at login (use 'darwin' for macOS)";
         };

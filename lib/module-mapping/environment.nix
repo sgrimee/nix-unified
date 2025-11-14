@@ -24,6 +24,18 @@
           ../../modules/home-manager/user/rofi.nix
         ];
       };
+      niri = {
+        nixos = [
+          ../../modules/nixos/greetd.nix
+          ../../modules/nixos/niri.nix
+        ];
+        darwin = [];
+        homeManager = [
+          ../../modules/home-manager/waybar.nix
+          ../../modules/home-manager/quickshell.nix
+          ../../modules/home-manager/user/rofi.nix
+        ];
+      };
       kde = {
         nixos = [];
         darwin = [];
