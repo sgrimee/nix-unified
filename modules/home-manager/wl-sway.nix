@@ -62,8 +62,8 @@ in {
           "${cfg.modifier}+Shift+l" = "move up";
           "${cfg.modifier}+Shift+semicolon" = "move right";
 
-          "XF86MonBrightnessUp" = "exec brightnessctl -d intel_backlight s +10%";
-          "XF86MonBrightnessDown" = "exec brightnessctl -d intel_backlight s 10%-";
+          "XF86MonBrightnessUp" = "exec brightnessctl s +10%";
+          "XF86MonBrightnessDown" = "exec brightnessctl s 10%-";
           "XF86KbdBrightnessUp" = "exec brightnessctl -d smc::kbd_backlight s +20";
           "XF86KbdBrightnessDown" = "exec brightnessctl -d smc::kbd_backlight s 20-";
           "XF86AudioRaiseVolume" = "exec pactl set-sink-volume @DEFAULT_SINK@ +5%";
