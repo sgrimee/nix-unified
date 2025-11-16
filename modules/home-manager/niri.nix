@@ -16,7 +16,11 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkMerge [
+    # Enable automatically when module imported (can be disabled explicitly)
+    {programs.niri.enable = lib.mkDefault true;}
+
+    (lib.mkIf cfg.enable {
     # Additional recommended software for a complete desktop experience
     # These are suggestions from the niri docs
     home.packages = with pkgs; [
@@ -37,5 +41,6 @@ in {
     xdg.configFile."niri/config.kdl" = {
       source = ./user/dotfiles/niri/config.kdl;
     };
-  };
+    })
+  ];
 }

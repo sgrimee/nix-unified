@@ -46,8 +46,8 @@
   # Environment preferences
   environment = {
     desktops = {
-      available = ["sway"]; # Only sway available
-      default = "sway";
+      available = ["sway" "niri"]; # Sway and niri available
+      default = "niri"; # Default to niri
     };
     bars = {
       available = ["waybar"]; # Only waybar available
