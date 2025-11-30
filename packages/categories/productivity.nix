@@ -13,7 +13,7 @@
     yazi # Blazing fast terminal file manager
     zellij # Terminal workspace multiplexer
     gping # Ping with a graph
-    fuzzel # Wayland application launcher
+    # fuzzel now loaded via capability system for Wayland desktops
   ];
 
   browsers = with pkgs;

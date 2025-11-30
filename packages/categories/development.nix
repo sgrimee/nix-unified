@@ -20,6 +20,7 @@
     uv
     carapace
     joshuto
+    espflash # ESP32/ESP8266 serial flasher (Rust-based alternative to esptool)
   ];
 
   # Language-specific packages

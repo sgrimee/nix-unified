@@ -2,6 +2,7 @@
   "borders" # macOS window border utility
   "bun" # Fast JavaScript runtime and package manager
   "dua-cli" # Disk usage analyzer with interactive mode
+  "mongodb/brew/mongodb-database-tools" # MongoDB command-line database tools
   "tw93/tap/mole" # Network tunneling tool
   "node" # JavaScript runtime (managed by modules/home-manager/user/programs/node.nix)
   "pam-reattach" # Reattach to user namespace on macOS
