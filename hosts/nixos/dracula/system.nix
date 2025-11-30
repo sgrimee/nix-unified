@@ -11,6 +11,9 @@
     enableAskPassword = true;
   };
 
+  # Enable ACPI daemon for power management
+  services.acpid.enable = true;
+
   # Enable Apple SMC kernel module for keyboard backlight control
   boot.kernelModules = ["applesmc"];
   boot.extraModulePackages = [];

@@ -9,6 +9,9 @@
     enableAskPassword = true;
   };
 
+  # Enable ACPI daemon for power management
+  services.acpid.enable = true;
+
   nix.settings = {
     max-jobs =
       lib.mkForce

@@ -21,6 +21,9 @@
     enableAskPassword = true;
   };
 
+  # Enable ACPI daemon for power management
+  services.acpid.enable = true;
+
   # Enable StrongSwan VPN client for Senningerberg
   services.strongswan-senningerberg = {
     enable = true;
