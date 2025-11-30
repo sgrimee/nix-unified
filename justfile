@@ -12,36 +12,80 @@ default:
 # - test-linux/test-darwin: Platform-specific configuration validation
 # - test-remote-builders: Verify remote build machines are working
 
-# Run basic validation tests (lightweight - syntax + flake validation)
-test *ARGS:
-    @echo "🧪 Running Basic Validation Tests"
-    @echo "================================="
-    @echo "📝 Running core unit tests..."
-    just test-basic
-    @echo "🔍 Running flake validation..."
-    just check {{ARGS}}
-    @echo ""
-    @echo "🎉 Basic validation completed successfully!"
+# Lightweight basic validation (syntax, core modules, flake check) - recommended for regular use
+test:
+    @echo "Running quick validation..."
+    @echo "1. Running basic core tests..."
+    @nix-instantiate --eval --strict --expr 'import ./tests/basic.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }' > /dev/null && echo "✅ Basic tests passed"
+    @echo "2. Running flake check..."
+    @nix flake check --no-warn-dirty && echo "✅ Flake check passed"
+    @echo "🎉 Quick validation completed successfully!"
 
+# Run basic core tests only (fastest - syntax and module loading only)
+test-basic:
+    @echo "Running basic core tests..."
+    nix-instantiate --eval --strict --expr 'import ./tests/basic.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }'
 
-# Run tests for specific platform (lightweight - just config evaluation)
+# Run all unit tests with verbose output (comprehensive - all tests with detailed output)
+test-verbose:
+    @echo "Running all unit tests with verbose output..."
+    nix-instantiate --eval --strict --expr 'import ./tests/default.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> { config.allowUnfree = true; }; }'
+
+# Run tests for specific platform (platform-specific - validates NixOS host configurations)
 test-linux:
-    @echo "🧪 Running Linux Platform Tests"
-    @echo "==============================="
-    @echo "🔍 Evaluating NixOS configurations..."
-    @nix eval .#nixosConfigurations.nixair.config.system.stateVersion --no-warn-dirty && echo "✅ nixair configuration valid"
-    @nix eval .#nixosConfigurations.dracula.config.system.stateVersion --no-warn-dirty && echo "✅ dracula configuration valid"
-    @nix eval .#nixosConfigurations.legion.config.system.stateVersion --no-warn-dirty && echo "✅ legion configuration valid"
-    @echo "🎉 All Linux configurations validated successfully!"
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "🧪 Running Linux Platform Tests"
+    echo "==============================="
+    echo "🔍 Evaluating NixOS configurations..."
 
+    FAILED=0
+    while IFS=: read -r host platform; do
+        if [ "$platform" = "nixos" ]; then
+            if nix eval .#nixosConfigurations."$host".config.system.stateVersion --no-warn-dirty > /dev/null 2>&1; then
+                echo "✅ $host configuration valid"
+            else
+                echo "❌ $host configuration invalid"
+                FAILED=1
+            fi
+        fi
+    done < <(./utils/get-hosts.sh)
+
+    if [ $FAILED -eq 0 ]; then
+        echo "🎉 All Linux configurations validated successfully!"
+    else
+        echo "❌ Some Linux configurations failed validation"
+        exit 1
+    fi
+
+# Run tests for specific platform (platform-specific - validates Darwin host configurations)
 test-darwin:
-    @echo "🧪 Running Darwin Platform Tests"
-    @echo "================================"
-    @echo "🔍 Evaluating Darwin configuration..."
-    @nix eval .#darwinConfigurations.SGRIMEE-M-4HJT.config.system.stateVersion --no-warn-dirty && echo "✅ SGRIMEE-M-4HJT configuration valid"
-    @echo "🎉 Darwin configuration validated successfully!"
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "🧪 Running Darwin Platform Tests"
+    echo "================================"
+    echo "🔍 Evaluating Darwin configurations..."
 
-# Test remote build machines connectivity and functionality
+    FAILED=0
+    while IFS=: read -r host platform; do
+        if [ "$platform" = "darwin" ]; then
+            if nix eval .#darwinConfigurations."$host".config.system.stateVersion --no-warn-dirty > /dev/null 2>&1; then
+                echo "✅ $host configuration valid"
+            else
+                echo "❌ $host configuration invalid"
+                FAILED=1
+            fi
+        fi
+    done < <(./utils/get-hosts.sh)
+
+    if [ $FAILED -eq 0 ]; then
+        echo "🎉 All Darwin configurations validated successfully!"
+    else
+        echo "❌ Some Darwin configurations failed validation"
+        exit 1
+    fi
+
+# Test remote build machines connectivity and functionality (infrastructure - verifies remote builders)
 test-remote-builders:
     @echo "🧪 Testing Remote Build Machines"
     @echo "================================"
@@ -53,79 +97,109 @@ test-remote-builders:
     @nix build nixpkgs#hello --max-jobs 0 --no-link && echo "✅ Remote build test successful"
     @echo "🎉 All remote builders are working correctly!"
 
-# Run basic core tests only (syntax, module loading, config validation - internal use)
-test-basic:
-    @echo "Running basic core tests..."
-    nix-instantiate --eval --strict --expr 'import ./tests/basic.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> {}; }'
-
-# Run all unit tests with verbose output (includes all tests + internal cross-platform tests)
-test-verbose:
-    @echo "Running all unit tests with verbose output..."
-    nix-instantiate --eval --strict --expr 'import ./tests/default.nix { lib = (import <nixpkgs> {}).lib; pkgs = import <nixpkgs> { config.allowUnfree = true; }; }'
-
 # === Building and Switching ===
 
-# Build specific host configuration (without switching)
-build HOST:
-    @echo "Building configuration for {{HOST}}..."
-    @if [ "{{HOST}}" = "SGRIMEE-M-4HJT" ]; then \
-        nix build .#darwinConfigurations.{{HOST}}.system --print-build-logs; \
-    else \
-        nix build .#nixosConfigurations.{{HOST}}.config.system.build.toplevel --print-build-logs; \
+# Build current host configuration (without switching)
+build:
+    @just build-host `hostname`
+
+# Build specific host configuration (interactive selection if no HOST provided)
+build-host HOST="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    # If no host specified, use interactive selection
+    if [ -z "{{HOST}}" ]; then
+        TARGET_HOST=$(echo "$HOST_LIST" | ./utils/host-selector.sh)
+    else
+        TARGET_HOST="{{HOST}}"
     fi
 
-# Build with timing information
-build-timed HOST:
-    @echo "Building configuration for {{HOST}} with timing..."
-    @if [ "{{HOST}}" = "SGRIMEE-M-4HJT" ]; then \
-        time nix build .#darwinConfigurations.{{HOST}}.system --print-build-logs; \
-    else \
-        time nix build .#nixosConfigurations.{{HOST}}.config.system.build.toplevel --print-build-logs; \
+    # Get platform for the target host from cached list
+    PLATFORM=$(echo "$HOST_LIST" | grep "^$TARGET_HOST:" | cut -d: -f2 || (echo "❌ Host $TARGET_HOST not found" >&2; exit 1))
+
+    echo "Building configuration for $TARGET_HOST..."
+
+    if [ "$PLATFORM" = "darwin" ]; then
+        nix build .#darwinConfigurations."$TARGET_HOST".system --print-build-logs
+    else
+        nix build .#nixosConfigurations."$TARGET_HOST".config.system.build.toplevel --print-build-logs
     fi
 
-# Check what will be built before building
-check-derivations HOST:
-    @echo "Checking what needs to be built for {{HOST}}..."
-    @if [ "{{HOST}}" = "SGRIMEE-M-4HJT" ]; then \
-        nix path-info --derivation .#darwinConfigurations.{{HOST}}.system; \
-    else \
-        nix path-info --derivation .#nixosConfigurations.{{HOST}}.config.system.build.toplevel; \
-    fi
-
-# Switch to configuration for current host
+# Rebuild system and Home Manager (full rebuild) for current host
 switch:
     #!/usr/bin/env bash
-    echo "Switching to current host configuration..."
-    case "$(uname -s)" in
-        Darwin)
-            sudo darwin-rebuild switch --flake .
-            ;;
-        *)
-            sudo nixos-rebuild switch --flake .
-            ;;
-    esac
+    set -euo pipefail
 
-# Switch to specific host configuration
-switch-host HOST:
-    @echo "Switching to {{HOST}} configuration..."
-    @if [ "{{HOST}}" = "SGRIMEE-M-4HJT" ]; then \
-        sudo darwin-rebuild switch --flake .#{{HOST}}; \
-    else \
-        sudo nixos-rebuild switch --flake .#{{HOST}}; \
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    # Use current hostname
+    TARGET_HOST=$(hostname)
+
+    # Get platform for the target host from cached list
+    PLATFORM=$(echo "$HOST_LIST" | grep "^$TARGET_HOST:" | cut -d: -f2 || (echo "❌ Host $TARGET_HOST not found" >&2; exit 1))
+
+    echo "🔄 Full rebuild: $TARGET_HOST (system + Home Manager)..."
+
+    if [ "$PLATFORM" = "darwin" ]; then
+        sudo darwin-rebuild switch --flake .#"$TARGET_HOST"
+    else
+        sudo nixos-rebuild switch --flake .#"$TARGET_HOST"
     fi
 
-# Dry run - show what would be built/changed
-dry-run:
+    echo "✅ System and Home Manager activated"
+
+# Rebuild Home Manager only for current host (fast iteration on user config)
+# This extracts and activates the Home Manager configuration from the system config
+# Behavior is identical to the Home Manager module, just faster for HM-only changes
+switch-home:
     #!/usr/bin/env bash
-    echo "Dry run for current host..."
-    case "$(uname -s)" in
-        Darwin)
-            darwin-rebuild build --dry-run --flake .
-            ;;
-        *)
-            sudo nixos-rebuild dry-run --flake .
-            ;;
-    esac
+    set -euo pipefail
+
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    # Use current hostname
+    TARGET_HOST=$(hostname)
+
+    # Get platform for the target host from cached list
+    PLATFORM=$(echo "$HOST_LIST" | grep "^$TARGET_HOST:" | cut -d: -f2 || (echo "❌ Host $TARGET_HOST not found" >&2; exit 1))
+
+    echo "🏠 Rebuilding Home Manager for $TARGET_HOST (system unchanged)..."
+
+    # Determine config path based on platform
+    if [ "$PLATFORM" = "darwin" ]; then
+        CONFIG_PATH=".#darwinConfigurations.$TARGET_HOST"
+    else
+        CONFIG_PATH=".#nixosConfigurations.$TARGET_HOST"
+    fi
+
+    # Get primary user from config (fallback to sgrimee if not set)
+    USER=$(nix eval "$CONFIG_PATH.config.system.primaryUser" --raw 2>/dev/null || echo "sgrimee")
+
+    echo "👤 User: $USER"
+
+    # Build HM activation package from system config
+    # This uses the EXACT same Home Manager configuration as the system module
+    # ensuring identical behavior whether activated via system or standalone
+    echo "🔨 Building Home Manager activation package..."
+    nix build "$CONFIG_PATH.config.home-manager.users.$USER.home.activationPackage" \
+        -o /tmp/hm-result-$TARGET_HOST \
+        --print-build-logs
+
+    # Activate Home Manager
+    echo "🚀 Activating Home Manager..."
+    /tmp/hm-result-$TARGET_HOST/activate
+
+    # Cleanup temporary symlink
+    rm -f /tmp/hm-result-$TARGET_HOST
+
+    echo "✅ Home Manager activated (system unchanged)"
+    echo "ℹ️  System configuration was not rebuilt or changed"
 
 # === Flake Management ===
 
@@ -139,28 +213,67 @@ update-input INPUT:
     @echo "Updating {{INPUT}}..."
     nix flake lock --update-input {{INPUT}}
 
-# Check flake for errors
+# Check flake for errors (validates entire flake structure)
 check *ARGS:
     @echo "Checking flake..."
     nix flake check {{ARGS}}
 
-# Check specific host configuration (defaults to current host)
-check-host HOST=`hostname`:
+# Check specific host configuration evaluates correctly (interactive selection if no HOST provided)
+check-host HOST="":
     #!/usr/bin/env bash
-    echo "Checking configuration for {{HOST}}..."
-    case "$(uname -s)" in
-        Darwin)
-            echo "Evaluating Darwin configuration..."
-            nix eval --no-warn-dirty .#darwinConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1)
-            ;;
-        *)
-            echo "Evaluating NixOS configuration..."
-            nix eval --no-warn-dirty .#nixosConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ {{HOST}} configuration is valid" || (echo "❌ {{HOST}} configuration has errors" && exit 1)
-            ;;
-    esac
+    set -euo pipefail
 
-# Show flake info
-show:
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    # If no host specified, use interactive selection
+    if [ -z "{{HOST}}" ]; then
+        TARGET_HOST=$(echo "$HOST_LIST" | ./utils/host-selector.sh)
+    else
+        TARGET_HOST="{{HOST}}"
+    fi
+
+    # Get platform for the target host from cached list
+    PLATFORM=$(echo "$HOST_LIST" | grep "^$TARGET_HOST:" | cut -d: -f2 || (echo "❌ Host $TARGET_HOST not found" >&2; exit 1))
+
+    echo "Checking configuration for $TARGET_HOST..."
+
+    if [ "$PLATFORM" = "darwin" ]; then
+        echo "Evaluating Darwin configuration..."
+        nix eval --no-warn-dirty .#darwinConfigurations."$TARGET_HOST".config.system.stateVersion > /dev/null && echo "✅ $TARGET_HOST configuration is valid" || (echo "❌ $TARGET_HOST configuration has errors" && exit 1)
+    else
+        echo "Evaluating NixOS configuration..."
+        nix eval --no-warn-dirty .#nixosConfigurations."$TARGET_HOST".config.system.stateVersion > /dev/null && echo "✅ $TARGET_HOST configuration is valid" || (echo "❌ $TARGET_HOST configuration has errors" && exit 1)
+    fi
+
+# Check what derivations will be built for a host (shows build plan without building)
+check-derivations HOST="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    # If no host specified, use interactive selection
+    if [ -z "{{HOST}}" ]; then
+        TARGET_HOST=$(echo "$HOST_LIST" | ./utils/host-selector.sh)
+    else
+        TARGET_HOST="{{HOST}}"
+    fi
+
+    # Get platform for the target host from cached list
+    PLATFORM=$(echo "$HOST_LIST" | grep "^$TARGET_HOST:" | cut -d: -f2 || (echo "❌ Host $TARGET_HOST not found" >&2; exit 1))
+
+    echo "Checking what needs to be built for $TARGET_HOST..."
+
+    if [ "$PLATFORM" = "darwin" ]; then
+        nix path-info --derivation .#darwinConfigurations."$TARGET_HOST".system
+    else
+        nix path-info --derivation .#nixosConfigurations."$TARGET_HOST".config.system.build.toplevel
+    fi
+
+# Show flake outputs
+show-flake-info:
     @echo "Showing flake outputs..."
     nix flake show
 
@@ -186,12 +299,12 @@ fmt:
     @echo "Formatting Nix files..."
     NIX_CONFIG="warn-dirty = false" find . -name "*.nix" -exec nix fmt {} -- --quiet \;
 
-# Lint and auto-fix Nix files with deadnix
+# Lint and auto-fix Nix files with deadnix (interactive - modifies files)
 lint:
     @echo "Linting Nix files and removing dead code..."
     nix run github:astro/deadnix -- --edit --no-lambda-pattern-names .
 
-# Check for dead code without fixing (for CI)
+# Check for dead code without fixing (non-interactive - for CI/pre-commit)
 lint-check:
     @echo "Checking for dead code..."
     nix run github:astro/deadnix -- --fail --no-lambda-pattern-names .
@@ -221,13 +334,39 @@ list-package-categories:
 search-packages TERM:
     nix eval .#searchPackages --apply "f: f \"{{TERM}}\"" --json | jq
 
-# Validate package combination for host
-validate-packages HOST:
-    nix eval .#hostConfigs.{{HOST}}.packageValidation --json
+# Validate package combination for host (interactive selection if no HOST provided)
+validate-packages HOST="":
+    #!/usr/bin/env bash
+    set -euo pipefail
 
-# Show package info for host
-package-info HOST:
-    nix eval .#hostConfigs.{{HOST}}.packageInfo --json | jq
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    if [ -z "{{HOST}}" ]; then
+        TARGET_HOST=$(echo "$HOST_LIST" | ./utils/host-selector.sh)
+    else
+        TARGET_HOST="{{HOST}}"
+    fi
+
+    nix eval .#hostConfigs."$TARGET_HOST".packageValidation --json
+
+# Show package info for host (interactive selection if no HOST provided)
+package-info HOST="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    if [ -z "{{HOST}}" ]; then
+        TARGET_HOST=$(echo "$HOST_LIST" | ./utils/host-selector.sh)
+    else
+        TARGET_HOST="{{HOST}}"
+    fi
+        TARGET_HOST="{{HOST}}"
+    fi
+
+    nix eval .#hostConfigs."$TARGET_HOST".packageInfo --json | jq
 
 # === Maintenance ===
 
@@ -274,11 +413,6 @@ optimize:
 
 # === Performance ===
 
-# Analyze build performance and system configuration
-analyze-performance:
-    @echo "Analyzing build performance..."
-    ./utils/analyze-performance.sh
-
 # Show current Nix configuration
 show-nix-config:
     @echo "Current Nix configuration:"
@@ -296,26 +430,33 @@ profile-store:
 
 # === Debugging ===
 
-# Show derivation for host
-show-derivation HOST:
-    @echo "Showing derivation for {{HOST}}..."
-    @if [ "{{HOST}}" = "SGRIMEE-M-4HJT" ]; then \
-        nix show-derivation .#darwinConfigurations.{{HOST}}.system; \
-    else \
-        nix show-derivation .#nixosConfigurations.{{HOST}}.config.system.build.toplevel; \
+# Show derivation for host (interactive selection if no HOST provided)
+show-derivation HOST="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    if [ -z "{{HOST}}" ]; then
+        TARGET_HOST=$(echo "$HOST_LIST" | ./utils/host-selector.sh)
+    else
+        TARGET_HOST="{{HOST}}"
     fi
 
-# Trace evaluation of configuration
-trace-eval HOST:
-    @echo "Tracing evaluation for {{HOST}}..."
-    @if [ "{{HOST}}" = "SGRIMEE-M-4HJT" ]; then \
-        nix eval --show-trace .#darwinConfigurations.{{HOST}}.config.system.stateVersion; \
-    else \
-        nix eval --show-trace .#nixosConfigurations.{{HOST}}.config.system.stateVersion; \
+    # Get platform for the target host from cached list
+    PLATFORM=$(echo "$HOST_LIST" | grep "^$TARGET_HOST:" | cut -d: -f2 || (echo "❌ Host $TARGET_HOST not found" >&2; exit 1))
+
+    echo "Showing derivation for $TARGET_HOST..."
+
+    if [ "$PLATFORM" = "darwin" ]; then
+        nix show-derivation .#darwinConfigurations."$TARGET_HOST".system
+    else
+        nix show-derivation .#nixosConfigurations."$TARGET_HOST".config.system.build.toplevel
     fi
 
 # Show current system info
-info:
+info-system:
     @echo "System Information:"
     @echo "OS: $(uname -s)"
     @echo "Architecture: $(uname -m)"
@@ -324,17 +465,36 @@ info:
         echo "Nix version: $(nix --version)"; \
     fi
 
-
 # === Host Management ===
 
 # List all discovered hosts
 list-hosts:
-    @echo "Discovered host configurations:"
-    @echo "NixOS hosts:"
-    @nix eval --raw .#nixosConfigurations --apply 'configs: "  " + builtins.concatStringsSep "\n  " (builtins.attrNames configs)'
-    @echo ""
-    @echo "Darwin hosts:"
-    @nix eval --raw .#darwinConfigurations --apply 'configs: "  " + builtins.concatStringsSep "\n  " (builtins.attrNames configs)'
+    #!/usr/bin/env bash
+    echo "Discovered host configurations:"
+    echo ""
+
+    # Get hosts from external script
+    NIXOS_HOSTS=()
+    DARWIN_HOSTS=()
+
+    while IFS=: read -r host platform; do
+        if [ "$platform" = "nixos" ]; then
+            NIXOS_HOSTS+=("$host")
+        else
+            DARWIN_HOSTS+=("$host")
+        fi
+    done < <(./utils/get-hosts.sh)
+
+    if [ ${#NIXOS_HOSTS[@]} -gt 0 ]; then
+        echo "NixOS hosts:"
+        printf '  %s\n' "${NIXOS_HOSTS[@]}"
+        echo ""
+    fi
+
+    if [ ${#DARWIN_HOSTS[@]} -gt 0 ]; then
+        echo "Darwin hosts:"
+        printf '  %s\n' "${DARWIN_HOSTS[@]}"
+    fi
 
 # List hosts by platform
 list-hosts-by-platform PLATFORM:
@@ -366,42 +526,35 @@ copy-host SOURCE TARGET PLATFORM="":
     find "hosts/$TARGET_PLATFORM/{{TARGET}}" -name "*.nix" -exec sed -i '' 's/{{SOURCE}}/{{TARGET}}/g' {} \;
     echo "Host {{TARGET}} created as copy of {{SOURCE}} on $TARGET_PLATFORM platform"
 
-# Validate host configuration
-validate-host HOST:
-    @echo "Validating host {{HOST}}..."
-    @FOUND=false; \
-    if [ -d "hosts/nixos/{{HOST}}" ]; then \
-        echo "Found NixOS host: {{HOST}}"; \
-        FOUND=true; \
-        nix eval --no-warn-dirty .#nixosConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ Configuration evaluates successfully" || echo "❌ Configuration has evaluation errors"; \
-    fi; \
-    if [ -d "hosts/darwin/{{HOST}}" ]; then \
-        echo "Found Darwin host: {{HOST}}"; \
-        FOUND=true; \
-        nix eval --no-warn-dirty .#darwinConfigurations.{{HOST}}.config.system.stateVersion > /dev/null && echo "✅ Configuration evaluates successfully" || echo "❌ Configuration has evaluation errors"; \
-    fi; \
-    if [ "$FOUND" = false ]; then echo "❌ Host {{HOST}} not found"; exit 1; fi
+# Validate current host configuration
+validate:
+    @just validate-host `hostname`
 
-# Show host information
-host-info HOST:
-    @echo "Host Information for {{HOST}}:"
-    @echo "=============================="
-    @FOUND=false; \
-    if [ -d "hosts/nixos/{{HOST}}" ]; then \
-        echo "Platform: NixOS"; \
-        echo "Path: hosts/nixos/{{HOST}}/"; \
-        echo "Files:"; \
-        ls -la hosts/nixos/{{HOST}}/ | tail -n +2; \
-        FOUND=true; \
-    fi; \
-    if [ -d "hosts/darwin/{{HOST}}" ]; then \
-        echo "Platform: Darwin"; \
-        echo "Path: hosts/darwin/{{HOST}}/"; \
-        echo "Files:"; \
-        ls -la hosts/darwin/{{HOST}}/ | tail -n +2; \
-        FOUND=true; \
-    fi; \
-    if [ "$FOUND" = false ]; then echo "Host {{HOST}} not found"; exit 1; fi
+# Validate host configuration (interactive selection if no HOST provided)
+validate-host HOST="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    if [ -z "{{HOST}}" ]; then
+        TARGET_HOST=$(echo "$HOST_LIST" | ./utils/host-selector.sh)
+    else
+        TARGET_HOST="{{HOST}}"
+    fi
+
+    echo "Validating host $TARGET_HOST..."
+
+    PLATFORM=$(./utils/get-hosts.sh | grep "^$TARGET_HOST:" | cut -d: -f2 || (echo "❌ Host $TARGET_HOST not found" >&2; exit 1))
+
+    if [ "$PLATFORM" = "nixos" ]; then
+        echo "Found NixOS host: $TARGET_HOST"
+        nix eval --no-warn-dirty .#nixosConfigurations."$TARGET_HOST".config.system.stateVersion > /dev/null && echo "✅ Configuration evaluates successfully" || echo "❌ Configuration has evaluation errors"
+    else
+        echo "Found Darwin host: $TARGET_HOST"
+        nix eval --no-warn-dirty .#darwinConfigurations."$TARGET_HOST".config.system.stateVersion > /dev/null && echo "✅ Configuration evaluates successfully" || echo "❌ Configuration has evaluation errors"
+    fi
 
 # Create a new NixOS host template
 new-nixos-host NAME:
@@ -517,35 +670,6 @@ new-darwin-host NAME:
     @echo "2. Customize hosts/darwin/{{NAME}}/home.nix and packages.nix"
     @echo "3. Test with: just build {{NAME}}"
 
-# === Host-specific shortcuts ===
-
-# Build Darwin host
-build-darwin:
-    @just build SGRIMEE-M-4HJT
-
-# Build NixOS hosts
-build-nixair:
-    @just build nixair
-
-build-dracula:
-    @just build dracula
-
-build-legion:
-    @just build legion
-
-# Switch shortcuts
-switch-darwin:
-    @just switch-host SGRIMEE-M-4HJT
-
-switch-nixair:
-    @just switch-host nixair
-
-switch-dracula:
-    @just switch-host dracula
-
-switch-legion:
-    @just switch-host legion
-
 # === Host-to-Package Mapping Reporting ===
 #
 # Systematic 4-version pattern for each data type:
@@ -565,16 +689,30 @@ secret-edit:
     @echo "📝 Editing shared secrets with SOPS..."
     sops secrets/shared/sgrimee.yaml
 
-# Edit host-specific secrets
-secret-edit-host HOST:
-    @echo "📝 Editing secrets for {{HOST}}..."
-    @if [ ! -f "secrets/{{HOST}}/secrets.yaml" ]; then \
-        echo "Creating new secrets file for {{HOST}}..."; \
-        mkdir -p "secrets/{{HOST}}"; \
-        echo "# Secrets for {{HOST}}" > "secrets/{{HOST}}/secrets.yaml"; \
-        sops --encrypt --in-place "secrets/{{HOST}}/secrets.yaml"; \
+# Edit host-specific secrets (interactive selection if no HOST provided)
+secret-edit-host HOST="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Get all hosts once
+    HOST_LIST=$(./utils/get-hosts.sh)
+
+    if [ -z "{{HOST}}" ]; then
+        TARGET_HOST=$(echo "$HOST_LIST" | ./utils/host-selector.sh)
+    else
+        TARGET_HOST="{{HOST}}"
     fi
-    sops "secrets/{{HOST}}/secrets.yaml"
+
+    echo "📝 Editing secrets for $TARGET_HOST..."
+
+    if [ ! -f "secrets/$TARGET_HOST/secrets.yaml" ]; then
+        echo "Creating new secrets file for $TARGET_HOST..."
+        mkdir -p "secrets/$TARGET_HOST"
+        echo "# Secrets for $TARGET_HOST" > "secrets/$TARGET_HOST/secrets.yaml"
+        sops --encrypt --in-place "secrets/$TARGET_HOST/secrets.yaml"
+    fi
+
+    sops "secrets/$TARGET_HOST/secrets.yaml"
 
 # Validate secret files
 secret-validate:
@@ -658,17 +796,17 @@ wm-keys-aerospace HOST=`hostname`:
 
 # === Documentation Formatting ===
 
-# Check if uvx is available
+# Check if uvx is available (dependency verification for documentation tools)
 check-uvx:
     @command -v uvx >/dev/null || (echo "❌ uvx not found. Install with: curl -LsSf https://astral.sh/uv/install.sh | sh" && exit 1)
     @echo "✅ uvx is available"
 
 # Format markdown files with YAML frontmatter and GitHub Markdown support
-format-docs: check-uvx
+fmt-docs: check-uvx
     @echo "📝 Formatting documentation with uvx..."
     uvx --with mdformat-frontmatter --with mdformat-gfm mdformat specs/
 
-# Check documentation formatting without making changes
+# Check documentation formatting without making changes (verifies markdown style)
 check-docs: check-uvx
     @echo "🔍 Checking documentation formatting..."
-    uvx --with mdformat-frontmatter --with mdformat-gfm mdformat --check specs/ && echo "✅ Documentation is properly formatted" || (echo "❌ Documentation needs formatting. Run 'just format-docs' to fix." && exit 1)
+    uvx --with mdformat-frontmatter --with mdformat-gfm mdformat --check specs/ && echo "✅ Documentation is properly formatted" || (echo "❌ Documentation needs formatting. Run 'just fmt-docs' to fix." && exit 1)
