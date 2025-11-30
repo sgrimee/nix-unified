@@ -7,6 +7,9 @@
   networking.hostName = "cirice";
   # allowUnfree now handled centrally in flake
 
+  # Use latest kernel for MT7925e WiFi driver fixes (6.17+)
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   # Boot configuration for specializations
   boot.loader = {
     systemd-boot = {
@@ -25,6 +28,22 @@
 
   # Enable ACPI daemon for power management
   services.acpid.enable = true;
+
+  # AMD GPU resume workaround - force high performance mode
+  # Prevents power state transition issues during suspend/resume
+  systemd.services.amdgpu-force-performance = {
+    description = "Force AMD GPU to high performance mode for stable resume";
+    wantedBy = ["multi-user.target"];
+    after = ["systemd-modules-load.service"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.bash}/bin/bash -c 'echo high > /sys/class/drm/card1/device/power_dpm_force_performance_level || true'";
+    };
+  };
+
+  # Disable WiFi power saving to fix MT7925e suspend issues
+  # networking.networkmanager.wifi.powersave = false;
 
   # Enable StrongSwan VPN client for Senningerberg
   services.strongswan-senningerberg = {
@@ -70,6 +89,10 @@
     "lsm=landlock,yama,bpf"
     "amd_pstate=active"
     "processor.max_cstate=1"
+    # AMD GPU resume fixes for Radeon 890M
+    "amdgpu.dpm=1" # Enable dynamic power management
+    "amdgpu.psr=0" # Disable Panel Self Refresh (causes resume hangs)
+    "nvme_core.default_ps_max_latency_us=0" # Disable NVMe power saving
   ];
 
   # Ensure AMD driver is used for gaming
