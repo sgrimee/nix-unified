@@ -4,8 +4,16 @@
   ...
 }: {
   imports = [
+    # Terminals are loaded via capability system (environment.terminal)
+    # See lib/module-mapping/environment.nix
+
+    # Shells
+    ./shells/fish.nix
+    ./shells/nushell.nix
+    ./shells/zsh.nix
+
+    # Development tools
     ./aerc.nix
-    ./alacritty.nix
     ./android-studio.nix
     ./bat.nix
     ./broot.nix
@@ -13,24 +21,20 @@
     ./carapace.nix
     ./direnv.nix
     ./eza.nix
-    ./fish.nix
     ./fzf.nix
     ./gh.nix
     ./git.nix
     ./gitui.nix
     ./helix.nix
     ./jq.nix
-    ./kitty.nix
     ./neomutt.nix
     ./node.nix
-    ./nushell.nix
     ./spotify-player.nix
     ./ssh.nix
     ./starship.nix
-    ./yt-dlp.nix
+    ./tmux
     ./yazi.nix
-    ./zsh.nix
+    ./yt-dlp.nix
     ./zoxide.nix
-    ../../niri.nix
   ];
 }
