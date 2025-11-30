@@ -5,6 +5,7 @@
 The `modules/darwin/sudo.nix` module provides sudo authentication with Touch ID and YubiKey/U2F support:
 
 ### Configuration
+
 ```nix
 { lib, ... }:
 let
@@ -32,15 +33,17 @@ in
 ```
 
 ### Features
+
 - **Touch ID**: Primary authentication method
 - **YubiKey/U2F**: Hardware fallback (only configured if pam-u2f is installed)
 - **Extended timeout**: 15-minute credential caching
 - **tmux/screen compatibility**: Touch ID works inside terminal multiplexers
 
 ### Setup
+
 1. The module automatically installs `pam-u2f` via Homebrew
-2. Register your U2F key:
+1. Register your U2F key:
    ```bash
    pamu2fcfg > ~/.config/Yubico/u2f_keys
    ```
-3. Rebuild your Darwin configuration
+1. Rebuild your Darwin configuration

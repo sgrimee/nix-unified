@@ -755,17 +755,24 @@ graph TD
 
 ### Current Architecture Analysis
 
-**1. Dynamic Host Discovery**: The flake automatically discovers hosts from the `hosts/` directory structure, supporting both NixOS and Darwin platforms.
+**1. Dynamic Host Discovery**: The flake automatically discovers hosts from the `hosts/` directory structure, supporting
+both NixOS and Darwin platforms.
 
-**2. Capability System**: A sophisticated capability-based configuration system that can fall back to traditional imports for backward compatibility.
+**2. Capability System**: A sophisticated capability-based configuration system that can fall back to traditional
+imports for backward compatibility.
 
-**3. Platform Separation**: 
+**3. Platform Separation**:
+
 - **Darwin modules**: macOS-specific (dock, homebrew, finder, etc.)
 - **NixOS modules**: Linux-specific (display, sound, hardware, sway, etc.)
 - **Home Manager**: User-space configuration shared across platforms
 
-**4. Modular Design**: Each platform has a `default.nix` that imports all relevant modules, making it easy to enable/disable features per host.
+**4. Modular Design**: Each platform has a `default.nix` that imports all relevant modules, making it easy to
+enable/disable features per host.
 
-**5. External Integration**: Clean integration with external flake inputs like nixpkgs, home-manager, nix-darwin, and specialized tools.
+**5. External Integration**: Clean integration with external flake inputs like nixpkgs, home-manager, nix-darwin, and
+specialized tools.
 
-This diagram shows how the unified flake structure dynamically discovers hosts and routes them through platform-specific module hierarchies, with the capability system providing advanced configuration management while maintaining backward compatibility.
+This diagram shows how the unified flake structure dynamically discovers hosts and routes them through platform-specific
+module hierarchies, with the capability system providing advanced configuration management while maintaining backward
+compatibility.

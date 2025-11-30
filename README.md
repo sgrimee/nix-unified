@@ -51,32 +51,84 @@ just build <hostname>
 ## Common Commands
 
 ```bash
-# Testing
-just test              # Quick validation
-just check             # Check for errors
-just test-linux        # Test Linux configs
-just test-darwin       # Test Darwin configs
+# Testing & Validation
+just test                          # Quick validation (basic tests + flake check)
+just test-basic                    # Basic core tests only (fastest)
+just test-verbose                  # All unit tests with verbose output
+just check                         # Check flake for errors
+just test-linux                    # Test Linux configs
+just test-darwin                   # Test Darwin configs
+just test-remote-builders          # Test remote build machines
 
-# Building
-just build <hostname>  # Build specific host
-just dry-run          # Preview changes
+# Building & Switching
+just build                         # Build current host
+just build-host [hostname]         # Build specific host (interactive if not specified)
+just check-host [hostname]         # Check host evaluation (interactive if not specified)
+just check-derivations [hostname]  # Show what needs to be built
 
-# Maintenance
-just update           # Update flake inputs
-just gc               # Garbage collect
-just optimize         # Optimize Nix store
-just fmt              # Format Nix files
+# Rebuilding Current Host (requires sudo)
+just switch                        # Full rebuild (system + Home Manager)
+just switch-home                   # Rebuild only Home Manager (faster for dotfiles/programs)
+
+# Flake Management
+just update                        # Update all flake inputs
+just update-input <input>          # Update specific input
+just show-flake-info               # Show flake outputs
+just metadata                      # Show flake metadata
+
+# Development
+just dev                           # Enter development shell
+just install-hooks                 # Install git hooks
+just fmt                           # Format Nix files
+just lint                          # Lint and auto-fix with deadnix
+just lint-check                    # Check for dead code without fixing
+just scan-secrets                  # Scan for secrets with gitleaks
+just scan-secrets-path <path>      # Scan specific path for secrets
+just scan-secrets-staged           # Scan staged files for secrets
 
 # Package Management
 just search-packages <term>        # Search for packages
 just list-package-categories       # List available categories
-just package-info <hostname>       # Show host packages
+just package-info [hostname]       # Show host packages (interactive if not specified)
+just validate-packages [hostname]  # Validate package combination
+
+# Maintenance
+just gc                            # Garbage collect
+just clear-cache                   # Clear evaluation cache
+just optimize                      # Optimize Nix store
+just generations                   # Show system generations
+just clean-generations [N]         # Delete old generations (keep last N, default 5)
+
+# Performance & Debugging
+just show-nix-config               # Show current Nix configuration
+just profile-store                 # Profile store usage
+just show-derivation [hostname]    # Show derivation for host
+just info-system                   # Show system information
 
 # Host Management
 just list-hosts                    # List all hosts
-just new-nixos-host <name>        # Create new NixOS host
-just new-darwin-host <name>       # Create new Darwin host
-just validate-host <hostname>      # Validate host config
+just list-hosts-by-platform <platform>  # List hosts by platform (nixos/darwin)
+just validate                      # Validate current host
+just validate-host [hostname]      # Validate specific host (interactive if not specified)
+just new-nixos-host <name>         # Create new NixOS host
+just new-darwin-host <name>        # Create new Darwin host
+just copy-host <source> <target> [platform]  # Copy host configuration
+
+# Secrets Management (SOPS)
+just secret-edit                   # Edit shared secrets file
+just secret-edit-host [hostname]   # Edit host-specific secrets (interactive if not specified)
+just secret-validate               # Validate all secret files
+just secret-list                   # List all secrets and their accessibility
+just secret-reencrypt              # Re-encrypt all secrets with current SOPS config
+
+# Window Manager Keybindings
+just wm-keys                       # Show all keybindings for current platform
+just wm-keys-sway [hostname]       # Show Sway keybindings specifically
+just wm-keys-aerospace [hostname]  # Show Aerospace keybindings specifically
+
+# Documentation
+just fmt-docs                      # Format markdown files
+just check-docs                    # Check documentation formatting
 ```
 
 ## Project Structure
@@ -234,20 +286,21 @@ See [Package Management Guide](docs/package-management.md) for details.
 ## Testing
 
 ```bash
-# Quick validation
+# Quick validation (basic tests + flake check)
 just test
 
-# Comprehensive test suite
-just test-comprehensive
+# Basic core tests only (fastest)
+just test-basic
+
+# All unit tests with verbose output
+just test-verbose
 
 # Platform-specific tests
-just test-linux
-just test-darwin
+just test-linux            # Test Linux configurations
+just test-darwin           # Test Darwin configurations
 
-# Test categories
-just test-properties        # Property-based tests
-just test-integration       # Module interaction tests
-just test-performance       # Performance regression tests
+# Infrastructure tests
+just test-remote-builders  # Test remote build machines
 ```
 
 Tests are automatically run in CI on every push.

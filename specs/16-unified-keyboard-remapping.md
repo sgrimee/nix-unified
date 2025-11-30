@@ -13,34 +13,40 @@ dependencies: []
 ## Problem Statement
 
 The current keyboard remapping implementation has several issues:
+
 1. **Platform Fragmentation**: Separate Darwin and NixOS modules with duplicated logic and configuration
-2. **Inconsistent Options**: Different option schemas and defaults between platforms
-3. **Dead Code**: Unused `includeKeyboards` option in Kanata module
-4. **Incomplete Filtering**: Device filtering uses incorrect syntax for Kanata on macOS (numeric IDs instead of device names)
-5. **Inflexible Architecture**: `remapper = "none"` hack instead of granular feature toggles
-6. **Maintenance Burden**: Changes require updates across multiple files with different patterns
+1. **Inconsistent Options**: Different option schemas and defaults between platforms
+1. **Dead Code**: Unused `includeKeyboards` option in Kanata module
+1. **Incomplete Filtering**: Device filtering uses incorrect syntax for Kanata on macOS (numeric IDs instead of device
+   names)
+1. **Inflexible Architecture**: `remapper = "none"` hack instead of granular feature toggles
+1. **Maintenance Burden**: Changes require updates across multiple files with different patterns
 
 Current modules:
+
 - `modules/darwin/keyboard.nix` - Darwin system keyboard settings + remapper choice
-- `modules/darwin/kanata.nix` - Darwin-specific Kanata service configuration  
+- `modules/darwin/kanata.nix` - Darwin-specific Kanata service configuration
 - `modules/nixos/kanata.nix` - NixOS-specific Kanata service with hardcoded homerow config
 - Separate homerow mod configurations that can drift out of sync
 
 ## Current State Analysis
 
 **Darwin Implementation:**
+
 - Supports Karabiner Elements (via Homebrew) and Kanata remappers
 - Has basic exclusion filtering but generates invalid Kanata syntax
 - Mixes system keyboard settings with remapper configuration
 - Uses `enableHomerowMods` boolean and `remapper` enum including `"none"`
 
 **NixOS Implementation:**
+
 - Only supports Kanata
 - Hardcoded homerow configuration embedded in module
 - Uses host capabilities for device discovery
 - No filtering or exclusion mechanism
 
 **Shared Issues:**
+
 - Homerow mod timings and mappings defined separately (potential drift)
 - No unified configuration schema
 - Device filtering incomplete/broken
@@ -51,22 +57,26 @@ Current modules:
 Create a unified keyboard remapping architecture with:
 
 1. **Shared Core Module** (`modules/shared/keyboard/`)
+
    - Platform-agnostic options schema
    - Pure functions for Kanata configuration generation
    - Device filtering logic with proper platform handling
    - Timing and mapping consistency
 
-2. **Granular Feature Toggles**
+1. **Granular Feature Toggles**
+
    - `keyboard.features.homerowMods` (default: true)
    - `keyboard.features.remapCapsLock` (default: true)
    - Remove `remapper = "none"` in favor of disabling features
 
-3. **Improved Device Filtering**
+1. **Improved Device Filtering**
+
    - Support device names on macOS (not just vendor/product IDs)
    - Clear documentation for device discovery
    - Platform-appropriate filtering mechanisms
 
-4. **Platform Wrappers**
+1. **Platform Wrappers**
+
    - Thin platform-specific modules that consume shared configuration
    - Handle platform prerequisites (uinput on Linux, driver warnings on macOS)
    - Apply platform-specific defaults
@@ -141,11 +151,13 @@ The shared module generates Kanata configuration based on enabled features:
 ### Device Filtering Strategy
 
 **macOS (Kanata):**
+
 - Requires actual device names in `macos-dev-names-exclude`
 - Fall back to comments with vendor/product IDs if names not provided
 - Emit warnings for unresolved device entries
 
 **Linux (Kanata):**
+
 - Use existing device path enumeration via host capabilities
 - Exclusion list creates inverse device selection
 - Support both `/dev/input/by-path/` and `/dev/input/by-id/` paths
@@ -153,6 +165,7 @@ The shared module generates Kanata configuration based on enabled features:
 ### Discovery Methods
 
 **macOS:**
+
 ```bash
 # Preferred: Karabiner-EventViewer.app (shows real-time device info)
 # Alternative: ioreg -r -n IOHIDKeyboard -l | grep -E 'Product|VendorID|ProductID'  
@@ -160,6 +173,7 @@ The shared module generates Kanata configuration based on enabled features:
 ```
 
 **Linux:**
+
 ```bash
 # Stable symlinks: ls -l /dev/input/by-id/
 # Device info: udevadm info -a -n /dev/input/eventX
@@ -169,17 +183,20 @@ The shared module generates Kanata configuration based on enabled features:
 ## Files to Create/Modify
 
 ### New Files
+
 - `modules/shared/keyboard/default.nix` - Main shared module
 - `modules/shared/keyboard/kanata.nix` - Kanata configuration generator
 - `modules/shared/keyboard/filtering.nix` - Device filtering logic
 
 ### Modified Files
+
 - `modules/darwin/keyboard.nix` - Convert to wrapper consuming shared module
 - `modules/darwin/kanata.nix` - Remove duplicate options, add platform setup
 - `modules/nixos/kanata.nix` - Convert to wrapper, remove hardcoded config
 - `lib/module-mapping.nix` - Update module references if needed
 
 ### Test Files
+
 - `tests/shared-keyboard-tests.nix` - New shared module tests
 - Update existing keyboard-related tests for new option schema
 
@@ -188,21 +205,25 @@ The shared module generates Kanata configuration based on enabled features:
 ### Implementation Phases Completed
 
 **Phase 1: Shared Module Creation** ✅
+
 - Created shared module with unified option schema
-- Implemented pure Kanata configuration generation functions  
+- Implemented pure Kanata configuration generation functions
 - Added device filtering logic with platform-specific detection
 
 **Phase 2: Platform Wrapper Conversion** ✅
+
 - Converted Darwin keyboard module to consume shared configuration
 - Simplified Darwin kanata module to service wrapper with driver management
 - Converted NixOS kanata module to wrapper consuming shared config
 
 **Phase 3: Clean Implementation** ✅
+
 - Removed `includeKeyboards` option entirely
 - Updated comprehensive documentation and warnings
 - Clean implementation with no deprecated options
 
 **Breaking Changes Made:**
+
 - Removed `darwin.keyboard.*` options entirely - use `keyboard.*` instead
 - Removed `remapper = "none"` option - use feature toggles instead
 - Removed `includeKeyboards` option - was unused and broken
@@ -210,17 +231,20 @@ The shared module generates Kanata configuration based on enabled features:
 ## Testing Strategy
 
 ### Unit Tests
+
 - Option validation and defaults per platform
 - Kanata configuration generation with different feature combinations
 - Device filtering logic with various input formats
 - Backward compatibility option translation
 
-### Integration Tests  
+### Integration Tests
+
 - Full Darwin host build with Karabiner configuration
 - Full NixOS host build with Kanata service
 - Cross-platform configuration consistency
 
 ### Manual Testing
+
 - Device discovery on both platforms
 - Service activation/deactivation with feature toggles
 - Filter effectiveness with real hardware
@@ -228,34 +252,36 @@ The shared module generates Kanata configuration based on enabled features:
 ## Benefits
 
 1. **Consistency**: Single source of truth for homerow mappings and timing
-2. **Maintainability**: Centralized logic reduces duplication and drift
-3. **Flexibility**: Granular feature control instead of all-or-nothing
-4. **Correctness**: Proper device filtering implementation
-5. **Documentation**: Clear device discovery methods and examples
-6. **Future-Proof**: Shared architecture supports additional remappers/features
+1. **Maintainability**: Centralized logic reduces duplication and drift
+1. **Flexibility**: Granular feature control instead of all-or-nothing
+1. **Correctness**: Proper device filtering implementation
+1. **Documentation**: Clear device discovery methods and examples
+1. **Future-Proof**: Shared architecture supports additional remappers/features
 
 ## Implementation Status: ✅ COMPLETED
 
 ### Implementation Steps Completed
 
 1. ✅ Created shared keyboard module with unified options schema (`modules/shared/keyboard/`)
-2. ✅ Implemented Kanata configuration generation functions with proper syntax
-3. ✅ Added device filtering with platform-specific handling (macOS names, Linux paths)
-4. ✅ Converted Darwin modules to thin wrappers consuming shared configuration
-5. ✅ Converted NixOS module to wrapper pattern with shared config generation
-6. ✅ Removed unused `includeKeyboards` option completely
-7. ✅ Updated comprehensive documentation and warnings
-8. ✅ Verified builds and functionality across all platforms
+1. ✅ Implemented Kanata configuration generation functions with proper syntax
+1. ✅ Added device filtering with platform-specific handling (macOS names, Linux paths)
+1. ✅ Converted Darwin modules to thin wrappers consuming shared configuration
+1. ✅ Converted NixOS module to wrapper pattern with shared config generation
+1. ✅ Removed unused `includeKeyboards` option completely
+1. ✅ Updated comprehensive documentation and warnings
+1. ✅ Verified builds and functionality across all platforms
 
 ### Final Architecture
 
 **Shared Core:**
+
 - `modules/shared/keyboard/default.nix` - Unified options schema
-- `modules/shared/keyboard/lib.nix` - Configuration utility functions  
+- `modules/shared/keyboard/lib.nix` - Configuration utility functions
 - `modules/shared/keyboard/kanata.nix` - Cross-platform Kanata config generator
 - `modules/shared/keyboard/filtering.nix` - Device filtering logic
 
 **Platform Wrappers:**
+
 - `modules/darwin/keyboard.nix` - macOS system settings + service integration
 - `modules/darwin/kanata.nix` - macOS Kanata service with driver management
 - `modules/nixos/kanata.nix` - Linux Kanata service with uinput setup
@@ -303,14 +329,17 @@ keyboard = {
 ```
 
 **Platform Defaults:**
+
 - macOS: `remapper = "karabiner"` (established, stable)
 - Linux: `remapper = "kanata"` (only supported option)
 
 **Global Exclusions (Applied to All Hosts):**
+
 - **Aurora Sweep (ZMK Project)** - Custom ZMK firmware handles its own remapping
 - **Glove80 Left (MoErgo)** - Ergonomic keyboard with custom firmware
 
 **Device Filtering:**
+
 - macOS: Uses device names in `macos-dev-names-exclude`
 - Linux: Uses device path exclusion via service configuration
 - Discovery: Karabiner-EventViewer.app (macOS), udevadm (Linux)
@@ -320,7 +349,10 @@ keyboard = {
 **Status: 🔄 PENDING - Requires Linux Host**
 
 ### Problem
-While keyboard exclusion is fully implemented for macOS (using device names in Kanata config), Linux keyboard exclusion is **not implemented**. The `modules/nixos/kanata.nix` currently ignores the `excludeKeyboards` configuration and processes all devices, generating this warning:
+
+While keyboard exclusion is fully implemented for macOS (using device names in Kanata config), Linux keyboard exclusion
+is **not implemented**. The `modules/nixos/kanata.nix` currently ignores the `excludeKeyboards` configuration and
+processes all devices, generating this warning:
 
 ```
 Keyboard exclusion configured but not yet implemented for Linux.
@@ -329,17 +361,21 @@ Use 'ls -l /dev/input/by-id/' to identify device paths for manual exclusion.
 ```
 
 ### Required Implementation
-1. **Device Path Mapping**: Map excluded keyboards (vendor_id/product_id) to actual `/dev/input/*` device paths at runtime
-2. **Path Filtering**: Filter excluded device paths from the `keyboardDevices` list before passing to Kanata service
-3. **Runtime Discovery**: Use `udevadm` or similar tools to enumerate devices and match against exclusion criteria
-4. **Fallback Handling**: Gracefully handle cases where device paths cannot be resolved
+
+1. **Device Path Mapping**: Map excluded keyboards (vendor_id/product_id) to actual `/dev/input/*` device paths at
+   runtime
+1. **Path Filtering**: Filter excluded device paths from the `keyboardDevices` list before passing to Kanata service
+1. **Runtime Discovery**: Use `udevadm` or similar tools to enumerate devices and match against exclusion criteria
+1. **Fallback Handling**: Gracefully handle cases where device paths cannot be resolved
 
 ### Implementation Location
+
 - **File**: `modules/nixos/kanata.nix`
 - **Function**: Replace the current TODO placeholder in `filteredDevices` logic
 - **Testing**: Requires Linux host with physical keyboard devices for validation
 
 ### Expected Outcome
+
 - Warning eliminated when exclusions are properly filtered
 - Custom firmware keyboards (Aurora Sweep, Glove80) excluded from Kanata processing on Linux
 - Consistent exclusion behavior across Darwin and NixOS platforms
@@ -351,6 +387,7 @@ Use 'ls -l /dev/input/by-id/' to identify device paths for manual exclusion.
 The unified keyboard remapping system is complete with a clean, modern implementation:
 
 ### Key Achievements
+
 - **Zero Legacy Code**: All backward compatibility removed for clean maintainable codebase
 - **Global Exclusions**: Custom firmware keyboards excluded across all hosts by default
 - **Cross-Platform Consistency**: Identical homerow mappings and timing across Darwin/NixOS
@@ -362,29 +399,35 @@ The unified keyboard remapping system is complete with a clean, modern implement
 ### Setup Requirements
 
 #### Kanata on macOS
+
 Kanata requires additional setup on macOS due to system security restrictions:
 
 1. **Install Karabiner VirtualHIDDevice Driver**
+
    ```bash
    # Download from: https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases
    # Install the .pkg file and restart your Mac
    ```
 
-2. **Activate the Driver**
+1. **Activate the Driver**
+
    ```bash
    sudo /Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager activate
    ```
 
-3. **Start the Daemon**
+1. **Start the Daemon**
+
    ```bash
    sudo '/Library/Application Support/org.pqrs/Karabiner-DriverKit-VirtualHIDDevice/Applications/Karabiner-VirtualHIDDevice-Daemon.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Daemon' &
    ```
 
-4. **Grant Input Monitoring Permissions**
+1. **Grant Input Monitoring Permissions**
+
    - System Settings → Privacy & Security → Input Monitoring
    - Add and enable `kanata`
 
-5. **Service Management**
+1. **Service Management**
+
    ```bash
    # Start service
    sudo launchctl load /Library/LaunchDaemons/org.nixos.kanata.plist
@@ -400,32 +443,42 @@ Kanata requires additional setup on macOS due to system security restrictions:
    ```
 
 #### Karabiner on macOS
+
 Karabiner Elements is the default remapper and requires fewer setup steps:
 
 1. **Install via Homebrew** (automatic with Nix configuration)
+
    ```bash
    brew install --cask karabiner-elements
    ```
 
-2. **Grant Input Monitoring Permissions**
+1. **Grant Input Monitoring Permissions**
+
    - System Settings → Privacy & Security → Input Monitoring
    - Add and enable `Karabiner-Elements`
 
-3. **Device Discovery** (for custom exclusions)
+1. **Device Discovery** (for custom exclusions)
+
    - Install `Karabiner-EventViewer` from Karabiner-Elements menu
    - Use it to find device names and IDs for exclusion configuration
 
 #### Linux (NixOS)
+
 No additional setup required - Kanata works out of the box with uinput support.
 
 ### macOS Device Filtering Fix (2025-01-03)
-**Issue:** Kanata configuration was generating Linux device filtering comments instead of macOS `macos-dev-names-exclude` blocks, causing custom firmware keyboards like Glove80 to be incorrectly remapped.
 
-**Root Cause:** Platform detection parameter `isDarwin` was not being properly threaded through the configuration generation pipeline.
+**Issue:** Kanata configuration was generating Linux device filtering comments instead of macOS
+`macos-dev-names-exclude` blocks, causing custom firmware keyboards like Glove80 to be incorrectly remapped.
 
-**Solution:** Modified `modules/shared/keyboard/kanata.nix` to detect platform using `pkgs.stdenv.isDarwin` instead of relying on parameter passing, ensuring correct macOS device filtering generation.
+**Root Cause:** Platform detection parameter `isDarwin` was not being properly threaded through the configuration
+generation pipeline.
+
+**Solution:** Modified `modules/shared/keyboard/kanata.nix` to detect platform using `pkgs.stdenv.isDarwin` instead of
+relying on parameter passing, ensuring correct macOS device filtering generation.
 
 **Result:** Kanata config now properly generates:
+
 ```lisp
 macos-dev-names-exclude (
   "Aurora Sweep (ZMK Project)"
@@ -434,12 +487,15 @@ macos-dev-names-exclude (
 ```
 
 ### Breaking Changes Made
+
 1. **Removed `darwin.keyboard.*` namespace** - All configuration now under unified `keyboard.*`
-2. **Removed `remapper = "none"` option** - Use feature toggles instead (`homerowMods = false`, `remapCapsLock = false`)
-3. **Removed `includeKeyboards` option** - Was unused and had broken implementation
+1. **Removed `remapper = "none"` option** - Use feature toggles instead (`homerowMods = false`, `remapCapsLock = false`)
+1. **Removed `includeKeyboards` option** - Was unused and had broken implementation
 
 ### Migration Guide
+
 **Old Configuration (REMOVED):**
+
 ```nix
 darwin.keyboard = {
   remapper = "none";           # ❌ No longer supported
@@ -449,6 +505,7 @@ darwin.keyboard = {
 ```
 
 **New Unified Configuration (REQUIRED):**
+
 ```nix
 keyboard = {
   remapper = "karabiner";           # ✅ "karabiner" | "kanata"
@@ -477,6 +534,7 @@ keyboard = {
 ```
 
 ### Production Benefits
+
 - **Unified Configuration**: Same config works across all platforms
 - **Clean Architecture**: Shared core with thin platform wrappers
 - **Maintainable**: No legacy code paths or deprecated options

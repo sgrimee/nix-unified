@@ -11,16 +11,20 @@ dependencies: [04, 11]
 
 ## Problem Statement
 
-The current nix-unified configuration system has a sophisticated mapping from hosts → capabilities → categories → packages, but lacks visibility into these relationships. Users and maintainers need tools to understand, analyze, and visualize the complete dependency chain to identify optimization opportunities, debug configuration issues, and document system architecture.
+The current nix-unified configuration system has a sophisticated mapping from hosts → capabilities → categories →
+packages, but lacks visibility into these relationships. Users and maintainers need tools to understand, analyze, and
+visualize the complete dependency chain to identify optimization opportunities, debug configuration issues, and document
+system architecture.
 
 ## Phase 1 Status: COMPLETE ✅
 
-**Implementation Date**: January 11, 2025  
+**Implementation Date**: January 11, 2025\
 **Status**: Phase 1 fully implemented and operational
 
 ### Phase 1 Achievements:
+
 - ✅ **Core data collection engine** - Extracts complete host mapping data
-- ✅ **Platform detection** - Accurate platform identification from directory structure  
+- ✅ **Platform detection** - Accurate platform identification from directory structure
 - ✅ **Capability loading** - Direct import of `capabilities.nix` files with rich feature data
 - ✅ **Clean JSON export** - Multiple output formats (clean, verbose, human-readable)
 - ✅ **Justfile integration** - 15+ commands for data access and analysis
@@ -29,6 +33,7 @@ The current nix-unified configuration system has a sophisticated mapping from ho
 - ✅ **Comprehensive testing** - All 5 hosts (4 NixOS, 1 Darwin) successfully discovered and analyzed
 
 ### Current Data Quality:
+
 - **Host Discovery**: 5/5 hosts discovered (nixair, dracula, legion, cirice, SGRIMEE-M-4HJT)
 - **Platform Detection**: 100% accurate (directory-based: `darwin: 1, nixos: 4`)
 - **Capability Loading**: Rich data from all `capabilities.nix` files
@@ -49,8 +54,9 @@ The current nix-unified configuration system has a sophisticated mapping from ho
 ## Proposed Solution
 
 Create a comprehensive reporting and visualization system using a hybrid approach:
+
 - **Nix functions in `lib/reporting/`** for data collection and analysis
-- **External tools** for processing and visualization  
+- **External tools** for processing and visualization
 - **Web interface** for interactive exploration
 - **Static reports** for documentation and CI integration
 
@@ -155,7 +161,9 @@ The data collection engine successfully extracts comprehensive host mapping data
 ```
 
 **Key Implementation Features**:
-- **Platform Detection**: Uses directory structure (`hosts/nixos/` vs `hosts/darwin/`) for reliable platform identification
+
+- **Platform Detection**: Uses directory structure (`hosts/nixos/` vs `hosts/darwin/`) for reliable platform
+  identification
 - **Capability Loading**: Direct import of `capabilities.nix` files from flake context
 - **Data Structure**: Clean, no duplication, logically organized fields
 - **Error Handling**: Graceful handling of missing files and malformed data
@@ -279,24 +287,28 @@ The export system generates visualization-ready files in multiple formats:
 **Graph Structure**: 187 nodes (5 hosts, 22 capabilities, 68 categories, 92 packages) and 5,651 relationships
 
 **1. GraphML Format** (for Cytoscape, yEd):
+
 - XML-based graph format with rich metadata
 - Node attributes: label, type, platform, package count
 - Edge attributes: relationship type (has_capability, has_category, provides_package)
 - Compatible with Cytoscape for advanced network analysis
 
 **2. DOT Format** (for Graphviz):
+
 - Text-based graph description language
 - Node styling by type (hosts=blue boxes, capabilities=red circles, categories=orange diamonds, packages=green circles)
 - Hierarchical layout with proper edge arrows
 - Generate SVG/PNG visualizations with `dot -Tsvg graph.dot -o graph.svg`
 
 **3. JSON Graph Format** (for Sigma.js, D3.js):
+
 - Standard JSON format with nodes and edges arrays
 - Numeric edge IDs and comprehensive metadata
 - Node/edge type breakdowns for filtering
 - Ready for web-based graph libraries
 
-**Note**: Cytoscape.js web format support was removed per user request. For Cytoscape network analysis, use the GraphML format which is fully compatible with the Cytoscape desktop application.
+**Note**: Cytoscape.js web format support was removed per user request. For Cytoscape network analysis, use the GraphML
+format which is fully compatible with the Cytoscape desktop application.
 
 ### 6. Command-Line Integration (IMPLEMENTED ✅)
 
@@ -311,6 +323,7 @@ just mapping-export-all prefix                 # All formats with prefix
 ```
 
 **Flake Integration**:
+
 ```bash
 nix eval .#hostPackageMapping.exportGraphML --raw     # Direct Nix access
 nix eval .#hostPackageMapping.exportDOT --raw         # Generate DOT format
@@ -320,15 +333,17 @@ nix eval .#hostPackageMapping.exportJSONGraph --raw   # JSON Graph format
 ## Files Created/Modified
 
 **Phase 1 & 2 (Data Collection & Package Integration)**:
+
 1. ✅ `specs/12-host-package-mapping-visualization.md` - This specification document
 1. ✅ `lib/reporting/` - New reporting library directory
-1. ✅ `lib/reporting/default.nix` - Main interface and exports  
+1. ✅ `lib/reporting/default.nix` - Main interface and exports
 1. ✅ `lib/reporting/collector.nix` - Data collection functions
 1. ✅ `flake.nix` - Export reporting functions and data
 1. ✅ `justfile` - Add reporting commands
 1. ✅ `packages/manager.nix` - Added `generatePackageNames` function
 
 **Phase 3 (Graph Export)**:
+
 1. ✅ `lib/reporting/exporters.nix` - Graph format conversion functions
 1. ✅ `lib/reporting/default.nix` - Added graph export functions
 1. ✅ `flake.nix` - Added graph export outputs
@@ -339,6 +354,7 @@ nix eval .#hostPackageMapping.exportJSONGraph --raw   # JSON Graph format
 The system provides comprehensive command-line access via justfile with three categories of commands:
 
 ### Clean JSON Commands (automation-ready):
+
 ```bash
 # Complete mapping data
 just mapping-data                           # All hosts, pure JSON
@@ -352,12 +368,14 @@ just mapping-host-packages cirice            # Host packages only (Phase 2)
 ```
 
 ### Verbose JSON Commands (JSON + progress messages):
-```bash  
+
+```bash
 just mapping-data-verbose                   # All hosts with progress to stderr
 just mapping-data-host-verbose cirice       # Single host with progress to stderr
 ```
 
 ### Human-Readable Commands (formatted display):
+
 ```bash
 just mapping-stats                          # Statistics table
 just mapping-hosts                          # Host list with platforms  
@@ -371,12 +389,14 @@ just mapping-validate                       # Validation results
 ```
 
 ### Export Commands (file output):
+
 ```bash
 just mapping-export mapping.json            # Export all data to file
 just mapping-export-host cirice cirice.json # Export single host to file
 ```
 
 ### Graph Export Commands (visualization formats):
+
 ```bash
 # Individual format exports
 just mapping-export-graphml graph.graphml           # GraphML for Cytoscape desktop, yEd
@@ -388,6 +408,7 @@ just mapping-export-all host-graph                  # Creates host-graph.{graphm
 ```
 
 **Usage Examples**:
+
 ```bash
 # Get host count programmatically
 HOST_COUNT=$(just mapping-overview | jq '.hostCount')
@@ -416,6 +437,7 @@ just mapping-stats
 ## Implementation Steps
 
 ### Phase 1: Foundation (COMPLETED ✅)
+
 1. ✅ Create core Nix library structure in `lib/reporting/`
 1. ✅ Implement data collection functions for host mapping extraction
 1. ✅ Add platform detection from directory structure
@@ -427,6 +449,7 @@ just mapping-stats
 1. ✅ Add comprehensive testing across all 5 hosts
 
 ### Phase 2: Package Integration (COMPLETED ✅)
+
 1. ✅ Build analysis engine with conflict detection and optimization suggestions
 1. ✅ Integrate with existing package management system (auto-category-mapping)
 1. ✅ Implement package derivation from capabilities → categories → packages
@@ -434,11 +457,13 @@ just mapping-stats
 1. ✅ Create optimization recommendation system
 
 ### Phase 3: Export & Formats (COMPLETED ✅)
+
 1. ✅ Create export system supporting GraphML, DOT, and JSON Graph formats
 1. ✅ Integrate graph exporters with flake and justfile for command-line access
 1. ✅ Generate visualization-ready files for popular graph tools (Cytoscape desktop, yEd, Graphviz, D3.js, Sigma.js)
 
 ### Phase 4: Visualization (FUTURE)
+
 1. Build interactive web visualization interface using Cytoscape.js
 1. Add multi-layer graph layouts and interactive filtering
 1. Create comprehensive documentation and usage examples
@@ -446,19 +471,24 @@ just mapping-stats
 ## Acceptance Criteria
 
 ### Phase 1 Criteria (COMPLETED ✅)
+
 - [x] **Complete visibility into all host configurations** - All 5 hosts discovered with rich capability data
 - [x] **Clean JSON export system** - Multiple command formats (clean, verbose, human-readable)
 - [x] **Platform detection accuracy** - 100% correct platform identification from directory structure
-- [x] **Capability data loading** - All `capabilities.nix` files successfully imported with features, hardware, environment, services
+- [x] **Capability data loading** - All `capabilities.nix` files successfully imported with features, hardware,
+  environment, services
 - [x] **Data structure optimization** - No duplication, logical field organization (architecture moved to hardware)
 - [x] **Command-line integration** - 15+ justfile commands for comprehensive data access
 - [x] **Flake integration** - Available as `hostPackageMapping` output with debugging support
 - [x] **Error handling** - Graceful handling of missing files and configuration issues
 
 ### Phase 2 Criteria (COMPLETED ✅)
-- [x] **Package derivation from capabilities → categories → packages working** - All 5 hosts showing 71-90 packages derived from capabilities
+
+- [x] **Package derivation from capabilities → categories → packages working** - All 5 hosts showing 71-90 packages
+  derived from capabilities
 - [x] **Integration with existing auto-category-mapping system** - Uses `packages/manager.nix` and `deriveCategories()`
-- [x] **Automated identification of optimization opportunities and configuration conflicts** - Full validation and conflict detection implemented
+- [x] **Automated identification of optimization opportunities and configuration conflicts** - Full validation and
+  conflict detection implemented
 - [x] **Package validation and conflict resolution** - Comprehensive validation system with conflict reporting
 - [x] **Integration with CI/CD pipeline for configuration validation** - Available via justfile commands for automation
 
@@ -466,11 +496,14 @@ just mapping-stats
 
 ### Architecture Review: Code Duplication Concerns
 
-During Phase 2 implementation, a critical architectural question was identified: **Does the reporting system use the same code as the flake configurations for package derivation?**
+During Phase 2 implementation, a critical architectural question was identified: **Does the reporting system use the
+same code as the flake configurations for package derivation?**
 
 ### Current State Assessment ✅
 
-**Migration Status**: All 5 hosts have been successfully migrated from manual category specifications to auto-derivation:
+**Migration Status**: All 5 hosts have been successfully migrated from manual category specifications to
+auto-derivation:
+
 - ✅ **No static mappings found** - All hosts use `packageManager.deriveCategories()`
 - ✅ **Consistent patterns** - Identical auto-derivation code across all host configurations
 - ✅ **Single source of truth** - All derivation logic contained in `packages/manager.nix`
@@ -478,6 +511,7 @@ During Phase 2 implementation, a critical architectural question was identified:
 ### Code Path Analysis
 
 **Host Configurations** (`hosts/*/packages.nix`):
+
 ```nix
 packageManager = import ../../../packages/manager.nix { inherit lib pkgs hostCapabilities; };
 auto = packageManager.deriveCategories {
@@ -488,6 +522,7 @@ systemPackages = packageManager.generatePackages auto.categories;
 ```
 
 **Reporting System** (`lib/reporting/collector.nix`):
+
 ```nix
 packageManager = packageManagerFactory capabilities;  # Same manager.nix
 derivation = packageManager.deriveCategories {
@@ -500,12 +535,14 @@ packages = packageManager.generatePackages derivation.categories;
 ### Risk Assessment
 
 **✅ Strengths**:
+
 - **Same source code** - Both use `packages/manager.nix`
-- **Same functions** - Both use `deriveCategories()` and `generatePackages()` 
+- **Same functions** - Both use `deriveCategories()` and `generatePackages()`
 - **Same algorithm** - Identical capability → category → package logic
 - **Minimal duplication** - Only 6 lines of configuration options
 
 **⚠️ Identified Risk**:
+
 - **Configuration options duplicated** across 6 locations (5 hosts + 1 reporting)
 - **Potential for drift** if derivation options are updated in one place but not others
 - **No automated verification** that host configs and reporting produce identical results
@@ -513,6 +550,7 @@ packages = packageManager.generatePackages derivation.categories;
 ### Risk Mitigation Strategies
 
 **Option 1: Configuration Constants** (Recommended)
+
 ```nix
 # packages/constants.nix
 { standardDerivationOptions = {
@@ -523,10 +561,12 @@ packages = packageManager.generatePackages derivation.categories;
 ```
 
 **Option 2: Automated Testing**
+
 - Add CI test to verify reporting system matches host derivation results
 - Compare package lists between host configs and reporting for same capabilities
 
 **Option 3: Documentation & Process**
+
 - Document dependency between host configs and reporting system
 - Add code review checklist for derivation option changes
 - Link related files with comments
@@ -536,20 +576,24 @@ packages = packageManager.generatePackages derivation.categories;
 **Current architecture is sound** - the risk is manageable with proper process:
 
 1. **Keep existing design** - Well-architected with single algorithm source
-2. **Add monitoring** - CI tests to detect configuration drift
-3. **Document dependencies** - Clear linking between related configurations
-4. **Minimize changes** - Derivation options should remain stable
+1. **Add monitoring** - CI tests to detect configuration drift
+1. **Document dependencies** - Clear linking between related configurations
+1. **Minimize changes** - Derivation options should remain stable
 
-The system correctly uses the **same package derivation code** for both host configurations and reporting, ensuring accurate representation of actual package selections.
+The system correctly uses the **same package derivation code** for both host configurations and reporting, ensuring
+accurate representation of actual package selections.
 
 ### Phase 3 Criteria (COMPLETED ✅)
+
 - [x] **Multiple export formats for visualization tools** - GraphML, DOT, and JSON Graph formats implemented
-- [x] **Integration with command-line workflow** - 4 justfile commands for graph export operations  
+- [x] **Integration with command-line workflow** - 4 justfile commands for graph export operations
 - [x] **Visualization-ready output** - Files compatible with Cytoscape desktop, yEd, Graphviz, D3.js, and Sigma.js
-- [x] **Complete graph representation** - 187 nodes (5 hosts, 22 capabilities, 68 categories, 92 packages) and 5,651 edges
+- [x] **Complete graph representation** - 187 nodes (5 hosts, 22 capabilities, 68 categories, 92 packages) and 5,651
+  edges
 - [x] **Flake integration** - Available as `hostPackageMapping.export*` outputs for programmatic access
 
 ### Phase 4+ Criteria (FUTURE)
-- [ ] Interactive web visualization interface with real-time exploration capabilities  
-- [ ] Multi-layer graph layouts and interactive filtering and search capabilities  
+
+- [ ] Interactive web visualization interface with real-time exploration capabilities
+- [ ] Multi-layer graph layouts and interactive filtering and search capabilities
 - [ ] Host comparison functionality for configuration management

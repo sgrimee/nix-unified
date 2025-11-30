@@ -2,20 +2,23 @@
 
 ## Problem Statement
 
-Currently, the unified Nix configuration rebuilds both system and home-manager configurations together via `just switch`. This makes it impossible to:
+Currently, the unified Nix configuration rebuilds both system and home-manager configurations together via
+`just switch`. This makes it impossible to:
 
 1. Rebuild only system configuration when making system-level changes
-2. Rebuild only home-manager when making user configuration changes
-3. Avoid unnecessary rebuilds of unchanged components
+1. Rebuild only home-manager when making user configuration changes
+1. Avoid unnecessary rebuilds of unchanged components
 
 ## Current Architecture Issues
 
 ### Darwin (macOS) Integration
+
 - Home-manager is integrated as a nix-darwin module
 - `darwin-rebuild switch` always rebuilds both system and home-manager
 - No way to separate the rebuilds
 
 ### NixOS Integration
+
 - Home-manager is integrated as a NixOS module
 - `nixos-rebuild switch` always rebuilds both system and home-manager
 - Technically possible to separate but not implemented
@@ -76,12 +79,14 @@ homeConfigurations = {
 ### Justfile Command Updates
 
 #### Current Commands (Keep Working)
+
 ```bash
 just switch          # Rebuild both system + home-manager (current behavior)
 just switch-host HOST # Rebuild both for specific host
 ```
 
 #### New Commands
+
 ```bash
 just switch-system          # Rebuild only system configuration
 just switch-system-host HOST # Rebuild only system for specific host
@@ -145,16 +150,19 @@ switch-home:
 ### Migration Strategy
 
 #### Phase 1: Add Conditional Logic
+
 - Modify capability-loader to support conditional home-manager inclusion
 - Keep existing behavior as default
 - Test that existing commands still work
 
 #### Phase 2: Create Separate Configurations
+
 - Add system-only and home-manager-only configurations to flake
 - Update justfile with new commands
 - Test new commands work independently
 
 #### Phase 3: Update Documentation
+
 - Document new commands and their purposes
 - Update README with new workflow
 - Add examples of when to use each command
@@ -162,32 +170,33 @@ switch-home:
 ### Benefits
 
 1. **Faster rebuilds**: Only rebuild what changed
-2. **Better development workflow**: Test system changes without rebuilding user config
-3. **Reduced rebuild times**: Avoid rebuilding home-manager when only system config changed
-4. **Clear separation**: Explicit commands for different types of changes
+1. **Better development workflow**: Test system changes without rebuilding user config
+1. **Reduced rebuild times**: Avoid rebuilding home-manager when only system config changed
+1. **Clear separation**: Explicit commands for different types of changes
 
 ### Risks and Considerations
 
 1. **Complexity**: More configuration variants to maintain
-2. **Testing**: Need to test all combinations work correctly
-3. **Documentation**: Users need to understand when to use each command
-4. **Backwards compatibility**: Ensure existing workflows continue to work
+1. **Testing**: Need to test all combinations work correctly
+1. **Documentation**: Users need to understand when to use each command
+1. **Backwards compatibility**: Ensure existing workflows continue to work
 
 ### Testing Strategy
 
 1. **Unit tests**: Test conditional module inclusion
-2. **Integration tests**: Test all command combinations
-3. **Migration tests**: Ensure existing commands still work
-4. **Performance tests**: Verify rebuild time improvements
+1. **Integration tests**: Test all command combinations
+1. **Migration tests**: Ensure existing commands still work
+1. **Performance tests**: Verify rebuild time improvements
 
 ### Rollout Plan
 
 1. Implement conditional logic (low risk)
-2. Add new configurations and commands
-3. Test thoroughly on development systems
-4. Roll out to production systems
-5. Update documentation and training
+1. Add new configurations and commands
+1. Test thoroughly on development systems
+1. Roll out to production systems
+1. Update documentation and training
 
 ## Conclusion
 
-This architecture change will provide the granular control needed for efficient development workflows while maintaining backwards compatibility with existing commands.
+This architecture change will provide the granular control needed for efficient development workflows while maintaining
+backwards compatibility with existing commands.

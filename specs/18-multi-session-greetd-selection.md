@@ -11,13 +11,16 @@ dependencies: [14-determinate-nix-migration.md, 16-unified-keyboard-remapping.md
 
 ## Problem Statement
 
-Currently, NixOS hosts have a single hardcoded desktop environment and status bar configured per host. Users cannot choose between different desktop environments or status bars at login time without rebuilding the system configuration. This limits flexibility and requires system rebuilds to try different combinations.
+Currently, NixOS hosts have a single hardcoded desktop environment and status bar configured per host. Users cannot
+choose between different desktop environments or status bars at login time without rebuilding the system configuration.
+This limits flexibility and requires system rebuilds to try different combinations.
 
 ## Current State Analysis
 
 ### Existing Configuration Model
 
 **Current capability structure:**
+
 ```nix
 environment = {
   desktop = "sway" | "gnome";           # Single choice
@@ -27,12 +30,14 @@ environment = {
 ```
 
 **Per-host current state:**
+
 - **cirice**: desktop="sway", bar="caelestia"
 - **dracula**: desktop="sway", bar="waybar"
 - **legion**: desktop="gnome", bar=null
 - **nixair**: desktop="sway", bar=null (defaults to waybar)
 
 **Existing infrastructure:**
+
 - greetd with tuigreet already deployed (`modules/nixos/greetd.nix`)
 - tuigreet supports multiple sessions via `.desktop` files
 - Bar modules are home-manager only
@@ -41,13 +46,14 @@ environment = {
 ### Limitations
 
 1. Cannot switch between GNOME and Sway without rebuild
-2. Cannot try different status bars without rebuild
-3. User preference locked at system configuration time
-4. GNOME packages installed even when not primary desktop
+1. Cannot try different status bars without rebuild
+1. User preference locked at system configuration time
+1. GNOME packages installed even when not primary desktop
 
 ## Proposed Solution
 
-Transform the capability system to support multiple available sessions, with user selection at greetd login time via tuigreet's session picker.
+Transform the capability system to support multiple available sessions, with user selection at greetd login time via
+tuigreet's session picker.
 
 ### New Capability Structure
 
@@ -76,6 +82,7 @@ features = {
 ### Per-Host Target Configuration
 
 **cirice:**
+
 ```nix
 environment.desktops = { available = ["sway" "gnome"]; default = "sway"; };
 environment.bars = { available = ["caelestia" "waybar" "quickshell"]; default = "caelestia"; };
@@ -83,6 +90,7 @@ features.gnome = false;  # GNOME available but minimal packages
 ```
 
 **dracula:**
+
 ```nix
 environment.desktops = { available = ["sway"]; default = "sway"; };
 environment.bars = { available = ["waybar"]; default = "waybar"; };
@@ -90,6 +98,7 @@ features.gnome = false;
 ```
 
 **legion:**
+
 ```nix
 environment.desktops = { available = ["sway" "gnome"]; default = "gnome"; };
 environment.bars = { available = ["waybar"]; default = "waybar"; };
@@ -97,6 +106,7 @@ features.gnome = true;  # Full GNOME packages installed
 ```
 
 **nixair:**
+
 ```nix
 environment.desktops = { available = ["sway"]; default = "sway"; };
 environment.bars = { available = ["waybar"]; default = "waybar"; };
@@ -106,6 +116,7 @@ features.gnome = false;
 ### Session Generation
 
 Generate `.desktop` session files for all combinations:
+
 - `sway-waybar.desktop`
 - `sway-caelestia.desktop`
 - `sway-quickshell.desktop`
@@ -225,57 +236,63 @@ services.greetd.settings.default_session.command = ''
 ### New Files
 
 1. `lib/session-generator.nix` - Session file generation logic
-2. `tests/session-generator-tests.nix` - Test session generation
+1. `tests/session-generator-tests.nix` - Test session generation
 
 ### Modified Files
 
 1. `lib/capability-schema.nix` - Remove old fields, add new multi-option structure
-2. `lib/capability-loader.nix` - Load all available desktops/bars
-3. `lib/module-mapping.nix` - Update desktop and bar module mappings
-4. `modules/nixos/greetd.nix` - Integrate session generator
-5. `modules/home-manager/wl-sway.nix` - Read bar from NIXOS_SESSION_BAR env var
-6. `modules/nixos/gnome.nix` - Make package installation conditional on features.gnome
-7. `modules/nixos/sway.nix` - Ensure sway.desktop is available
-8. `hosts/nixos/cirice/capabilities.nix` - Migrate to new format
-9. `hosts/nixos/dracula/capabilities.nix` - Migrate to new format
-10. `hosts/nixos/legion/capabilities.nix` - Migrate to new format
-11. `hosts/nixos/nixair/capabilities.nix` - Migrate to new format
+1. `lib/capability-loader.nix` - Load all available desktops/bars
+1. `lib/module-mapping.nix` - Update desktop and bar module mappings
+1. `modules/nixos/greetd.nix` - Integrate session generator
+1. `modules/home-manager/wl-sway.nix` - Read bar from NIXOS_SESSION_BAR env var
+1. `modules/nixos/gnome.nix` - Make package installation conditional on features.gnome
+1. `modules/nixos/sway.nix` - Ensure sway.desktop is available
+1. `hosts/nixos/cirice/capabilities.nix` - Migrate to new format
+1. `hosts/nixos/dracula/capabilities.nix` - Migrate to new format
+1. `hosts/nixos/legion/capabilities.nix` - Migrate to new format
+1. `hosts/nixos/nixair/capabilities.nix` - Migrate to new format
 
 ## Migration Strategy
 
 ### Phase 1: Infrastructure (No Breaking Changes Yet)
+
 1. Create `lib/session-generator.nix` with full implementation
-2. Add tests for session generation
-3. Update `modules/nixos/gnome.nix` to support features.gnome flag (default true for compatibility)
+1. Add tests for session generation
+1. Update `modules/nixos/gnome.nix` to support features.gnome flag (default true for compatibility)
 
 ### Phase 2: Capability Schema Migration (Breaking Changes)
+
 1. Update `lib/capability-schema.nix` - remove old fields, add new structure
-2. Update `lib/capability-loader.nix` - process new structure
-3. Update `lib/module-mapping.nix` - load multiple modules
+1. Update `lib/capability-loader.nix` - process new structure
+1. Update `lib/module-mapping.nix` - load multiple modules
 
 ### Phase 3: Module Updates
+
 1. Update `modules/nixos/greetd.nix` - integrate session generator
-2. Update `modules/home-manager/wl-sway.nix` - read env var
-3. Update `modules/nixos/sway.nix` - ensure proper desktop file
+1. Update `modules/home-manager/wl-sway.nix` - read env var
+1. Update `modules/nixos/sway.nix` - ensure proper desktop file
 
 ### Phase 4: Host Migration (All at Once)
+
 1. Update all host capabilities.nix files simultaneously
-2. Test build for each host
-3. Deploy to one host for validation
-4. Deploy to remaining hosts
+1. Test build for each host
+1. Deploy to one host for validation
+1. Deploy to remaining hosts
 
 ## Testing Strategy
 
 ### Unit Tests
 
 1. **Session Generator Tests** (`tests/session-generator-tests.nix`):
+
    - Test sway-only with single bar
    - Test sway-only with multiple bars
    - Test gnome-only
    - Test sway + gnome with bars
    - Verify correct .desktop file format
 
-2. **Capability Schema Tests** (extend `tests/capability-tests.nix`):
+1. **Capability Schema Tests** (extend `tests/capability-tests.nix`):
+
    - Validate new schema structure
    - Test that old single-value format is rejected
    - Verify defaults work correctly
@@ -283,11 +300,13 @@ services.greetd.settings.default_session.command = ''
 ### Integration Tests
 
 1. **Build Tests**:
+
    - Build each host configuration
    - Verify correct session files generated
    - Verify correct packages installed
 
-2. **Runtime Tests** (manual):
+1. **Runtime Tests** (manual):
+
    - Boot into greetd on test host
    - Verify all expected sessions appear in tuigreet
    - Test launching each session
@@ -298,6 +317,7 @@ services.greetd.settings.default_session.command = ''
 ### Per-Host Validation
 
 **cirice:**
+
 - [ ] Builds successfully
 - [ ] Shows: sway-caelestia, sway-waybar, sway-quickshell, gnome
 - [ ] Default: sway-caelestia
@@ -305,12 +325,14 @@ services.greetd.settings.default_session.command = ''
 - [ ] Each sway session launches correct bar
 
 **dracula:**
+
 - [ ] Builds successfully
 - [ ] Shows: sway-waybar only
 - [ ] Default: sway-waybar
 - [ ] No GNOME packages installed
 
 **legion:**
+
 - [ ] Builds successfully
 - [ ] Shows: sway-waybar, gnome
 - [ ] Default: gnome
@@ -318,6 +340,7 @@ services.greetd.settings.default_session.command = ''
 - [ ] Sway session launches waybar
 
 **nixair:**
+
 - [ ] Builds successfully
 - [ ] Shows: sway-waybar only
 - [ ] Default: sway-waybar
@@ -326,26 +349,26 @@ services.greetd.settings.default_session.command = ''
 ## Benefits
 
 1. **User Flexibility**: Switch between desktops/bars without system rebuild
-2. **Testing**: Easy to try different configurations before committing
-3. **Development**: Test multiple desktop environments on single host
-4. **Resource Management**: Install GNOME only where needed (features.gnome flag)
-5. **Consistency**: All NixOS hosts use same multi-session paradigm
-6. **Clean Architecture**: No legacy compatibility code, pure new implementation
+1. **Testing**: Easy to try different configurations before committing
+1. **Development**: Test multiple desktop environments on single host
+1. **Resource Management**: Install GNOME only where needed (features.gnome flag)
+1. **Consistency**: All NixOS hosts use same multi-session paradigm
+1. **Clean Architecture**: No legacy compatibility code, pure new implementation
 
 ## Implementation Steps
 
 1. Create `lib/session-generator.nix` with full session generation logic
-2. Add comprehensive tests for session generator
-3. Update capability schema - remove old single-value fields
-4. Update capability loader to process new multi-value structure
-5. Update module mapping to load all available modules
-6. Update greetd module to use session generator
-7. Update sway home-manager module to read NIXOS_SESSION_BAR
-8. Update GNOME module to check features.gnome flag
-9. Migrate all host capabilities.nix files simultaneously
-10. Build and test each host configuration
-11. Deploy to cirice first for validation
-12. Deploy to remaining hosts after validation
+1. Add comprehensive tests for session generator
+1. Update capability schema - remove old single-value fields
+1. Update capability loader to process new multi-value structure
+1. Update module mapping to load all available modules
+1. Update greetd module to use session generator
+1. Update sway home-manager module to read NIXOS_SESSION_BAR
+1. Update GNOME module to check features.gnome flag
+1. Migrate all host capabilities.nix files simultaneously
+1. Build and test each host configuration
+1. Deploy to cirice first for validation
+1. Deploy to remaining hosts after validation
 
 ## Acceptance Criteria
 

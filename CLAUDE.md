@@ -13,25 +13,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Quick Start
 
-**Most common operations:**
-
-```bash
-# Test configuration changes
-just test
-
-# Build a host (without switching)
-just build <hostname>
-
-# Check for errors
-just check
-
-# Format code
-just fmt
-
-# Install git hooks (do this once after cloning)
-just install-hooks
-```
-
 ## Documentation
 
 **For detailed information, refer to:**
@@ -73,37 +54,25 @@ packages/categories/      # Package category definitions
 
 **Important**: ALL hosts MUST have `capabilities.nix` - no traditional `default.nix` imports.
 
-## Common Commands
+## Essential Testing Commands
 
-See [README.md](README.md) for complete command reference. Key commands:
+AI agents should use these commands for validation:
 
 ```bash
-# Testing & Validation
-just test                   # Quick validation
-just check                  # Check for errors
-just test-linux            # Test NixOS configs
-just test-darwin           # Test Darwin configs
+# Primary validation workflow
+just test              # Quick validation (basic tests + flake check) - USE THIS FIRST
+just fmt               # Format code before committing
 
-# Building (DO NOT run switch commands - requires sudo)
-just build <hostname>      # Build configuration
-just dry-run              # Preview changes
+# Build validation
+just build             # Build current host
+just build-host        # Build specific host (interactive selector if no hostname provided)
 
-# Package Management
-just search-packages <term>           # Find packages
-just list-package-categories          # List categories
-just package-info <hostname>          # Show host packages
-
-# Maintenance
-just update                # Update flake inputs
-just gc                    # Garbage collect
-just fmt                   # Format Nix files
-just lint                  # Check for dead code
-
-# Host Management
-just list-hosts            # Show all hosts
-just new-nixos-host <name> # Create NixOS host
-just validate-host <name>  # Validate configuration
+# Platform-specific testing (when needed)
+just test-linux        # Test all NixOS configurations
+just test-darwin       # Test all Darwin configurations
 ```
+
+For complete command reference, see [README.md](README.md).
 
 ## Development Guidelines
 
@@ -130,52 +99,28 @@ just validate-host <name>  # Validate configuration
 ### Best Practices
 
 **When modifying configurations:**
-1. Run `just test` before committing
-2. Run `just check` to validate syntax
-3. Build affected hosts: `just build <hostname>`
-4. Format code: `just fmt`
-5. Add tests for new features
+- Follow validation workflow (see Essential Testing Commands above)
+- Add tests for new features
 
 **When adding packages:**
 - Add to appropriate category in `packages/categories/`
-- Use platform guards for platform-specific packages
-- Pin versions in `packages/versions.nix` if needed
 - See [docs/package-management.md](docs/package-management.md)
 
 **When adding modules:**
 - Create module in appropriate platform directory
 - Add capability mapping in `lib/module-mapping/<category>.nix`
-- Update schema if adding new capability type
-- Add test case
 
 **When creating hosts:**
 - Use `just new-nixos-host <name>` or `just new-darwin-host <name>`
-- Define capabilities in `capabilities.nix`
-- Request package categories in `packages.nix`
 - Never create `default.nix` files
-
-### Testing Strategy
-
-Always run after making changes:
-```bash
-just test        # Quick validation
-just check       # Syntax and evaluation
-just build <host> # Test specific host builds
-```
-
-For comprehensive testing:
-```bash
-just test-comprehensive  # Full test suite
-just test-integration   # Module interaction tests
-```
 
 ### Git Workflow
 
 1. **Install hooks**: `just install-hooks` (once per clone)
 2. **Make changes** and test locally
-3. **Commit** with descriptive messages (never mention AI)
-4. **Push** - CI will run tests and builds
-5. **Never commit unless explicitly instructed**
+3. **Stage changes** only when explicitly instructed
+4. **Commit** with descriptive messages (never mention AI) only when explicitly instructed
+5. **Push** - do not try to push changes, the user takes care of it.
 
 ## AI Assistant Operational Guidelines
 
@@ -188,7 +133,7 @@ just test-integration   # Module interaction tests
 - Any `sudo` command
 
 **CAN run:**
-- `just test`, `just check`, `just build`
+- `just test`, `just build`
 - `nix build`, `nix flake check`
 - Git commands (except push without permission)
 - File operations, searches, analysis
@@ -198,17 +143,15 @@ just test-integration   # Module interaction tests
 ### Configuration Rules
 
 **Always:**
-- Run `just check` or validation after making changes
+- Follow validation workflow (see Essential Testing Commands above)
 - Use capability system for all hosts (mandatory `capabilities.nix`)
-- Add tests for new features
-- Format with `just fmt` before committing
 - Reference documentation in docs/ for detailed info
 
 **Never:**
 - Create `default.nix` files for hosts or manual module imports
 - Add `nix = { ... }` configuration blocks to Darwin systems (uses Determinate Nix)
 - Mention AI agent in commit messages or PRs
-- Commit to git unless specifically instructed
+- Stage or commit to git unless specifically instructed
 - Run interactive commands (sudo, switches, etc.)
 
 ### Platform-Specific
@@ -238,9 +181,8 @@ darwin-rebuild switch --flake .#<hostname>
 
 1. Identify appropriate location (module, capability, package category)
 2. Make changes following existing patterns
-3. Add unit test in `tests/`
-4. Run `just test` to validate
-5. Document in commit message
+3. Follow validation workflow (see Essential Testing Commands above)
+4. Document in commit message
 
 ### Common Tasks
 
@@ -253,7 +195,7 @@ darwin-rebuild switch --flake .#<hostname>
 **Add capability mapping:**
 1. Edit appropriate file in `lib/module-mapping/`
 2. Add mapping: `capability.path = [ "module/path.nix" ];`
-3. Test: `just check`
+3. Test: `just test`
 
 **Create new host:**
 ```bash

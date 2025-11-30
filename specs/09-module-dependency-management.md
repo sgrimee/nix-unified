@@ -1,5 +1,5 @@
 ---
-title: Self-Sufficient Modules and Simple Conflict Detection  
+title: Self-Sufficient Modules and Simple Conflict Detection
 status: implemented
 priority: medium
 category: architecture
@@ -11,19 +11,25 @@ dependencies: [03]
 
 ## Problem Statement
 
-Current modules have implicit dependencies that users must remember to enable manually. This leads to broken configurations when required dependencies are forgotten (e.g., kanata needing uinput, gaming features needing OpenGL). Users shouldn't need to understand complex dependency relationships - modules should "just work" when enabled.
+Current modules have implicit dependencies that users must remember to enable manually. This leads to broken
+configurations when required dependencies are forgotten (e.g., kanata needing uinput, gaming features needing OpenGL).
+Users shouldn't need to understand complex dependency relationships - modules should "just work" when enabled.
 
 ## Current State Analysis
 
 **Real examples from the configuration:**
-- **Kanata** requires `hardware.uinput.enable = true` and `boot.kernelModules = [ "uinput" ]` but users must remember this
+
+- **Kanata** requires `hardware.uinput.enable = true` and `boot.kernelModules = [ "uinput" ]` but users must remember
+  this
 - **StrongSwan VPN** needs xl2tpd service, firewall ports, kernel modules, and SOPS secrets - currently handled well
 - **Gaming features** need OpenGL, audio, kernel parameters but these aren't auto-enabled
 - **File mounts** need devmon + gvfs + udisks2 together - currently bundled appropriately
 
 ## Proposed Solution
 
-**Make modules completely self-sufficient** by auto-enabling their dependencies, with simple conflict detection for edge cases. This follows the Unix philosophy of each component handling its own needs, leveraging NixOS's existing `mkIf` and `assertions` mechanisms.
+**Make modules completely self-sufficient** by auto-enabling their dependencies, with simple conflict detection for edge
+cases. This follows the Unix philosophy of each component handling its own needs, leveraging NixOS's existing `mkIf` and
+`assertions` mechanisms.
 
 ## Implementation Details
 
@@ -356,7 +362,7 @@ list-self-sufficient:
 
 1. **Audit existing modules** - Identify modules with implicit dependencies
 1. **Update modules to be self-sufficient** - Auto-enable required dependencies
-1. **Add simple conflict detection** - Use assertions for known conflicts  
+1. **Add simple conflict detection** - Use assertions for known conflicts
 1. **Add runtime validation** - Check services are actually working
 1. **Update documentation** - Document what each module provides/requires
 1. **Create migration examples** - Show before/after for common patterns
@@ -374,25 +380,29 @@ Based on current configuration analysis:
 ## Acceptance Criteria
 
 - [x] **StrongSwan VPN** already self-sufficient (auto-enables xl2tpd, firewall, secrets)
-- [x] **Kanata** already self-sufficient (auto-enables uinput, kernel modules)  
+- [x] **Kanata** already self-sufficient (auto-enables uinput, kernel modules)
 - [x] **File mounts** already bundled appropriately (devmon + gvfs + udisks2)
 - [x] **Gaming features** auto-enable OpenGL, audio, kernel parameters
-- [x] **Runtime validation** checks critical services are running  
+- [x] **Runtime validation** checks critical services are running
 - [x] **Conflict detection** prevents nginx+apache, other port conflicts
 - [x] **Documentation** clearly shows what each module auto-enables
 - [x] **Migration guide** helps update remaining modules
 
 ## Conclusion
 
-This simplified approach leverages NixOS's existing mechanisms instead of creating a complex dependency management system. By making modules self-sufficient and using simple conflict detection, we achieve:
+This simplified approach leverages NixOS's existing mechanisms instead of creating a complex dependency management
+system. By making modules self-sufficient and using simple conflict detection, we achieve:
 
 **90% of the benefits with 10% of the complexity**
 
-The key insight is that Nix already handles the hard parts (package dependencies, build ordering, reproducibility). We just need to handle the logical relationships that users shouldn't have to think about.
+The key insight is that Nix already handles the hard parts (package dependencies, build ordering, reproducibility). We
+just need to handle the logical relationships that users shouldn't have to think about.
 
 **Examples of the approach working well in the current config:**
+
 - **StrongSwan VPN** (98 lines) - Auto-enables xl2tpd, firewall, kernel modules, creates secrets
 - **Kanata** (20 lines) - Auto-enables uinput, kernel modules, sets up permissions
 - **Mount services** (4 lines) - Bundles devmon + gvfs + udisks2 together
 
-This specification replaces the original complex dependency management system with a practical, maintainable approach that follows NixOS conventions.
+This specification replaces the original complex dependency management system with a practical, maintainable approach
+that follows NixOS conventions.

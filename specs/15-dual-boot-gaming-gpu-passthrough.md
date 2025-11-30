@@ -2,43 +2,51 @@
 
 ## Overview
 
-Implement a dual-boot specialisation system that allows users to choose between native gaming mode (default) and GPU passthrough mode for virtual machines on AMD systems with integrated graphics.
+Implement a dual-boot specialisation system that allows users to choose between native gaming mode (default) and GPU
+passthrough mode for virtual machines on AMD systems with integrated graphics.
 
 ## Problem Statement
 
-The cirice host with AMD Ryzen AI 9 HX 370 and Radeon 890M currently has GPU configured for VFIO passthrough to Windows VMs. This prevents native Linux gaming since the GPU is bound to the VFIO driver and unavailable to the Linux host.
+The cirice host with AMD Ryzen AI 9 HX 370 and Radeon 890M currently has GPU configured for VFIO passthrough to Windows
+VMs. This prevents native Linux gaming since the GPU is bound to the VFIO driver and unavailable to the Linux host.
 
 ### Current Conflict Explanation
 
 The AMD Radeon 890M GPU can only be controlled by **one driver at a time**:
 
 **Current Setup (GPU Passthrough)**:
+
 - GPU is bound to VFIO driver via `vfioIds = ["1002:150e" "1002:1640"]`
 - Linux host cannot use the GPU directly - it's reserved for VM passthrough
 - AMD graphics appear as `/dev/vfio/` devices instead of normal GPU devices
 - No OpenGL/Vulkan access from Linux host
 
 **Native Gaming Setup**:
+
 - GPU needs to be controlled by `amdgpu` kernel driver
 - Linux host gets direct access to GPU hardware
 - OpenGL/Vulkan/gaming works natively
 - Cannot passthrough to VMs simultaneously
 
-**Solution**: Boot-time specialisations allow choosing the configuration at boot time, since VFIO binding happens during kernel initialization and cannot be changed at runtime.
+**Solution**: Boot-time specialisations allow choosing the configuration at boot time, since VFIO binding happens during
+kernel initialization and cannot be changed at runtime.
 
 ## Current State Analysis
 
 ### Host Configuration (cirice)
+
 - Gaming capability disabled (`features.gaming = false`)
 - GPU passthrough enabled with VFIO binding (PCI IDs: 1002:150e, 1002:1640)
 - Current configuration requires choosing between VFIO passthrough and native gaming at boot time
 
 ### Module Integration Gaps
+
 - `featureModules.gaming.nixos = []` (empty in lib/module-mapping.nix:69)
 - Missing `hardwareModules.gpu.amd` section entirely
 - Virtualization module unconditionally enables VFIO
 
 ### Package Integration Issues
+
 - Gaming packages not accessible due to disabled gaming capability
 - No OpenJDK included (will be managed by launchers)
 - AMD-specific drivers not included
@@ -83,6 +91,7 @@ specialisation = {
 #### lib/module-mapping.nix Updates Required
 
 **A. Gaming Feature Modules (Line 69)**:
+
 ```nix
 gaming = {
   nixos = [
@@ -95,6 +104,7 @@ gaming = {
 ```
 
 **B. AMD GPU Hardware Modules (Missing)**:
+
 ```nix
 gpu = {
   nvidia = {
@@ -109,6 +119,7 @@ gpu = {
 ```
 
 **C. Conditional Virtualization Modules**:
+
 ```nix
 virtualizationModules = {
   windowsGpuPassthrough = {
@@ -126,6 +137,7 @@ virtualizationModules = {
 ### 3. New Modules Required
 
 #### modules/nixos/gaming-graphics.nix
+
 ```nix
 { config, lib, pkgs, ... }:
 
@@ -163,6 +175,7 @@ virtualizationModules = {
 ```
 
 #### modules/nixos/gaming-performance.nix
+
 ```nix
 { config, lib, pkgs, ... }:
 
@@ -197,14 +210,16 @@ virtualizationModules = {
 The current `windows-gpu-passthrough.nix` module needs significant refactoring:
 
 #### Current Issues:
+
 1. **Unconditional VFIO binding** (lines 140-159): systemd service always binds GPU to VFIO
-2. **Hard-coded kernel parameters** (lines 61-69): IOMMU and VFIO always enabled
-3. **initrd modules** (line 60): VFIO modules always loaded
-4. **No conditional logic**: Assumes module is always active when enabled
+1. **Hard-coded kernel parameters** (lines 61-69): IOMMU and VFIO always enabled
+1. **initrd modules** (line 60): VFIO modules always loaded
+1. **No conditional logic**: Assumes module is always active when enabled
 
 #### Required Changes:
 
 **A. Split VFIO-specific logic into conditional sections**:
+
 ```nix
 # Only bind VFIO when GPU passthrough is specifically enabled
 # AND not in native-gaming specialisation
@@ -214,12 +229,14 @@ config = lib.mkIf (cfg.enable && !config.specialisation.native-gaming.enable) {
 ```
 
 **B. Move kernel parameters to specialisation-specific configs**:
+
 ```nix
 # vm-passthrough specialisation gets VFIO kernel params
 # native-gaming specialisation gets gaming kernel params
 ```
 
 **C. Create base virtualization module**:
+
 ```nix
 # modules/nixos/virtualization/base.nix
 # Provides libvirtd, QEMU, but no GPU binding
@@ -228,6 +245,7 @@ config = lib.mkIf (cfg.enable && !config.specialisation.native-gaming.enable) {
 ### 5. Boot Configuration
 
 #### Default Boot Behavior:
+
 ```nix
 # Make native-gaming the default
 boot.loader.systemd-boot.default = "native-gaming";
@@ -239,6 +257,7 @@ specialisation.vm-passthrough.configuration.system.nixos.label = "VM Passthrough
 ```
 
 #### Boot Menu Example:
+
 ```
 NixOS Configuration Menu:
 1. Gaming Mode (Default)           [10 seconds]
@@ -250,6 +269,7 @@ NixOS Configuration Menu:
 #### Capability → Category → Package Chain
 
 **Automatic Package Inclusion**:
+
 - When `features.gaming = true` → gaming category enabled → gaming packages included
 - Gaming packages include: Prism Launcher, Steam, MangoHUD, GameMode, Discord
 - AMD-specific packages: amdvlk, mesa with AMD drivers
@@ -258,6 +278,7 @@ NixOS Configuration Menu:
 **Package Categories by Mode**:
 
 **Native Gaming Mode**:
+
 ```nix
 # Automatically included via gaming capability
 gaming.platforms = [
@@ -278,6 +299,7 @@ gaming.gpuSpecific.amd = [
 ```
 
 **VM Passthrough Mode**:
+
 ```nix
 # VM-specific packages
 virtualization.packages = [
@@ -290,29 +312,34 @@ virtualization.packages = [
 ## Implementation Plan
 
 ### Phase 1: Create New Modules
+
 1. **Create gaming-graphics.nix** - AMD graphics configuration for gaming
-2. **Create gaming-performance.nix** - Gaming performance optimizations
-3. **Create amd-graphics.nix** - General AMD graphics support
+1. **Create gaming-performance.nix** - Gaming performance optimizations
+1. **Create amd-graphics.nix** - General AMD graphics support
 
 ### Phase 2: Update Module Mapping
+
 4. **Update lib/module-mapping.nix**:
    - Add gaming modules to `featureModules.gaming.nixos`
    - Add AMD GPU support to `hardwareModules.gpu.amd`
    - Update virtualization module mappings
 
 ### Phase 3: Refactor Virtualization Module
+
 5. **Split windows-gpu-passthrough.nix**:
    - Extract base virtualization to separate module
    - Make VFIO binding conditional on specialisation
    - Move kernel parameters to specialisation configs
 
 ### Phase 4: Update Host Configuration
+
 6. **Update cirice configuration**:
    - Restructure system.nix with specialisations
    - Set native-gaming as default
    - Update capabilities.nix for gaming support
 
 ### Phase 5: Boot Configuration
+
 7. **Configure boot behavior**:
    - Set appropriate defaults and timeouts
    - Clear menu labels
@@ -341,24 +368,28 @@ lib/
 ## Testing Strategy
 
 ### 1. Native Gaming Mode Testing
+
 - [ ] Verify OpenGL/Vulkan functionality (`glxinfo`, `vulkaninfo`)
 - [ ] Test Minecraft with Prism Launcher
 - [ ] Validate gaming performance optimizations
 - [ ] Ensure AMD drivers load correctly
 
 ### 2. VM Passthrough Mode Testing
+
 - [ ] Ensure VFIO binding works
 - [ ] Test Looking Glass functionality
 - [ ] Verify Windows VM performance
 - [ ] Validate GPU passthrough to VM
 
 ### 3. Boot Testing
+
 - [ ] All specialisations build successfully
 - [ ] Boot menu displays correctly
 - [ ] Default selection works (10-second timeout)
 - [ ] Smooth transitions between modes
 
 ### 4. Integration Testing
+
 - [ ] Module mapping correctly includes new modules
 - [ ] Package categories work in each mode
 - [ ] No conflicts between specialisations
@@ -377,16 +408,18 @@ lib/
 ## User Experience
 
 ### Switching Modes
+
 1. **To Gaming Mode** (default): Simply boot normally
-2. **To VM Mode**: Select from boot menu or `sudo nixos-rebuild boot --specialisation vm-passthrough`
+1. **To VM Mode**: Select from boot menu or `sudo nixos-rebuild boot --specialisation vm-passthrough`
 
 ### Expected Performance
+
 - **Gaming Mode**: Native GPU performance, low latency, optimized for games
 - **VM Mode**: GPU passthrough performance, Looking Glass display sharing
 
 ## Future Enhancements
 
 1. **Runtime Mode Detection**: Scripts that detect active mode and adjust behavior
-2. **Profile Management**: Save game settings per boot mode
-3. **Monitoring Integration**: Performance metrics per mode
-4. **Automated Testing**: CI tests for both specialisations
+1. **Profile Management**: Save game settings per boot mode
+1. **Monitoring Integration**: Performance metrics per mode
+1. **Automated Testing**: CI tests for both specialisations

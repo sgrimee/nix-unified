@@ -12,7 +12,8 @@ dependencies: []
 
 ## Problem Statement
 
-Currently, Darwin hosts use Determinate Nix while NixOS hosts use upstream Nix, creating inconsistency in the configuration. This leads to:
+Currently, Darwin hosts use Determinate Nix while NixOS hosts use upstream Nix, creating inconsistency in the
+configuration. This leads to:
 
 - Inconsistent performance characteristics between platforms
 - Different configuration management approaches for Nix settings
@@ -22,12 +23,14 @@ Currently, Darwin hosts use Determinate Nix while NixOS hosts use upstream Nix, 
 ## Current State Analysis
 
 ### Darwin Implementation (Completed)
+
 - Successfully migrated to Determinate Nix via `determinate.darwinModules.default`
 - Uses `modules/darwin/determinate.nix` with `determinate-nix.customSettings`
 - Explicitly disables nix-darwin's Nix management: `nix.enable = lib.mkForce false`
 - Flake input already added: `determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3"`
 
 ### NixOS Current State
+
 - Uses `modules/nixos/nix.nix` with traditional `nix.settings` configuration
 - All four hosts (cirice, dracula, legion, nixair) use upstream Nix
 - Capability-based configuration for buffer sizes and keep options
@@ -36,24 +39,28 @@ Currently, Darwin hosts use Determinate Nix while NixOS hosts use upstream Nix, 
 ### Research Findings
 
 **Configuration Structure:**
+
 - NixOS uses `determinate-nix.settings` (not `customSettings`)
-- Darwin uses `determinate-nix.customSettings` 
+- Darwin uses `determinate-nix.customSettings`
 - Both platforms use the same underlying options but different attribute paths
 
 **Upstream Nix Handling:**
+
 - On NixOS, Determinate Nix does NOT require disabling upstream nix configuration
 - The `nix.settings` section can coexist with `determinate-nix.settings`
 - Determinate settings take precedence and override conflicting upstream settings
 - Registry settings should remain in `nix.registry` for flake references
 
 **Substituters:**
+
 - Determinate substituters should be included in permanent configuration
 - Eliminates need for command-line flags after initial migration
 - FlakeHub cache integration provides additional performance benefits
 
 ## Proposed Solution
 
-Migrate all NixOS hosts to Determinate Nix while maintaining configuration consistency and implementing capability-based optimizations.
+Migrate all NixOS hosts to Determinate Nix while maintaining configuration consistency and implementing capability-based
+optimizations.
 
 ## Implementation Details
 
@@ -136,12 +143,13 @@ in {
 ### Capability-Based max-substitution-jobs
 
 - **Build servers** (cirice): 32 parallel jobs
-- **High-RAM hosts**: 16 parallel jobs  
+- **High-RAM hosts**: 16 parallel jobs
 - **Default/mobile**: 8 parallel jobs
 
 ### Module Integration Updates
 
 Update `lib/module-mapping.nix`:
+
 ```nix
 coreModules = {
   nixos = [
@@ -153,6 +161,7 @@ coreModules = {
 ```
 
 Update `lib/capability-loader.nix` to include NixOS Determinate module:
+
 ```nix
 # Determinate Nix module (both platforms)
 (if platform == "nixos" then
@@ -166,37 +175,44 @@ else
 ## Files to Create/Modify
 
 ### New Files
+
 - `modules/nixos/determinate.nix` - NixOS Determinate Nix configuration
 
 ### Modified Files
+
 - `lib/module-mapping.nix` - Replace nix.nix reference with determinate.nix
 - `lib/capability-loader.nix` - Add NixOS Determinate module import
 
 ### Files to Remove (After Testing)
+
 - `modules/nixos/nix.nix` - Legacy upstream Nix configuration
 
 ## Migration Strategy
 
 ### Phase 1: Preparation (Git Branch)
+
 1. Create feature branch for all changes
-2. Implement changes for all NixOS hosts simultaneously
-3. Build test configurations to verify syntax
+1. Implement changes for all NixOS hosts simultaneously
+1. Build test configurations to verify syntax
 
 ### Phase 2: Testing (cirice)
+
 1. Deploy to cirice first as test host
-2. Verify Determinate Nix activation: `nix --version`
-3. Test core functionality: builds, flakes, home-manager
-4. Monitor performance and cache behavior
+1. Verify Determinate Nix activation: `nix --version`
+1. Test core functionality: builds, flakes, home-manager
+1. Monitor performance and cache behavior
 
 ### Phase 3: Full Rollout
+
 1. Deploy to all remaining hosts simultaneously: dracula, legion, nixair
-2. Each host owner runs deployment with initial substituter flags
-3. Verify successful migration on all hosts
+1. Each host owner runs deployment with initial substituter flags
+1. Verify successful migration on all hosts
 
 ### Phase 4: Cleanup
+
 1. Remove `modules/nixos/nix.nix`
-2. Update documentation and CLAUDE.md
-3. Merge feature branch
+1. Update documentation and CLAUDE.md
+1. Merge feature branch
 
 ## Code De-duplication Implementation
 
@@ -205,11 +221,13 @@ else
 To eliminate duplication between Darwin and NixOS Determinate configurations, a shared library has been implemented:
 
 **File Structure:**
+
 - `modules/shared/determinate.nix` - Common Determinate Nix configuration
 - `modules/darwin/determinate.nix` - Platform-specific Darwin implementation
 - `modules/nixos/determinate.nix` - Platform-specific NixOS implementation
 
 **Shared Configuration Includes:**
+
 - Capability-based buffer size calculation
 - Keep options logic based on hardware capabilities
 - Max-substitution-jobs calculation with build-server/large-ram detection
@@ -218,10 +236,12 @@ To eliminate duplication between Darwin and NixOS Determinate configurations, a 
 - Trusted users configuration
 
 **Platform-Specific Handling:**
+
 - **Darwin**: Uses `determinate-nix.customSettings` with string-formatted values
 - **NixOS**: Uses `nix.settings` with list-formatted values and Determinate-specific extensions
 
 **Benefits Achieved:**
+
 - Eliminates ~90% of code duplication between platforms
 - Centralizes capability-based logic in one location
 - Simplifies maintenance of Determinate Nix configurations
@@ -234,6 +254,7 @@ To eliminate duplication between Darwin and NixOS Determinate configurations, a 
 **RESOLVED**: All duplication has been eliminated through the shared library implementation.
 
 ### Settings Duplication
+
 - Buffer size calculation logic (identical in both Darwin and NixOS modules)
 - Keep options logic (identical logic, different platforms)
 - Performance optimization settings (nearly identical)
@@ -241,16 +262,19 @@ To eliminate duplication between Darwin and NixOS Determinate configurations, a 
 - Trusted users lists (identical)
 
 ### Capability-Based Logic Duplication
+
 - max-substitution-jobs calculation (new, needs to be added to Darwin)
 - Hardware capability checks (large-ram, large-disk)
 - Role-based optimizations
 
 ### Refactoring Opportunities (Post-Migration)
+
 1. **Shared Settings Library**: Extract common Determinate settings to `lib/determinate-common.nix`
-2. **Unified Capability Logic**: Create shared functions for buffer sizes, keep options, etc.
-3. **Platform-Specific Overrides**: Minimal platform-specific modules that import shared base
+1. **Unified Capability Logic**: Create shared functions for buffer sizes, keep options, etc.
+1. **Platform-Specific Overrides**: Minimal platform-specific modules that import shared base
 
 **Refactoring Structure (Future)**:
+
 ```
 lib/determinate-common.nix     # Shared settings generation
 modules/darwin/determinate.nix # Platform-specific (customSettings)
@@ -260,6 +284,7 @@ modules/nixos/determinate.nix  # Platform-specific (settings)
 ## Testing Strategy
 
 ### Pre-Deployment Testing
+
 ```bash
 # Verify configuration builds successfully
 nix build .#nixosConfigurations.cirice.config.system.build.toplevel
@@ -269,6 +294,7 @@ nix build .#nixosConfigurations.nixair.config.system.build.toplevel
 ```
 
 ### Initial Migration Commands (User must run)
+
 ```bash
 # For each host, run with substituter flags for first migration
 sudo nixos-rebuild \
@@ -278,6 +304,7 @@ sudo nixos-rebuild \
 ```
 
 ### Post-Migration Verification
+
 - `nix --version` shows Determinate Nix version
 - `nix flake check` passes
 - Home Manager rebuilds successfully
@@ -287,12 +314,14 @@ sudo nixos-rebuild \
 ## Benefits
 
 ### Immediate Benefits
+
 - **Performance**: 10-30% faster builds and evaluations
 - **Reliability**: Improved binary cache handling and fewer corruption issues
 - **Consistency**: Unified Nix implementation across all platforms
 - **Cache Integration**: FlakeHub cache provides additional substitution sources
 
 ### Long-term Benefits
+
 - **Maintenance**: Single approach to Nix configuration management
 - **Support**: Professional support available for Determinate Nix issues
 - **Features**: Access to Determinate-specific optimizations and features
@@ -301,14 +330,14 @@ sudo nixos-rebuild \
 ## Implementation Steps
 
 1. **Create feature branch**: `git checkout -b feat/nixos-determinate-migration`
-2. **Implement NixOS module**: Create `modules/nixos/determinate.nix`
-3. **Update module mappings**: Modify `lib/module-mapping.nix` and `lib/capability-loader.nix`
-4. **Test configurations**: Run `nix build` for all hosts
-5. **Deploy to cirice**: User runs migration command with substituter flags
-6. **Verify cirice**: Test functionality and performance
-7. **Deploy to all hosts**: User runs migration for dracula, legion, nixair
-8. **Cleanup**: Remove legacy files and update documentation
-9. **Plan refactoring**: Document duplication for future cleanup
+1. **Implement NixOS module**: Create `modules/nixos/determinate.nix`
+1. **Update module mappings**: Modify `lib/module-mapping.nix` and `lib/capability-loader.nix`
+1. **Test configurations**: Run `nix build` for all hosts
+1. **Deploy to cirice**: User runs migration command with substituter flags
+1. **Verify cirice**: Test functionality and performance
+1. **Deploy to all hosts**: User runs migration for dracula, legion, nixair
+1. **Cleanup**: Remove legacy files and update documentation
+1. **Plan refactoring**: Document duplication for future cleanup
 
 ## Acceptance Criteria
 
