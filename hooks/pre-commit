@@ -23,7 +23,7 @@ print_status "$BLUE" "🔍 Pre-commit hook running..."
 
 # Check for secrets with gitleaks
 print_status "$BLUE" "🔐 Scanning for secrets..."
-if ! nix run nixpkgs#gitleaks -- detect --source . --config .gitleaks.toml --redact --verbose; then
+if ! gitleaks detect --source . --config .gitleaks.toml --redact --verbose; then
     print_status "$RED" "❌ Secrets detected! Commit blocked."
     print_status "$RED" "   Review the output above and remove any secrets."
     print_status "$RED" "   If this is a false positive, add to .gitleaks.toml"
@@ -43,7 +43,7 @@ fi
 nix_files=$(git diff --cached --name-only --diff-filter=AM | grep "\.nix$" || true)
 if [ -n "$nix_files" ]; then
     print_status "$BLUE" "🎨 Formatting Nix files with alejandra..."
-    echo "$nix_files" | xargs nix run nixpkgs#alejandra --
+    echo "$nix_files" | xargs alejandra
     
     # Add formatted files back to staging
     echo "$nix_files" | xargs git add
