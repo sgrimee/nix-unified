@@ -194,13 +194,13 @@ if.app-id = 'Cisco-Systems.Spark'
 if.window-title-regex-substring = '^Webex'    # Main window
 run = ['layout tiling']
 
-[[on-window-detected]]
-if.app-id = 'Cisco-Systems.Spark'   # meeting windows. Needs the other webex rule to come before.
-run = 'layout floating'
+# [[on-window-detected]]
+# if.app-id = 'Cisco-Systems.Spark'   # meeting windows. Needs the other webex rule to come before.
+# run = 'layout floating'
 
-[[on-window-detected]]
-if.app-id = 'com.webex.meetingmanager'
-run = 'layout floating'
+# [[on-window-detected]]
+# if.app-id = 'com.webex.meetingmanager'
+# run = 'layout floating'
 
 # [[on-window-detected]]
 # if.app-id = 'com.busymac.busycal3'
