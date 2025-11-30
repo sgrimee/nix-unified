@@ -15,11 +15,8 @@ with lib; let
     if dmsEnabled
     then let
       system = pkgs.stdenv.hostPlatform.system;
-      dmsPkgs = {
-        dmsCli = inputs.dank-material-shell.inputs.dms-cli.packages.${system}.default;
-      };
     in
-      dmsPkgs.dmsCli
+      inputs.dank-material-shell.packages.${system}.dmsCli
     else null;
 
   # Import session generator
