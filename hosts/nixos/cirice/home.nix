@@ -15,6 +15,11 @@ in {
     shell = pkgs.zsh;
   };
 
+  home-manager = {
+    # Backup existing files instead of failing during activation
+    backupFileExtension = "backup";
+  };
+
   home-manager.users.${user} = {
     imports = [
       ../../../modules/home-manager/user

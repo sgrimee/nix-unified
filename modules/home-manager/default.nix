@@ -33,7 +33,7 @@ in {
   };
 
   home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = true;
+  home-manager.useUserPackages = false;
 
   # Set default stateVersion for home-manager
   home-manager.users.${user}.home.stateVersion = stateVersion;

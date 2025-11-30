@@ -21,26 +21,13 @@ in {
     {programs.niri.enable = lib.mkDefault true;}
 
     (lib.mkIf cfg.enable {
-    # Additional recommended software for a complete desktop experience
-    # These are suggestions from the niri docs
-    home.packages = with pkgs; [
-      # Application launcher (used by default niri config)
-      fuzzel
-      # Screenshot tool
-      grim
-      slurp
-      # Screen locker
-      swaylock
-      # Notification daemon
-      mako
-      # Clipboard manager
-      wl-clipboard
-    ];
+      # Wayland tools (fuzzel, grim, slurp, swaylock, mako, wl-clipboard)
+      # are now loaded via capability system in lib/module-mapping/environment.nix
 
-    # Use the user's custom niri config file
-    xdg.configFile."niri/config.kdl" = {
-      source = ./user/dotfiles/niri/config.kdl;
-    };
+      # Use the user's custom niri config file
+      xdg.configFile."niri/config.kdl" = {
+        source = ./user/dotfiles/niri/config.kdl;
+      };
     })
   ];
 }
