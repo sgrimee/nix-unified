@@ -21,7 +21,13 @@
           ../../modules/home-manager/wl-sway.nix
           ../../modules/home-manager/waybar.nix
           ../../modules/home-manager/quickshell.nix
-          ../../modules/home-manager/user/rofi.nix
+          ../../modules/home-manager/user/programs/wayland/rofi.nix
+          ../../modules/home-manager/user/programs/wayland/fuzzel.nix
+          ../../modules/home-manager/user/programs/wayland/grim.nix
+          ../../modules/home-manager/user/programs/wayland/slurp.nix
+          ../../modules/home-manager/user/programs/wayland/swaylock.nix
+          ../../modules/home-manager/user/programs/wayland/mako.nix
+          ../../modules/home-manager/user/programs/wayland/wl-clipboard.nix
         ];
       };
       niri = {
@@ -34,7 +40,13 @@
           ../../modules/home-manager/niri.nix
           ../../modules/home-manager/waybar.nix
           ../../modules/home-manager/quickshell.nix
-          ../../modules/home-manager/user/rofi.nix
+          ../../modules/home-manager/user/programs/wayland/rofi.nix
+          ../../modules/home-manager/user/programs/wayland/fuzzel.nix
+          ../../modules/home-manager/user/programs/wayland/grim.nix
+          ../../modules/home-manager/user/programs/wayland/slurp.nix
+          ../../modules/home-manager/user/programs/wayland/swaylock.nix
+          ../../modules/home-manager/user/programs/wayland/mako.nix
+          ../../modules/home-manager/user/programs/wayland/wl-clipboard.nix
         ];
       };
       kde = {
@@ -74,17 +86,22 @@
       alacritty = {
         nixos = [];
         darwin = [];
-        homeManager = [];
+        homeManager = [../../modules/home-manager/user/programs/terminals/alacritty.nix];
       };
       ghostty = {
         nixos = [];
         darwin = [];
-        homeManager = [../../modules/home-manager/user/ghostty.nix];
+        homeManager = [../../modules/home-manager/user/programs/terminals/ghostty.nix];
       };
       foot = {
         nixos = [];
         darwin = [];
-        homeManager = [../../modules/home-manager/user/foot.nix];
+        homeManager = [../../modules/home-manager/user/programs/terminals/foot.nix];
+      };
+      kitty = {
+        nixos = [];
+        darwin = [];
+        homeManager = [../../modules/home-manager/user/programs/terminals/kitty.nix];
       };
     };
 
