@@ -92,10 +92,14 @@
     # Discover all hosts across all platforms
     allHosts = hostDiscovery.discoverAllHosts ./hosts;
 
-    # Import package manager
+    # Import package manager with a default pkgs for discovery
     packageManager = import ./packages/manager.nix {
       inherit lib;
-      pkgs = inputs.stable-nixos.pkgs; # Use a default pkgs for discovery
+      pkgs = import inputs.stable-nixos {
+        system = "x86_64-linux";
+        config = stableConfig;
+        overlays = overlays;
+      };
       hostCapabilities = {}; # Empty for general queries
     };
 
