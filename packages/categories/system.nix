@@ -23,6 +23,7 @@
       interception-tools # Keyboard interception framework
       wev # Wayland event viewer for identifying keypresses
       kbd # Console keyboard utilities (showkey, loadkeys, etc.)
+      playerctl # Media player controller for MPRIS-compatible players
     ];
 
   metadata = {
