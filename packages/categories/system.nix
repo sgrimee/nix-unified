@@ -15,6 +15,7 @@
       pat # Packet analysis toolkit
       poppler # PDF rendering library utilities
       unrar # RAR archive extraction utility
+      socat # Socket/serial port relay tool
     ]
     ++
     # Linux-specific system tools
