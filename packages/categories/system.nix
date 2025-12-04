@@ -10,6 +10,7 @@
       qemu # Hardware virtualization and emulation
       wakeonlan # Wake-on-LAN magic packet sender
       du-dust # Disk usage analyzer with tree view
+      lnav # View multiple log files at once
       ncdu # Interactive ncurses disk usage analyzer
       pat # Packet analysis toolkit
       poppler # PDF rendering library utilities
