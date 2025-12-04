@@ -45,7 +45,10 @@
     };
 
     connectivity = {
-      # bluetooth modules not implemented yet
+      bluetooth = {
+        nixos = [../../modules/nixos/bluetooth.nix];
+        darwin = [];
+      };
       wifi = {
         nixos = [../../modules/nixos/iwd.nix];
         darwin = [];
