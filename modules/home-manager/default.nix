@@ -33,7 +33,13 @@ in {
   };
 
   home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = false;
+  # IMPORTANT: useUserPackages must be true for macOS GUI applications to find
+  # shells and other programs when launched via 'open' command or Finder.
+  # When true, packages are installed to /etc/profiles/per-user/$USER which is
+  # included in PATH during macOS login shell initialization. When false, packages
+  # go to /run/current-system/sw which is not available early enough for GUI apps.
+  # This affects terminal emulators like Ghostty and iTerm2 finding fish shell.
+  home-manager.useUserPackages = true;
 
   # Set default stateVersion for home-manager
   home-manager.users.${user}.home.stateVersion = stateVersion;
