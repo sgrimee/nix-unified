@@ -24,9 +24,6 @@ in {
   programs.fish = {
     enable = true;
     package = inputs.unstable.legacyPackages.${system}.fish;
-
-    # Disable automatic completion generation to avoid deroff.py issues
-    generateCompletions = false;
   };
   # no option for nushell exists here, seems not needed
 
