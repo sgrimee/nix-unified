@@ -69,7 +69,8 @@
 
   # Build machine configuration
   buildMachines = {
-    enable = ["cirice"]; # Use cirice as remote build machine
+    enable = []; # Disabled: cirice is not always available on network
+    # enable = ["cirice"]; # Use cirice as remote build machine
   };
 
   # Security and access control
