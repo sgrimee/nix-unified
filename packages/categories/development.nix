@@ -47,10 +47,7 @@
       valgrind
       strace
       # JavaScript/Node.js tools (Linux only - Darwin uses Homebrew)
-      nodejs
-      nodePackages.npm
-      nodePackages.yarn
-      nodePackages.typescript
+      # nodejs, npm, yarn, typescript handled by modules/home-manager/user/programs/node.nix
       # VSCode (Linux only - Darwin uses Homebrew)
       vscode
     ];

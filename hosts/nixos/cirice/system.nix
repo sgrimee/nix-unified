@@ -42,6 +42,10 @@
   # Enable ACPI daemon for power management
   services.acpid.enable = true;
 
+  # Configure lid close behavior - suspend when lid closes
+  services.logind.settings.Login.HandleLidSwitch = "suspend";
+  services.logind.settings.Login.HandleLidSwitchDocked = "ignore";
+
   # AMD GPU resume workaround - force high performance mode
   # Prevents power state transition issues during suspend/resume
   systemd.services.amdgpu-force-performance = {
