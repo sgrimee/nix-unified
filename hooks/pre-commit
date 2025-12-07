@@ -19,43 +19,35 @@ print_status() {
     echo -e "${color}${message}${NC}"
 }
 
-print_status "$BLUE" "🔍 Pre-commit hook running..."
+
 
 # Check for secrets with gitleaks
-print_status "$BLUE" "🔐 Scanning for secrets..."
-if ! gitleaks detect --source . --config .gitleaks.toml --redact --verbose; then
+if ! gitleaks detect --source . --config .gitleaks.toml --redact --no-banner >/dev/null 2>&1; then
     print_status "$RED" "❌ Secrets detected! Commit blocked."
-    print_status "$RED" "   Review the output above and remove any secrets."
+    print_status "$RED" "   Review gitleaks output and remove any secrets."
     print_status "$RED" "   If this is a false positive, add to .gitleaks.toml"
+    gitleaks detect --source . --config .gitleaks.toml --redact --no-banner
     exit 1
 fi
 
 # Check for large files (> 1MB)
-print_status "$BLUE" "📏 Checking for large files..."
 large_files=$(git diff --cached --name-only --diff-filter=A | xargs -I {} find {} -size +1M 2>/dev/null || true)
 if [ -n "$large_files" ]; then
     print_status "$YELLOW" "⚠️  Large files detected:"
     echo "$large_files"
-    print_status "$YELLOW" "   Consider using Git LFS or excluding from repository"
 fi
 
 # Format Nix files if they exist in the commit
 nix_files=$(git diff --cached --name-only --diff-filter=AM | grep "\.nix$" || true)
 if [ -n "$nix_files" ]; then
-    print_status "$BLUE" "🎨 Formatting Nix files with alejandra..."
-    echo "$nix_files" | xargs alejandra
+    echo "$nix_files" | xargs alejandra >/dev/null 2>&1
     
     # Add formatted files back to staging
-    echo "$nix_files" | xargs git add
-    
-    if [ -n "$(git diff --cached --name-only)" ]; then
-        print_status "$GREEN" "✅ Nix files formatted and re-staged"
-    fi
+    echo "$nix_files" | xargs git add >/dev/null 2>&1
 fi
 
 # Quick syntax check for staged Nix files
 if [ -n "$nix_files" ]; then
-    print_status "$BLUE" "🔍 Checking Nix syntax..."
     for file in $nix_files; do
         if ! nix-instantiate --parse "$file" >/dev/null 2>&1; then
             print_status "$RED" "❌ Syntax error in $file"
@@ -67,7 +59,6 @@ fi
 # Validate secret files
 secret_files=$(git diff --cached --name-only --diff-filter=AM | grep "secrets/.*\.yaml$" || true)
 if [ -n "$secret_files" ]; then
-    print_status "$BLUE" "🔐 Validating secret files..."
     for file in $secret_files; do
         if [ -f "$file" ]; then
             # Check if file is properly encrypted (contains 'ENC[' marker)
@@ -83,14 +74,11 @@ if [ -n "$secret_files" ]; then
                 print_status "$RED" "   File may be corrupted or you lack decryption keys"
                 exit 1
             fi
-            
-            print_status "$GREEN" "✅ Secret file $file is valid"
         fi
     done
 fi
 
 # Check for common patterns that shouldn't be committed
-print_status "$BLUE" "🔍 Checking for problematic patterns..."
 problematic_patterns=(
     "TODO.*FIXME"
     "console\.log"
@@ -104,8 +92,5 @@ problematic_patterns=(
 for pattern in "${problematic_patterns[@]}"; do
     if git diff --cached | grep -qE "$pattern"; then
         print_status "$YELLOW" "⚠️  Found potentially problematic pattern: $pattern"
-        print_status "$YELLOW" "   Review your changes before committing"
     fi
 done
-
-print_status "$GREEN" "✅ Pre-commit checks passed!"
