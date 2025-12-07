@@ -57,7 +57,8 @@
     ];
 
     amd = with pkgs; [
-      amdvlk # AMD Vulkan driver
+      # RADV (AMD Vulkan driver) is enabled by default in hardware.graphics
+      # amdvlk was removed in NixOS 25.11 as it was deprecated by AMD
     ];
   };
 

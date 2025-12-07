@@ -9,7 +9,7 @@
     [
       qemu # Hardware virtualization and emulation
       wakeonlan # Wake-on-LAN magic packet sender
-      du-dust # Disk usage analyzer with tree view
+      dust # Disk usage analyzer with tree view (du-dust was renamed to dust in NixOS 25.11)
       lnav # View multiple log files at once
       ncdu # Interactive ncurses disk usage analyzer
       pat # Packet analysis toolkit
