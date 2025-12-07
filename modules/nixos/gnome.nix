@@ -21,7 +21,7 @@ in {
     }
     (mkIf config.programs.custom.gnome.enable {
       # Enable GNOME Desktop Environment only when it's the default or full GNOME is requested
-      services.xserver.desktopManager.gnome.enable = lib.mkForce (installFullGnome || isDefaultDesktop);
+      services.desktopManager.gnome.enable = lib.mkForce (installFullGnome || isDefaultDesktop);
 
       # Configure GNOME services only when GNOME is actually used
       services.gnome = mkIf (installFullGnome || isDefaultDesktop) {

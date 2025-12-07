@@ -48,9 +48,7 @@ in {
         package = pkgs.qemu_kvm;
         runAsRoot = true;
         swtpm.enable = true;
-        ovmf = {
-          enable = true;
-        };
+        # OVMF is now enabled by default in NixOS 25.11
       };
     };
 
@@ -62,7 +60,7 @@ in {
         spice
         spice-gtk
         spice-protocol
-        win-virtio
+        virtio-win
         win-spice
         virtiofsd
       ]

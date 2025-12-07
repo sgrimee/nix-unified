@@ -11,14 +11,12 @@
     lfs = {
       enable = true;
     };
-    # TODO: take this from top-level variable
-    userName = "sgrimee";
-    userEmail = "sgrimee@gmail.com.me";
-    extraConfig = {
+    settings = {
+      # TODO: take this from top-level variable
+      user.name = "sgrimee";
+      user.email = "sgrimee@gmail.com.me";
       init.defaultBranch = "main";
-      core = {
-        autocrlf = "input";
-      };
+      core.autocrlf = "input";
       commit.gpgsign = false;
       pull.rebase = false;
       rebase.autoStash = true;
