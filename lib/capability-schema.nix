@@ -174,6 +174,12 @@
           default = null;
           description = "List of keyboard device paths (NixOS only, e.g., /dev/input/by-path/...)";
         };
+
+        fnKeyProfile = {
+          type = lib.types.enum ["apple" "framework" "standard"];
+          default = "apple";
+          description = "Function key profile/layout for this keyboard hardware (used for niri configuration)";
+        };
       };
     };
 

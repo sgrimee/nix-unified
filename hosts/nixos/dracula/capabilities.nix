@@ -33,6 +33,7 @@
     keyboard = {
       remapping = true; # Kanata keyboard remapping with homerow mods
       swapAltCommand = true; # Swap Alt and Command keys (Mac keyboard on NixOS)
+      fnKeyProfile = "apple"; # Apple MacBook Pro 2013 US keyboard layout
       devices = ["/dev/input/by-path/pci-0000:00:14.0-usbv2-0:12:1.0-event-kbd"];
     };
     # Resource capabilities for Nix configuration

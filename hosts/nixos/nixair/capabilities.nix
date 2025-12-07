@@ -33,6 +33,7 @@
     keyboard = {
       remapping = true; # Kanata keyboard remapping with homerow mods
       swapAltCommand = true; # Swap Alt and Command keys (Mac keyboard on NixOS)
+      fnKeyProfile = "apple"; # Apple MacBook Air 2011 US keyboard layout
       devices = ["/dev/input/by-path/pci-0000:00:1a.7-usbv2-0:1.2:1.0-event-kbd"];
     };
     # Resource capabilities for Nix configuration

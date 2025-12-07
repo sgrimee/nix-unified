@@ -33,6 +33,7 @@
     printer = true; # CUPS printing support
     keyboard = {
       remapping = true; # Kanata keyboard remapping with homerow mods
+      fnKeyProfile = "framework"; # Framework Laptop 13 US keyboard layout
       devices = ["/dev/input/by-path/platform-i8042-serio-0-event-kbd"];
     };
     # Resource capabilities for Nix configuration

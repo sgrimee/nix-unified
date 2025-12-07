@@ -8,13 +8,13 @@
   ...
 }:
 with lib; let
-  cfg = config.programs.quickshell;
+  cfg = config.programs.quickshellCustom;
   availableBars = hostCapabilities.environment.bars.available or [];
   shouldEnable = builtins.elem "quickshell" availableBars;
 in {
-  options.programs.quickshell = {
+  options.programs.quickshellCustom = {
     enable =
-      mkEnableOption "Quickshell status bar"
+      mkEnableOption "Quickshell status bar (custom config)"
       // {
         default = shouldEnable;
       };

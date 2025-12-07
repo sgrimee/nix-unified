@@ -32,6 +32,7 @@
     printer = true; # CUPS printing support
     keyboard = {
       remapping = true; # Kanata keyboard remapping with homerow mods
+      fnKeyProfile = "standard"; # Standard PC keyboard (media key functions unknown)
       devices = ["/dev/input/by-path/pci-0000:00:14.0-usbv2-0:8:1.0-event-kbd"];
     };
     # Resource capabilities for Nix configuration
