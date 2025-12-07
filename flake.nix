@@ -2,18 +2,18 @@
   description = "mac/nixos nix-conf, forked from peanutbother/dotfiles";
   inputs = {
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    stable-nixos.url = "github:nixos/nixpkgs/release-25.05";
-    stable-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.05-darwin";
+    stable-nixos.url = "github:nixos/nixpkgs/release-25.11";
+    stable-darwin.url = "github:NixOS/nixpkgs/nixpkgs-25.11-darwin";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
     nix-darwin = {
-      url = "github:lnl7/nix-darwin/nix-darwin-25.05";
+      url = "github:lnl7/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "stable-darwin";
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "stable-nixos";
     };
 
