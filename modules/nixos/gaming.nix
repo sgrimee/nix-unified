@@ -1,6 +1,5 @@
 # Gaming module - installs gaming packages system-wide
 {
-  config,
   lib,
   pkgs,
   ...

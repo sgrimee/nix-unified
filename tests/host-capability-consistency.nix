@@ -1,11 +1,7 @@
 # Host-Capability Consistency Tests
 # Validates that capability declarations match actual host configurations
 # Ensures no drift between what hosts declare and what they actually do
-{
-  lib,
-  pkgs,
-  ...
-}: let
+{lib, ...}: let
   # Dynamically discover hosts
   discoverHosts = hostsDir: let
     platforms = builtins.attrNames (builtins.readDir hostsDir);

@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}: {
+{...}: {
   # Test module paths and structure without importing
   testDarwinModuleExists = {
     expr = builtins.pathExists ../modules/darwin/default.nix;

@@ -1,9 +1,6 @@
 # Base Niri Configuration
 # Contains all non-keyboard-profile-specific configuration
-{pkgs}: let
-  # Helper to format KDL config sections
-  kdl = sections: builtins.concatStringsSep "\n\n" sections;
-in {
+{pkgs}: {
   # Input configuration (keyboard, mouse, touchpad, etc.)
   input = ''
     // Input device configuration.

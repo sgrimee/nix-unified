@@ -2,7 +2,6 @@
 {
   pkgs,
   lib,
-  hostCapabilities ? {},
   ...
 }: {
   # Core gaming packages (cross-platform)

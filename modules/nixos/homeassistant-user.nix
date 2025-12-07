@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{...}: {
   users.groups.shutdown = {};
   users.users.homeassistant = {
     group = "shutdown";

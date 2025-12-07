@@ -1,9 +1,4 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-}: {
+{...}: {
   services.mako = {
     enable = true;
     settings = {

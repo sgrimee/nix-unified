@@ -1,6 +1,5 @@
 # modules/hosts/SGRIMEE-M-4HJT/packages.nix
 {
-  config,
   lib,
   pkgs,
   ...

@@ -1,11 +1,7 @@
 # Capability System Tests
 # Tests the capability resolution, dependency handling, and validation logic
 # Ensures the capability system works correctly before migration
-{
-  lib,
-  pkgs,
-  ...
-}: let
+{lib, ...}: let
   capabilitySystem = import ../lib/capability-system.nix {
     inherit lib;
     inputs = {};

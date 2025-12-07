@@ -1,11 +1,7 @@
 # Property-Based Tests for Capability Combinations
 # Tests various combinations of capabilities to ensure they work together
 # Validates that capability combinations are logically consistent
-{
-  lib,
-  pkgs,
-  ...
-}: let
+{lib, ...}: let
   # Import capability system components (with error handling)
   # Define test capability combinations to validate
   testCombinations = [

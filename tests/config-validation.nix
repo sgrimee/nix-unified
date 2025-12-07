@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}:
+{lib, ...}:
 # Simple validation tests without evalModules
 {
   # Test basic Nix functionality

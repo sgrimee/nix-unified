@@ -1,8 +1,6 @@
 {
   inputs,
   lib,
-  pkgs,
-  config,
   hostCapabilities ? {},
   ...
 }: let

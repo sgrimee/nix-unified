@@ -1,9 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   # Base virtualization support without GPU passthrough
   # This module provides libvirtd, QEMU, and basic VM capabilities
   # It can be used alongside gaming mode or for VMs without GPU passthrough

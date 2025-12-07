@@ -1,10 +1,5 @@
 # packages/categories/ham.nix
-{
-  pkgs,
-  lib,
-  hostCapabilities ? {},
-  ...
-}: {
+{pkgs, ...}: {
   core = with pkgs; [
     hamlib_4 # Ham radio rig control libraries and utilities
     # Future: fldigi, wsjtx, chirp, qspectrumanalyzer (if added to overlays or pkgs)

@@ -2,7 +2,6 @@
 {
   pkgs,
   lib,
-  hostCapabilities ? {},
   ...
 }: {
   core = with pkgs;

@@ -1,11 +1,7 @@
 # CI Pipeline Validation Tests
 # Validates GitHub Actions workflows and CI configuration
 # Ensures CI pipeline matches current host setup and will work correctly
-{
-  lib,
-  pkgs,
-  ...
-}: let
+{lib, ...}: let
   # Check if CI workflow exists
   ciWorkflowPath = ../.github/workflows/ci.yml;
   ciWorkflowExists = builtins.pathExists ciWorkflowPath;

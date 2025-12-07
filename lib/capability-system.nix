@@ -951,7 +951,7 @@
       ++ hostFiles
       ++ [
         # Add capability context
-        ({config, ...}: {
+        ({...}: {
           _module.args.hostCapabilities = capabilities;
           _module.args.capabilityMode = true;
         })

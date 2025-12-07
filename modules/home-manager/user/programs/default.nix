@@ -1,8 +1,4 @@
-{
-  inputs,
-  system,
-  ...
-}: {
+{...}: {
   imports = [
     # Terminals are loaded via capability system (environment.terminal)
     # See lib/module-mapping/environment.nix

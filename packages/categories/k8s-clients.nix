@@ -1,10 +1,5 @@
 # packages/categories/k8s-clients.nix
-{
-  pkgs,
-  lib,
-  hostCapabilities ? {},
-  ...
-}: {
+{pkgs, ...}: {
   core = with pkgs; [
     kubectl # Kubernetes command-line interface
     k9s # Terminal UI for Kubernetes clusters

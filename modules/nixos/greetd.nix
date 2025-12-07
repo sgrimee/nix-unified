@@ -34,7 +34,6 @@ with lib; let
   defaultBar = hostCapabilities.environment.bars.default or "waybar";
 
   # Disable GNOME's SSH agent to avoid conflicts
-  isGnomeDefault = defaultDesktop == "gnome";
 
   # Construct default session command
   defaultSessionCmd =

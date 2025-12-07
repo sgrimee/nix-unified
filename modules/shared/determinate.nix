@@ -1,8 +1,4 @@
-{
-  lib,
-  hostCapabilities ? {},
-  ...
-}: let
+{hostCapabilities ? {}, ...}: let
   # Capability-based configurations that are platform-agnostic
   bufferSize =
     if (hostCapabilities.hardware.large-ram or false)

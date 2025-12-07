@@ -1,10 +1,5 @@
 # packages/categories/development.nix
-{
-  pkgs,
-  lib,
-  hostCapabilities ? {},
-  ...
-}: {
+{pkgs, ...}: {
   # Core development tools
   core = with pkgs; [
     git

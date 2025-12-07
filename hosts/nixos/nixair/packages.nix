@@ -1,6 +1,5 @@
 # modules/hosts/nixair/packages.nix
 {
-  config,
   lib,
   pkgs,
   ...

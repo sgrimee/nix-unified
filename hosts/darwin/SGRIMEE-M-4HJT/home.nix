@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{...}: let
   user = "sgrimee";
 in {
   home-manager.users.${user} = {

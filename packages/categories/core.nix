@@ -1,10 +1,5 @@
 # packages/categories/core.nix
-{
-  pkgs,
-  lib,
-  hostCapabilities ? {},
-  ...
-}: {
+{pkgs, ...}: {
   core = with pkgs; [
     coreutils-full
     curl

@@ -1,8 +1,5 @@
 {
-  inputs,
   stateVersion,
-  system,
-  unstable,
   pkgs,
   ...
 }: {

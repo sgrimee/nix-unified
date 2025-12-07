@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}: {
+{lib, ...}: {
   # Test string utilities
   testStringConcatenation = {
     expr = "hello" + " " + "world";

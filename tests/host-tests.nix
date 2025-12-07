@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}: let
+{lib, ...}: let
   # Dynamically discover hosts from directory structure
   discoverHosts = hostsDir: let
     platforms = builtins.attrNames (builtins.readDir hostsDir);

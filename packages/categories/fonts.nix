@@ -1,10 +1,5 @@
 # packages/categories/fonts.nix
-{
-  pkgs,
-  lib,
-  hostCapabilities ? {},
-  ...
-}: {
+{pkgs, ...}: {
   core = with pkgs; [
     meslo-lgs-nf # Meslo LG S Nerd Font for terminals
     nerd-fonts.fira-code # Fira Code with programming ligatures

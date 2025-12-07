@@ -1,7 +1,7 @@
 # Module Mapping Aggregator
 # Combines all module mapping categories into a single export
 # Maps capabilities to EXISTING module imports only
-{lib, ...}: let
+{...}: let
   # Import all module mapping categories
   core = import ./core.nix {};
   features = import ./features.nix {};

@@ -1,8 +1,4 @@
-{
-  lib,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   sops.secrets = {
     "meraki/ipsec_psk" = {};
     "meraki/l2tp_username" = {};

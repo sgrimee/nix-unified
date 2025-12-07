@@ -1,6 +1,5 @@
 # modules/hosts/dracula/packages.nix
 {
-  config,
   lib,
   pkgs,
   ...

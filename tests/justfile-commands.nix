@@ -1,11 +1,7 @@
 # Justfile Command Tests
 # Validates that essential justfile commands work correctly
 # Tests command syntax, dependencies, and basic functionality
-{
-  lib,
-  pkgs,
-  ...
-}: let
+{lib, ...}: let
   # Check if justfile exists and parse it for command validation
   justfilePath = ../justfile;
   justfileExists = builtins.pathExists justfilePath;

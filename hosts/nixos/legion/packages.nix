@@ -1,6 +1,5 @@
 # modules/hosts/legion/packages.nix
 {
-  config,
   lib,
   pkgs,
   ...

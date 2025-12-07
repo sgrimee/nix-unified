@@ -1,5 +1,5 @@
 # packages/versions.nix
-{lib, ...}: let
+{...}: let
   # Define package versions and channels
   packageVersions = {
     stable = {
