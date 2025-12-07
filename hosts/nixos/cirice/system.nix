@@ -7,6 +7,13 @@
   networking.hostName = "cirice";
   # allowUnfree now handled centrally in flake
 
+  # Console configuration - only set keymap, let amdgpu handle final console font
+  console = {
+    keyMap = "us";
+    # Do not set font here - amdgpu framebuffer provides the good readable console (180x60)
+    # Setting any font causes ugly huge characters on simpledrm framebuffer during boot
+  };
+
   # Use latest kernel for MT7925e WiFi driver fixes (6.17+)
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
@@ -16,7 +23,8 @@
       # Make native-gaming the default (10 second timeout)
       configurationLimit = 10;
       # Configure larger, more readable boot menu
-      consoleMode = "max"; # Use maximum resolution for boot menu
+      consoleMode = "5"; # Use mode 5 for best readability (closest to manual mode 4)
+      # Tip: Press 'r' in the systemd-boot selection menu to cycle through resolution modes
     };
     timeout = 10;
   };
@@ -92,12 +100,16 @@
     # AMD GPU resume fixes for Radeon 890M
     "amdgpu.dpm=1" # Enable dynamic power management
     "amdgpu.psr=0" # Disable Panel Self Refresh (causes resume hangs)
+    "amdgpu.modeset=1" # Enable kernel modesetting for early amdgpu to skip simpledrm
     "nvme_core.default_ps_max_latency_us=0" # Disable NVMe power saving
   ];
 
   # Ensure AMD driver is used for gaming
   services.xserver.videoDrivers = ["amdgpu"];
   boot.kernelModules = ["amdgpu"];
+
+  # Load amdgpu in initrd for early KMS to avoid simpledrm framebuffer transitions
+  boot.initrd.kernelModules = ["amdgpu"];
   environment.variables = {
     AMD_VULKAN_ICD = "RADV";
     MESA_LOADER_DRIVER_OVERRIDE = "radeonsi";
@@ -133,6 +145,7 @@
         # Disable amdgpu driver and modules for passthrough
         services.xserver.videoDrivers = lib.mkForce [];
         boot.kernelModules = lib.mkForce [];
+        boot.initrd.kernelModules = lib.mkForce []; # Don't load amdgpu in initrd so VFIO can claim GPU
         environment.variables = lib.mkForce {};
 
         # Remove gaming-specific boot parameters and add IOMMU ones
