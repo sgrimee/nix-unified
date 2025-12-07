@@ -11,6 +11,10 @@
     enableAskPassword = true;
   };
 
+  # Disable GNOME desktop manager and SSH agent to avoid conflicts
+  services.xserver.desktopManager.gnome.enable = lib.mkOverride 0 false;
+  services.gnome.gcr-ssh-agent.enable = lib.mkOverride 0 false;
+
   # Enable ACPI daemon for power management
   services.acpid.enable = true;
 

@@ -29,10 +29,15 @@
     timeout = 10;
   };
 
+  # Disable SSH agent since GNOME is available (causes conflicts with gcr-ssh-agent)
   programs.ssh = {
-    startAgent = true;
+    startAgent = false;
     enableAskPassword = true;
   };
+
+  # Disable GNOME desktop manager and SSH agent to avoid conflicts
+  services.xserver.desktopManager.gnome.enable = lib.mkOverride 0 false;
+  services.gnome.gcr-ssh-agent.enable = lib.mkOverride 0 false;
 
   # Enable ACPI daemon for power management
   services.acpid.enable = true;
@@ -71,13 +76,11 @@
     enable32Bit = true;
     extraPackages = with pkgs; [
       mesa
-      amdvlk
       libva
-      vaapiVdpau
+      libva-vdpau-driver
     ];
     extraPackages32 = with pkgs.pkgsi686Linux; [
       mesa
-      amdvlk
     ];
   };
 

@@ -5,7 +5,7 @@
   # allowUnfree now handled centrally in flake
 
   programs.ssh = {
-    startAgent = true;
+    startAgent = false;
     enableAskPassword = true;
   };
 
