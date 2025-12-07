@@ -541,12 +541,15 @@
 
     # Environment modules - separate system and home-manager
     environmentSystemModules = lib.flatten [
-      # Desktop environments (all available)
-      (lib.flatten (map (desktop:
-        if moduleMapping.environmentModules.desktop ? ${desktop}
-        then (moduleMapping.environmentModules.desktop.${desktop}.${platform} or [])
-        else [])
-      (resolvedCapabilities.environment.desktops.available or [])))
+      # Desktop environments (only default to avoid conflicts)
+      (
+        if
+          resolvedCapabilities.environment.desktops.default
+          != null
+          && moduleMapping.environmentModules.desktop ? ${resolvedCapabilities.environment.desktops.default}
+        then (moduleMapping.environmentModules.desktop.${resolvedCapabilities.environment.desktops.default}.${platform} or [])
+        else []
+      )
 
       # Shell configuration
       (

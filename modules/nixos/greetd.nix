@@ -15,8 +15,9 @@ with lib; let
     if dmsEnabled
     then let
       system = pkgs.stdenv.hostPlatform.system;
+      dmsPackages = inputs.dank-material-shell.packages.${system} or {};
     in
-      inputs.dank-material-shell.packages.${system}.dmsCli
+      dmsPackages.dmsCli or null
     else null;
 
   # Import session generator
@@ -31,6 +32,9 @@ with lib; let
   # Determine default session from capabilities
   defaultDesktop = hostCapabilities.environment.desktops.default or "sway";
   defaultBar = hostCapabilities.environment.bars.default or "waybar";
+
+  # Disable GNOME's SSH agent to avoid conflicts
+  isGnomeDefault = defaultDesktop == "gnome";
 
   # Construct default session command
   defaultSessionCmd =

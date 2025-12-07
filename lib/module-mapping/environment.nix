@@ -20,7 +20,7 @@
         homeManager = [
           ../../modules/home-manager/wl-sway.nix
           ../../modules/home-manager/waybar.nix
-          ../../modules/home-manager/quickshell.nix
+          ../../modules/home-manager/quickshell-custom.nix
           ../../modules/home-manager/user/programs/wayland/rofi.nix
           ../../modules/home-manager/user/programs/wayland/fuzzel.nix
           ../../modules/home-manager/user/programs/wayland/grim.nix
@@ -39,7 +39,7 @@
         homeManager = [
           ../../modules/home-manager/niri.nix
           ../../modules/home-manager/waybar.nix
-          ../../modules/home-manager/quickshell.nix
+          ../../modules/home-manager/quickshell-custom.nix
           ../../modules/home-manager/user/programs/wayland/rofi.nix
           ../../modules/home-manager/user/programs/wayland/fuzzel.nix
           ../../modules/home-manager/user/programs/wayland/grim.nix
@@ -127,7 +127,7 @@
       quickshell = {
         nixos = [];
         darwin = [];
-        homeManager = [../../modules/home-manager/quickshell.nix];
+        homeManager = [../../modules/home-manager/quickshell-custom.nix];
       };
       caelestia = {
         nixos = [];
