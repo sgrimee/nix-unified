@@ -45,7 +45,10 @@
 
   # Environment preferences
   environment = {
-    desktop = "darwin"; # Native macOS desktop
+    desktops = {
+      available = ["darwin"]; # Available desktop environments
+      default = "darwin"; # Native macOS desktop (default)
+    };
     shell = {
       primary = "zsh"; # Primary shell
       additional = ["fish"]; # Additional shells available
