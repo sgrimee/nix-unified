@@ -72,6 +72,7 @@
   "wireshark-app" # Network protocol analyzer
   "cocoapacketanalyzer" # Network packet analyzer
   "mqtt-explorer" # MQTT client and message explorer
+  "picocom" # serial terminal
   "synology-surveillance-station-client" # Synology surveillance system client
   "winbox" # MikroTik RouterOS configuration tool
 
