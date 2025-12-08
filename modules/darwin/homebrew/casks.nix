@@ -5,9 +5,8 @@
 
   # Development Tools
   "docker-desktop" # Docker containerization platform
-  # "visual-studio-code" # Microsoft Visual Studio Code editor
-  "visual-studio-code@insiders" # VS Code Insiders (preview build)
-  "itermai" # AI-powered development assistant
+  "visual-studio-code" # Microsoft Visual Studio Code editor
+  # "visual-studio-code@insiders" # VS Code Insiders (preview build)
   "gitup-app" # Git repository management application
   "mongodb-compass" # MongoDB GUI client
   # "neo4j-desktop" # Neo4j graph database desktop client
@@ -48,7 +47,7 @@
   "sonos" # Sonos speaker system controller
   "guitar-pro" # Guitar tablature editor
   "loopback" # Virtual audio routing
-  "midi-monitor" # MIDI message monitoring tool
+  # "midi-monitor" # MIDI message monitoring tool
   "music-assistant/tap/companion" # Music Assistant companion app
 
   # Gaming
@@ -66,9 +65,10 @@
   "ghostty" # Fast terminal emulator
   "iterm2" # Terminal emulator
   "itermbrowserplugin" # iTerm2 browser plugin
+  "itermai" # AI-powered development assistant
 
   # Networking & System Tools
-  "wifi-explorer" # WiFi network analysis tool
+  # "wifi-explorer" # WiFi network analysis tool
   "wireshark-app" # Network protocol analyzer
   "cocoapacketanalyzer" # Network packet analyzer
   "mqtt-explorer" # MQTT client and message explorer
@@ -77,7 +77,7 @@
 
   # Hardware & Development
   "balenaetcher" # OS image flasher
-  "raspberry-pi-imager" # Raspberry Pi imaging utility
+  # "raspberry-pi-imager" # Raspberry Pi imaging utility
   "serial" # Serial port terminal
   "silicon-labs-vcp-driver" # Silicon Labs USB-to-UART driver
   "wch-ch34x-usb-serial-driver" # WCH CH34x USB serial driver
@@ -88,7 +88,7 @@
   # "orcaslicer"                           # Alternative 3D printer slicer
 
   # Music Production
-  "arturia-software-center" # Arturia software and driver manager
+  # "arturia-software-center" # Arturia software and driver manager
   "ableton-live-suite" # Digital audio workstation
 
   # Smart Home & IoT
