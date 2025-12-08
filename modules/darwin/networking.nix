@@ -1,5 +1,8 @@
 {
-  system.defaults.alf.globalstate = 1; # enable firewall
+  # Application firewall configuration
+  # system.defaults.alf.globalstate has been replaced with networking.applicationFirewall
+  networking.applicationFirewall.enable = true;
+  networking.applicationFirewall.blockAllIncoming = false;
 
   # Disabling because the /etc/hosts file is edited by VpnClient
   # environment.etc."hosts".text = ''
