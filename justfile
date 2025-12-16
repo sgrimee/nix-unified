@@ -303,12 +303,12 @@ fmt:
 # Lint and auto-fix Nix files with deadnix (interactive - modifies files)
 lint:
     @echo "Linting Nix files and removing dead code..."
-    deadnix --edit --no-lambda-pattern-names .
+    nix run nixpkgs#deadnix -- --edit --no-lambda-pattern-names .
 
 # Check for dead code without fixing (non-interactive - for CI/pre-commit)
 lint-check:
     @echo "Checking for dead code..."
-    deadnix --fail --no-lambda-pattern-names .
+    nix run nixpkgs#deadnix -- --fail --no-lambda-pattern-names .
 
 # Scan for secrets with gitleaks
 scan-secrets:
