@@ -22,6 +22,7 @@
     ./git.nix
     ./gitui.nix
     ./helix.nix
+    ./homebrew.nix
     ./jq.nix
     ./neomutt.nix
     ./node.nix
