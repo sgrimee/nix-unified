@@ -46,14 +46,12 @@
       };
 
       enableSystemMonitoring = lib.mkDefault true;
-      enableClipboard = lib.mkDefault true;
+      # Note: enableClipboard, enableBrightnessControl, enableColorPicker, and enableSystemSound
+      # are now built-in to dms-shell and no longer need to be explicitly enabled
       enableVPN = lib.mkDefault true;
-      enableBrightnessControl = lib.mkDefault true;
-      enableColorPicker = lib.mkDefault true;
       enableDynamicTheming = lib.mkDefault true;
       enableAudioWavelength = lib.mkDefault true;
       enableCalendarEvents = lib.mkDefault true;
-      enableSystemSound = lib.mkDefault true;
     };
   };
 }
