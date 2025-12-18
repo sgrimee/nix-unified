@@ -15,6 +15,7 @@
       poppler # PDF rendering library utilities
       unrar # RAR archive extraction utility
       socat # Socket/serial port relay tool
+      usbutils # USB device utilities (lsusb, etc.)
     ]
     ++
     # Linux-specific system tools
