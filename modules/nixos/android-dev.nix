@@ -24,7 +24,7 @@ in {
     users.groups.adbusers = {};
 
     # Add specified users to adbusers group for Android device access
-    users.users = lib.genAttrs cfg.users (user: {
+    users.users = lib.genAttrs cfg.users (_: {
       extraGroups = ["adbusers"];
     });
 
