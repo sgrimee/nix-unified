@@ -69,6 +69,9 @@
     autoStart = false; # Don't start at boot to prevent blocking
   };
 
+  # Configure Android development users
+  android-dev.users = ["sgrimee"];
+
   # Base system is optimized for gaming (was native-gaming specialization)
   # Disable GPU passthrough in base system - enable only in vm-passthrough specialization
   virtualization.windowsGpuPassthrough.enable = false;
