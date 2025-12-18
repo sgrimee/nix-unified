@@ -110,6 +110,16 @@ For complete command reference, see [README.md](README.md).
 - Create module in appropriate platform directory
 - Add capability mapping in `lib/module-mapping/<category>.nix`
 
+**⚠️ CRITICAL: When adding new features or capabilities:**
+- Create the feature in `lib/module-mapping/features.nix` (or other mapping file)
+- **MUST add the feature name to the whitelist** in `lib/capability-system.nix` at:
+  - `platformConstraints.nixos.supports.features` (for NixOS)
+  - `platformConstraints.darwin.supports.features` (for Darwin, if applicable)
+  - **Failure to do this will cause the feature to be silently filtered out during resolution**
+- Update `capability-schema.nix` if adding new capability types
+- Test: `just test` (will check that configurations can be evaluated)
+- **This is a recurrent problem** - features work in development but fail at runtime if not whitelisted
+
 **When creating hosts:**
 - Use `just new-nixos-host <name>` or `just new-darwin-host <name>`
 - Never create `default.nix` files
