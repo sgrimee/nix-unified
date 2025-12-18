@@ -361,10 +361,14 @@ package-info HOST="":
 
 # === Maintenance ===
 
+# Clean up build artifacts in development directories (venv, node_modules, caches, etc.)
+clean-dev *ARGS:
+	@./utils/clean-dev {{ARGS}}
+
 # Garbage collect old generations and store paths
 gc:
-    @echo "Running garbage collection..."
-    ./utils/garbage-collect.sh
+	@echo "Running garbage collection..."
+	./utils/garbage-collect.sh
 
 # Clear evaluation cache
 clear-cache:

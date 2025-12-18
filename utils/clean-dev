@@ -1,0 +1,382 @@
+#!/usr/bin/env bash
+
+# dev-cleanup.sh - Clean up build artifacts in development directories
+# Safely removes common build artifacts while preserving source code
+
+set -euo pipefail
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Configuration
+DRY_RUN=false
+INTERACTIVE=false
+FORCE=false
+TARGET_PATH="$HOME/dev"
+FILTER_TYPE="" # empty = all types
+VERBOSE=false
+
+# Artifact patterns: type => space-separated patterns
+declare -A ARTIFACTS=(
+    [python]=".venv venv"
+    [rust]="target"
+    [node]="node_modules"
+    [pio]=".pio"
+    [js]=".next .nuxt .turbo .parcel-cache"
+    [cache]="__pycache__ .pytest_cache .mypy_cache .tox .ruff_cache"
+    [go]="go/pkg/mod"
+)
+
+# Initialize counters
+TOTAL_SIZE=0
+TOTAL_DIRS=0
+DELETED_SIZE=0
+DELETED_DIRS=0
+
+# Helper functions
+log_info() {
+    echo -e "${BLUE}ℹ${NC} $*"
+}
+
+log_success() {
+    echo -e "${GREEN}✓${NC} $*"
+}
+
+log_warning() {
+    echo -e "${YELLOW}⚠${NC} $*"
+}
+
+log_error() {
+    echo -e "${RED}✗${NC} $*"
+}
+
+show_help() {
+    cat << 'EOF'
+dev-cleanup.sh - Clean up build artifacts in development directories
+
+USAGE:
+    dev-cleanup.sh [OPTIONS]
+
+OPTIONS:
+    -p, --path <dir>           Target directory (default: ~/dev)
+    -t, --type <type>          Clean specific type only (python, rust, node, pio, js, cache, go)
+    -d, --dry-run              Show what would be deleted without deleting
+    -i, --interactive          Ask before deleting each directory
+    -f, --force                Skip confirmation prompts
+    -v, --verbose              Show detailed progress
+    -h, --help                 Show this help message
+
+EXAMPLES:
+    # Preview what would be cleaned in ~/dev
+    dev-cleanup.sh --dry-run
+
+    # Clean only Python venvs interactively
+    dev-cleanup.sh --type python --interactive
+
+    # Clean and skip confirmation
+    dev-cleanup.sh --force
+
+ARTIFACT TYPES:
+    python        .venv, venv directories
+    rust          target directories
+    node          node_modules directories
+    pio           .pio (PlatformIO) directories
+    js            .next, .nuxt, .turbo, .parcel-cache
+    cache         __pycache__, .pytest_cache, .mypy_cache, .tox, .ruff_cache
+    go            go/pkg/mod directories
+
+EOF
+}
+
+parse_args() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -p|--path)
+                TARGET_PATH="$(cd "$2" 2>/dev/null && pwd -P)" || {
+                    log_error "Invalid path: $2"
+                    exit 1
+                }
+                shift 2
+                ;;
+            -t|--type)
+                FILTER_TYPE="$2"
+                if [[ ! " ${!ARTIFACTS[@]} " =~ " ${FILTER_TYPE} " ]]; then
+                    log_error "Unknown type: $FILTER_TYPE"
+                    log_info "Valid types: ${!ARTIFACTS[@]}"
+                    exit 1
+                fi
+                shift 2
+                ;;
+            -d|--dry-run)
+                DRY_RUN=true
+                shift
+                ;;
+            -i|--interactive)
+                INTERACTIVE=true
+                shift
+                ;;
+            -f|--force)
+                FORCE=true
+                shift
+                ;;
+            -v|--verbose)
+                VERBOSE=true
+                shift
+                ;;
+            -h|--help)
+                show_help
+                exit 0
+                ;;
+            *)
+                log_error "Unknown option: $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
+}
+
+get_size() {
+    local path=$1
+    if [[ -d "$path" ]]; then
+        du -sh "$path" 2>/dev/null | awk '{print $1}' || echo "0B"
+    else
+        echo "0B"
+    fi
+}
+
+get_size_bytes() {
+    local path=$1
+    if [[ -d "$path" ]]; then
+        du -s "$path" 2>/dev/null | awk '{print $1}' || echo "0"
+    else
+        echo "0"
+    fi
+}
+
+human_to_bytes() {
+    local size=$1
+    local num=${size%[A-Z]*}
+    local unit=${size#$num}
+    
+    # Convert decimal to integer by removing the dot and treating as if multiplied by 10
+    # For simplicity, just round down by converting to integer
+    num=$(printf "%.0f" "$num" 2>/dev/null || echo "$num")
+    
+    case $unit in
+        B) echo "$num" ;;
+        K) echo $((num * 1024)) ;;
+        M) echo $((num * 1024 * 1024)) ;;
+        G) echo $((num * 1024 * 1024 * 1024)) ;;
+        *) echo 0 ;;
+    esac
+}
+
+human_readable_size() {
+    local bytes=$1
+    if [[ $bytes -lt 1024 ]]; then
+        echo "${bytes}B"
+    elif [[ $bytes -lt 1048576 ]]; then
+        echo "$((bytes / 1024))KB"
+    elif [[ $bytes -lt 1073741824 ]]; then
+        echo "$((bytes / 1048576))MB"
+    else
+        echo "$((bytes / 1073741824))GB"
+    fi
+}
+
+scan_directory() {
+    local search_path=$1
+    local types_to_check=()
+
+    # Determine which types to scan
+    if [[ -z "$FILTER_TYPE" ]]; then
+        types_to_check=("${!ARTIFACTS[@]}")
+    else
+        types_to_check=("$FILTER_TYPE")
+    fi
+
+    # Scan for each type
+    for type in "${types_to_check[@]}"; do
+        local patterns="${ARTIFACTS[$type]}"
+        
+        # For each pattern in this type
+        for pattern in $patterns; do
+            # Special handling for paths like go/pkg/mod
+            if [[ "$pattern" == *"/"* ]]; then
+                # For paths, just look for the top-level directory
+                local base_pattern=$(echo "$pattern" | cut -d'/' -f1)
+                while IFS= read -r -d '' dir; do
+                    local size_bytes
+                    size_bytes=$(get_size_bytes "$dir")
+                    TOTAL_DIRS=$((TOTAL_DIRS + 1))
+                    TOTAL_SIZE=$((TOTAL_SIZE + size_bytes))
+                    echo "${dir}|$(get_size "$dir")|${type}"
+                done < <(find -L "$search_path" -maxdepth 5 -type d -name "$base_pattern" -print0 2>/dev/null)
+            else
+                # For simple patterns
+                while IFS= read -r -d '' dir; do
+                    local size_bytes
+                    size_bytes=$(get_size_bytes "$dir")
+                    TOTAL_DIRS=$((TOTAL_DIRS + 1))
+                    TOTAL_SIZE=$((TOTAL_SIZE + size_bytes))
+                    echo "${dir}|$(get_size "$dir")|${type}"
+                done < <(find -L "$search_path" -maxdepth 5 -type d -name "$pattern" -print0 2>/dev/null)
+            fi
+        done
+    done
+}
+
+process_artifacts() {
+    local artifacts_file=$1
+    local line_count=0
+
+    # Count lines first
+    line_count=$(wc -l < "$artifacts_file" || echo 0)
+
+    if [[ $line_count -eq 0 ]]; then
+        log_warning "No artifacts found"
+        return 0
+    fi
+
+    log_info "Found $line_count artifact directories"
+
+    if [[ "$DRY_RUN" == true ]]; then
+        log_warning "DRY RUN MODE - No files will be deleted"
+    fi
+
+    echo ""
+
+    # Process each artifact
+    local count=0
+    while IFS='|' read -r path size_human type; do
+        count=$((count + 1))
+
+        # Show the artifact
+        printf "  [%d/%d] %-8s %8s  %s\n" "$count" "$line_count" "($type)" "$size_human" "$path"
+
+        if [[ "$DRY_RUN" == true ]]; then
+            continue
+        fi
+
+        # Interactive mode
+        if [[ "$INTERACTIVE" == true ]]; then
+            read -p "          Delete? (y/n) " -r response
+            if [[ ! "$response" =~ ^[Yy]$ ]]; then
+                continue
+            fi
+        fi
+
+        # Delete the directory
+        if rm -rf "$path" 2>/dev/null; then
+            local size_bytes
+            size_bytes=$(get_size_bytes "$path" 2>/dev/null || echo "0")
+            if [[ "$size_bytes" == "0" ]]; then
+                # Already deleted, use original size
+                size_bytes=$(echo "$size_human" | sed 's/[A-Z]*//g')
+            fi
+            DELETED_DIRS=$((DELETED_DIRS + 1))
+
+            if [[ "$VERBOSE" == true ]]; then
+                log_success "Deleted"
+            fi
+        else
+            log_error "Failed to delete: $path"
+        fi
+    done < "$artifacts_file"
+}
+
+show_summary() {
+    local total_size_human
+    total_size_human=$(human_readable_size "$TOTAL_SIZE")
+
+    echo ""
+    echo "════════════════════════════════════════"
+    echo "SUMMARY"
+    echo "════════════════════════════════════════"
+
+    if [[ "$DRY_RUN" == true ]]; then
+        log_warning "Dry run completed"
+        echo "  Artifacts found:     $TOTAL_DIRS"
+        echo "  Total size:          $total_size_human"
+        echo ""
+        echo "Run without --dry-run to delete"
+    else
+        log_success "Cleanup completed"
+        echo "  Artifacts scanned:   $TOTAL_DIRS"
+        echo "  Artifacts deleted:   $DELETED_DIRS"
+        echo "  Total scanned:       $total_size_human"
+    fi
+
+    echo "════════════════════════════════════════"
+}
+
+request_confirmation() {
+    local total_size_human
+    total_size_human=$(human_readable_size "$TOTAL_SIZE")
+
+    echo ""
+    log_warning "Found $TOTAL_DIRS artifact directories totaling $total_size_human"
+    echo ""
+
+    if [[ "$FORCE" == true ]]; then
+        return 0
+    fi
+
+    read -p "Proceed with deletion? (y/n) " -r response
+    [[ "$response" =~ ^[Yy]$ ]]
+}
+
+main() {
+    parse_args "$@"
+
+    # Validate path (don't resolve symlinks - keep the path as-is for find -L to work)
+    if [[ ! -d "$TARGET_PATH" ]]; then
+        log_error "Target path does not exist: $TARGET_PATH"
+        exit 1
+    fi
+
+    log_info "Scanning for build artifacts in: $TARGET_PATH"
+
+    # Create temporary file for artifacts
+    local temp_file
+    temp_file=$(mktemp)
+    trap "rm -f $temp_file" EXIT
+
+    # Scan directory (suppress counter updates since we're in a subshell)
+    scan_directory "$TARGET_PATH" 2>/dev/null | sort > "$temp_file"
+
+    # Check if any artifacts found
+    if [[ ! -s "$temp_file" ]]; then
+        log_warning "No artifacts found"
+        exit 0
+    fi
+
+    # Calculate totals from the temp file
+    while IFS='|' read -r path size_human type; do
+        local size_bytes
+        size_bytes=$(human_to_bytes "$size_human")
+        TOTAL_DIRS=$((TOTAL_DIRS + 1))
+        TOTAL_SIZE=$((TOTAL_SIZE + size_bytes))
+    done < "$temp_file"
+
+    # Request confirmation if not dry-run and not interactive
+    if [[ "$DRY_RUN" == false ]] && [[ "$INTERACTIVE" == false ]]; then
+        if ! request_confirmation; then
+            log_warning "Cancelled"
+            exit 0
+        fi
+    fi
+
+    # Process artifacts
+    process_artifacts "$temp_file"
+
+    # Show summary
+    show_summary
+}
+
+main "$@"
