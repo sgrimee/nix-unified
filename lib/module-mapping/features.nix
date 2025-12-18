@@ -58,5 +58,11 @@
       darwin = [];
       homeManager = [];
     };
+
+    android = {
+      nixos = [../../modules/nixos/android-dev.nix];
+      darwin = [];
+      homeManager = [];
+    };
   };
 }

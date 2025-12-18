@@ -15,6 +15,7 @@
     server = false; # Not a server host
     corporate = false; # No corporate tools
     ai = false; # No specialized AI/ML setup needed
+    android = true; # Android development (ADB, fastboot, custom udev rules)
     ham = true; # Amateur radio tooling enabled
     gnome = false; # GNOME available but minimal packages
   };
