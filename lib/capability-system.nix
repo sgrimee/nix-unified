@@ -17,6 +17,7 @@
     nixos = {
       supports = {
         features = [
+          "android"
           "gaming"
           "ai"
           "multimedia"
