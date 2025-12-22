@@ -6,7 +6,7 @@
     localBinInPath = false;
 
     # nixos only system packages, go to /run/current-system/sw
-    systemPackages = with pkgs; [alsa-utils espeak pciutils wirelesstools];
+    systemPackages = with pkgs; [alsa-utils espeak pciutils wirelesstools ghostty.terminfo];
 
     variables = {BROWSER = "firefox";};
 
