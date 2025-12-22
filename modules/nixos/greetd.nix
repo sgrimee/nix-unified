@@ -8,7 +8,7 @@
 with lib; let
   # Check if DankMaterialShell is enabled in any user's home-manager config
   hmUsers = config.home-manager.users or {};
-  dmsEnabled = lib.any (userCfg: userCfg.programs.dankMaterialShell.enable or false) (lib.attrValues hmUsers);
+  dmsEnabled = lib.any (userCfg: userCfg.programs.dank-material-shell.enable or false) (lib.attrValues hmUsers);
 
   # Get dms-cli from the dank-material-shell flake if DMS is enabled
   dmsCliPackage =

@@ -9,12 +9,12 @@
   #   programs.dankMaterialShell.enable = true;
 
   imports = [
-    inputs.dank-material-shell.homeModules.dankMaterialShell.default
+    inputs.dank-material-shell.homeModules.dank-material-shell
   ];
 
   # Set sensible defaults when enabled
-  config = lib.mkIf config.programs.dankMaterialShell.enable {
-    programs.dankMaterialShell = {
+  config = lib.mkIf config.programs.dank-material-shell.enable {
+    programs.dank-material-shell = {
       # Enable all features by default
       systemd = {
         # Don't auto-start - let user choose session from greetd

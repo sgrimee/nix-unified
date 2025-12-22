@@ -38,7 +38,7 @@ in {
     };
   };
 
-  config = mkIf (cfg.enable && !(config.programs.dankMaterialShell.enable or false)) {
+  config = mkIf (cfg.enable && !(config.programs.dank-material-shell.enable or false)) {
     home.packages = [cfg.package];
 
     # Create a basic quickshell config if none provided

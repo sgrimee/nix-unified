@@ -28,7 +28,7 @@ in {
     ];
 
     # Enable DankMaterialShell (available via "Niri (DankMaterialShell)" session in greetd)
-    programs.dankMaterialShell.enable = true;
+    programs.dank-material-shell.enable = true;
 
     # Enable niri window manager
     programs.niri.enable = true;
