@@ -9,6 +9,7 @@
       ../../modules/nixos/hardware.nix
       ../../modules/nixos/i18n.nix
       ../../modules/nixos/determinate.nix
+      ../../modules/nixos/nix-gc.nix
       ../../modules/nixos/time.nix
       ../../modules/nixos/polkit.nix
       ../../modules/nixos/build-machines.nix
@@ -17,6 +18,7 @@
     darwin = [
       ../../modules/darwin/determinate.nix # MUST BE INCLUDED - disables nix-darwin's nix management
       ../../modules/darwin/networking.nix
+      ../../modules/darwin/nix-gc.nix
       ../../modules/darwin/dock.nix
       ../../modules/darwin/finder.nix
       ../../modules/darwin/environment.nix

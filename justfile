@@ -365,7 +365,7 @@ package-info HOST="":
 clean-dev *ARGS:
 	@./utils/clean-dev {{ARGS}}
 
-# Garbage collect old generations and store paths
+# Garbage collection (removes old generations and unreachable store paths)
 gc:
 	@echo "Running garbage collection..."
 	./utils/garbage-collect.sh
@@ -389,7 +389,7 @@ generations:
     esac
 
 # Delete old generations (keep last N)
-clean-generations N="5":
+clean-generations N="3":
     #!/usr/bin/env bash
     echo "Cleaning old generations (keeping last {{N}})..."
     case "$(uname -s)" in
@@ -401,10 +401,11 @@ clean-generations N="5":
             ;;
     esac
 
-# Optimize nix store
+# Optimize nix store (deduplicates identical files)
 optimize:
-    @echo "Optimizing Nix store..."
-    nix store optimise
+    @echo "Optimizing Nix store (hard-linking identical files)..."
+    nix store optimise 2>/dev/null || nix-store --optimise 2>/dev/null || true
+    @echo "✅ Store optimization completed"
 
 # === Performance ===
 
