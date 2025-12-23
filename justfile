@@ -199,7 +199,7 @@ switch:
     if [ "$PLATFORM" = "darwin" ]; then
         sudo darwin-rebuild switch --flake .#"$TARGET_HOST"
     else
-        sudo nixos-rebuild switch --flake .#"$TARGET_HOST"
+        nixos-rebuild switch --flake .#"$TARGET_HOST" --sudo
     fi
 
     echo "✅ System and Home Manager activated"
