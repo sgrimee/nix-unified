@@ -1,7 +1,7 @@
 # Mac App Store applications (use `mas search <app name>` to find IDs)
 {...}: {
   # Bluetooth & Hardware Tools
-  "BlueSee" = 1336679524; # Bluetooth Low Energy scanner
+  # "BlueSee" = 1336679524; # Bluetooth Low Energy scanner
   "BT Terminal" = 1511543453; # Bluetooth terminal for IoT devices
 
   # Productivity & Organization
