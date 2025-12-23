@@ -7,6 +7,7 @@
   "docker-desktop" # Docker containerization platform
   "visual-studio-code" # Microsoft Visual Studio Code editor
   # "visual-studio-code@insiders" # VS Code Insiders (preview build)
+  "zed" # Zed editor - high-performance code editor
   "gitup-app" # Git repository management application
   "mongodb-compass" # MongoDB GUI client
   # "neo4j-desktop" # Neo4j graph database desktop client

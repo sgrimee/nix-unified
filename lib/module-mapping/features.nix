@@ -9,7 +9,9 @@
         ../../modules/nixos/development/rust.nix
       ];
       darwin = [];
-      homeManager = [];
+      homeManager = [
+        ../../modules/home-manager/zed-editor.nix
+      ];
     };
 
     desktop = {
