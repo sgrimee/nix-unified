@@ -18,7 +18,6 @@
     darwin = [
       ../../modules/darwin/determinate.nix # MUST BE INCLUDED - disables nix-darwin's nix management
       ../../modules/darwin/networking.nix
-      ../../modules/darwin/nix-gc.nix
       ../../modules/darwin/dock.nix
       ../../modules/darwin/finder.nix
       ../../modules/darwin/environment.nix
