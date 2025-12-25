@@ -10,6 +10,7 @@
       ../../modules/nixos/i18n.nix
       ../../modules/nixos/determinate.nix
       ../../modules/nixos/nix-gc.nix
+      ../../modules/nixos/nix-ld.nix
       ../../modules/nixos/time.nix
       ../../modules/nixos/polkit.nix
       ../../modules/nixos/build-machines.nix

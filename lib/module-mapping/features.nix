@@ -4,7 +4,6 @@
   featureModules = {
     development = {
       nixos = [
-        ../../modules/nixos/nix-ld.nix
         ../../modules/nixos/vscode.nix
         ../../modules/nixos/development/rust.nix
       ];
