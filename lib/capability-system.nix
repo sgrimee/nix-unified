@@ -33,6 +33,7 @@
           "media-center"
           "home-server"
           "mobile"
+          "thin-client"
         ];
         desktop = ["gnome" "sway" "kde" "niri"];
         hardware = {
@@ -175,6 +176,12 @@
       requires = {features = ["development"];};
       conflicts = {features = [];};
       suggests = {features = ["desktop" "multimedia"];};
+    };
+
+    thin-client = {
+      requires = {features = ["desktop"];};
+      conflicts = {features = [];};
+      suggests = {features = ["multimedia"];};
     };
 
     mobile = {
