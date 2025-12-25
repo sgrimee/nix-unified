@@ -11,6 +11,9 @@
     development = import ./categories/development.nix {
       inherit pkgs lib hostCapabilities;
     };
+    development-lite = import ./categories/development-lite.nix {
+      inherit pkgs lib hostCapabilities;
+    };
     gaming =
       import ./categories/gaming.nix {inherit pkgs lib hostCapabilities;};
     multimedia =
@@ -65,9 +68,9 @@ in {
         # GPU-specific packages
         (cat.gpuSpecific.${currentGpu} or [])
         ++
-        # Language packages (if development category)
+        # Language packages (if development or development-lite category)
         (
-          if category == "development"
+          if category == "development" || category == "development-lite"
           then lib.flatten (lib.attrValues (cat.languages or {}))
           else []
         )
