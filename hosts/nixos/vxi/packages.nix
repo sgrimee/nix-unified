@@ -12,12 +12,12 @@
   };
 
   # Explicit package categories based on host capabilities
-  # Minimal set: core essentials + system tools + fonts only
-  # No development, gaming, multimedia, or productivity packages
   requestedCategories = [
     "core" # Always included - essential CLI tools
     "system" # System utilities
     "fonts" # Required for desktop rendering
+    "productivity" # Browsers (Firefox, Chromium) and productivity CLI tools
+    "development-lite" # Lightweight dev tools (excludes vscode, sonar-scanner-cli)
   ];
 
   # Generate package list
