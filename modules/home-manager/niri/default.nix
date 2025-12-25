@@ -13,12 +13,18 @@
     then hostCapabilities.hardware.keyboard.fnKeyProfile
     else "apple";
 
+  # Safely read terminal from host capabilities (default: "alacritty")
+  terminal =
+    if hostCapabilities ? environment && hostCapabilities.environment ? terminal
+    then hostCapabilities.environment.terminal
+    else "alacritty";
+
   # Validate profile is one of the supported options
   validProfiles = ["apple" "framework" "standard"];
   isValidProfile = lib.elem fnKeyProfile validProfiles;
 
   # Load base configuration
-  baseConfig = import ./config.nix {inherit pkgs;};
+  baseConfig = import ./config.nix {inherit pkgs terminal;};
 
   # Load keyboard profile based on fnKeyProfile
   keymap = import ./keymaps/${fnKeyProfile}.nix {inherit pkgs;};

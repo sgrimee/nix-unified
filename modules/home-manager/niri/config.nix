@@ -1,6 +1,6 @@
 # Base Niri Configuration
 # Contains all non-keyboard-profile-specific configuration
-{pkgs}: {
+{pkgs, terminal ? "alacritty"}: {
   # Input configuration (keyboard, mouse, touchpad, etc.)
   input = ''
     // Input device configuration.
@@ -381,8 +381,8 @@
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
-    Mod+T hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
-    Mod+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
+    Mod+T hotkey-overlay-title="Open a Terminal: ${terminal}" { spawn "${terminal}"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal: ${terminal}" { spawn "${terminal}"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
     Mod+Shift+Escape hotkey-overlay-title="System Power Menu" { spawn "niri-power-menu"; }
