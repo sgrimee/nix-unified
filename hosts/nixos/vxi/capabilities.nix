@@ -42,7 +42,7 @@
   };
 
   # Host roles and primary use cases
-  roles = ["workstation"];
+  roles = ["thin-client"];
 
   # Environment preferences
   environment = {
@@ -58,7 +58,7 @@
       primary = "zsh"; # Primary shell
       additional = ["fish"]; # Additional shells available
     };
-    terminal = "ghostty"; # Preferred terminal emulator
+    terminal = "foot"; # Lightweight terminal (ghostty crashes on old AMD GPU)
   };
 
   # Service configurations
