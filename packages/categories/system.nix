@@ -6,6 +6,8 @@
 }: {
   core = with pkgs;
     [
+      git # Version control system (essential for all hosts)
+      just # Command runner for project-specific tasks
       qemu # Hardware virtualization and emulation
       wakeonlan # Wake-on-LAN magic packet sender
       dust # Disk usage analyzer with tree view (du-dust was renamed to dust in NixOS 25.11)
@@ -16,6 +18,9 @@
       unrar # RAR archive extraction utility
       socat # Socket/serial port relay tool
       usbutils # USB device utilities (lsusb, etc.)
+      ripgrep # Fast recursive grep tool
+      carapace # Multi-shell completion generator
+      joshuto # Ranger-like terminal file manager
     ]
     ++
     # Linux-specific system tools

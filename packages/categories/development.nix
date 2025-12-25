@@ -2,19 +2,14 @@
 {pkgs, ...}: {
   # Core development tools
   core = with pkgs; [
-    git
     gh
     direnv
-    just
     sonar-scanner-cli
     update-coding-agents # From overlay - updates Claude Code and OpenCode AI packages
     go
-    ripgrep
     lazygit
     mdformat
     uv
-    carapace
-    joshuto
     espflash # ESP32/ESP8266 serial flasher (Rust-based alternative to esptool)
   ];
 
