@@ -26,4 +26,10 @@ in {
       trusted-substituters = shared.commonSubstituters ++ nixos.extraSubstituters;
       trusted-public-keys = shared.commonPublicKeys ++ nixos.extraPublicKeys;
     };
+
+  # Configure nix-daemon to prefer IPv4 connections
+  # Workaround for CSecure Endpoint IPv6 routing issues that cause downloads to hang
+  systemd.services.nix-daemon.serviceConfig.Environment = [
+    "NIX_CURL_FLAGS=-4"
+  ];
 }
