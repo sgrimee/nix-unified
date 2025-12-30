@@ -15,10 +15,10 @@
 
 | Keybinding | Action | Description |
 |------------|--------|-------------|
-| `Alt + j` | Focus left | Move focus to window on the left |
-| `Alt + k` | Focus down | Move focus to window below |
-| `Alt + l` | Focus up | Move focus to window above |
-| `Alt + ;` | Focus right | Move focus to window on the right |
+| `Alt + h` | Focus left | Move focus to window on the left |
+| `Alt + j` | Focus down | Move focus to window below |
+| `Alt + k` | Focus up | Move focus to window above |
+| `Alt + l` | Focus right | Move focus to window on the right |
 | `Alt + Left` | Focus left | Alternative arrow key navigation |
 | `Alt + Down` | Focus down | Alternative arrow key navigation |
 | `Alt + Up` | Focus up | Alternative arrow key navigation |
@@ -28,10 +28,10 @@
 
 | Keybinding | Action | Description |
 |------------|--------|-------------|
-| `Alt + Shift + j` | Move left | Move window to the left |
-| `Alt + Shift + k` | Move down | Move window down |
-| `Alt + Shift + l` | Move up | Move window up |
-| `Alt + Shift + ;` | Move right | Move window to the right |
+| `Alt + Shift + h` | Move left | Move window to the left |
+| `Alt + Shift + j` | Move down | Move window down |
+| `Alt + Shift + k` | Move up | Move window up |
+| `Alt + Shift + l` | Move right | Move window to the right |
 | `Alt + Shift + Left` | Move left | Alternative arrow key moving |
 | `Alt + Shift + Down` | Move down | Alternative arrow key moving |
 | `Alt + Shift + Up` | Move up | Alternative arrow key moving |
@@ -65,10 +65,10 @@
 | `Alt + r` | Enter resize mode | Enter window resize mode |
 
 **In resize mode:**
-- `j` / `Left`: Shrink width
-- `k` / `Down`: Grow height  
-- `l` / `Up`: Shrink height
-- `;` / `Right`: Grow width
+- `h` / `Left`: Shrink width
+- `j` / `Down`: Grow height  
+- `k` / `Up`: Shrink height
+- `l` / `Right`: Grow width
 - `Enter` / `Escape`: Exit resize mode
 
 ## Application Launchers & Rofi

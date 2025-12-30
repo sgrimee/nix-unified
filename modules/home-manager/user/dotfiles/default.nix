@@ -72,10 +72,6 @@ in {
   home.file =
     {
       # Symlink most of .config, but exclude karabiner directory
-      ".config/aerospace" = {
-        source = ./config/aerospace;
-        recursive = true;
-      };
       ".config/skhd" = {
         source = ./config/skhd;
         recursive = true;

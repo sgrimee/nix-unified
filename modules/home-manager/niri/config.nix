@@ -1,6 +1,9 @@
 # Base Niri Configuration
 # Contains all non-keyboard-profile-specific configuration
-{pkgs, terminal ? "alacritty"}: {
+{
+  pkgs,
+  terminal ? "alacritty",
+}: {
   # Input configuration (keyboard, mouse, touchpad, etc.)
   input = ''
     // Input device configuration.
@@ -403,19 +406,19 @@
     Mod+Down  { focus-window-down; }
     Mod+Up    { focus-window-up; }
     Mod+Right { focus-column-right; }
-    Mod+J     { focus-column-left; }
-    Mod+K     { focus-window-down; }
-    Mod+L     { focus-window-up; }
-    Mod+semicolon     { focus-column-right; }
+    Mod+H     { focus-column-left; }
+    Mod+J     { focus-window-down; }
+    Mod+K     { focus-window-up; }
+    Mod+L     { focus-column-right; }
 
     Mod+Shift+Left  { move-column-left; }
     Mod+Shift+Down  { move-window-down; }
     Mod+Shift+Up    { move-window-up; }
     Mod+Shift+Right { move-column-right; }
-    Mod+Shift+J     { move-column-left; }
-    Mod+Shift+K     { move-window-down; }
-    Mod+Shift+L     { move-window-up; }
-    Mod+Shift+semicolon     { move-column-right; }
+    Mod+Shift+H     { move-column-left; }
+    Mod+Shift+J     { move-window-down; }
+    Mod+Shift+K     { move-window-up; }
+    Mod+Shift+L     { move-column-right; }
 
     // Alternative commands that move across workspaces when reaching
     // the first or last window in a column.
@@ -433,19 +436,19 @@
     Mod+Ctrl+Down  { focus-monitor-down; }
     Mod+Ctrl+Up    { focus-monitor-up; }
     Mod+Ctrl+Right { focus-monitor-right; }
-    Mod+Ctrl+J     { focus-monitor-left; }
-    Mod+Ctrl+K     { focus-monitor-down; }
-    Mod+Ctrl+L     { focus-monitor-up; }
-    Mod+Ctrl+semicolon     { focus-monitor-right; }
+    Mod+Ctrl+H     { focus-monitor-left; }
+    Mod+Ctrl+J     { focus-monitor-down; }
+    Mod+Ctrl+K     { focus-monitor-up; }
+    Mod+Ctrl+L     { focus-monitor-right; }
 
     Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
     Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
     Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
     Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
-    Mod+Shift+Ctrl+J     { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+K     { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+L     { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+semicolon     { move-column-to-monitor-right; }
+    Mod+Shift+Ctrl+H     { move-column-to-monitor-left; }
+    Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
+    Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
+    Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
 
     // Alternatively, there are commands to move just a single window:
     // Mod+Shift+Ctrl+Left  { move-window-to-monitor-left; }

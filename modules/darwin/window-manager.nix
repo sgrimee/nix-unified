@@ -68,17 +68,17 @@
         mode = {
           main = {
             binding = {
-              # Focus navigation
-              "alt-j" = "focus left";
-              "alt-k" = "focus down";
-              "alt-l" = "focus up";
-              "alt-semicolon" = "focus right";
+              # Focus navigation (vim hjkl style)
+              "alt-h" = "focus left";
+              "alt-j" = "focus down";
+              "alt-k" = "focus up";
+              "alt-l" = "focus right";
 
-              # Move windows
-              "alt-shift-j" = "move left";
-              "alt-shift-k" = "move down";
-              "alt-shift-l" = "move up";
-              "alt-shift-semicolon" = "move right";
+              # Move windows (vim hjkl style)
+              "alt-shift-h" = "move left";
+              "alt-shift-j" = "move down";
+              "alt-shift-k" = "move up";
+              "alt-shift-l" = "move right";
 
               # Workspace switching
               "alt-1" = "workspace 1";
@@ -105,8 +105,8 @@
               "alt-shift-minus" = "resize smart +50";
 
               # Monitor/workspace movement
-              "alt-shift-h" = "move-node-to-monitor --focus-follows-window --wrap-around next";
-              "alt-h" = "workspace-back-and-forth";
+              "alt-shift-semicolon" = "move-node-to-monitor --focus-follows-window --wrap-around next";
+              "alt-semicolon" = "workspace-back-and-forth";
 
               # Service mode
               "alt-shift-period" = "mode service";
@@ -118,10 +118,10 @@
 
           resize = {
             binding = {
-              "j" = "resize width -50";
-              "k" = "resize height +50";
-              "l" = "resize height -50";
-              "semicolon" = "resize width +50";
+              "h" = "resize width -50";
+              "j" = "resize height +50";
+              "k" = "resize height -50";
+              "l" = "resize width +50";
               "enter" = "mode main";
               "esc" = "mode main";
             };
@@ -134,10 +134,10 @@
               "f" = ["layout floating tiling" "mode main"];
               "backspace" = ["close-all-windows-but-current" "mode main"];
 
-              "alt-shift-j" = ["join-with left" "mode main"];
-              "alt-shift-k" = ["join-with down" "mode main"];
-              "alt-shift-l" = ["join-with up" "mode main"];
-              "alt-shift-semicolon" = ["join-with right" "mode main"];
+              "alt-shift-h" = ["join-with left" "mode main"];
+              "alt-shift-j" = ["join-with down" "mode main"];
+              "alt-shift-k" = ["join-with up" "mode main"];
+              "alt-shift-l" = ["join-with right" "mode main"];
 
               # Volume controls
               "down" = "volume down";
