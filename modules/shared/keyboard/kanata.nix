@@ -14,6 +14,7 @@ with lib; {
     needsCaps = cfg.features.remapCapsLock;
     needsHomerow = cfg.features.homerowMods;
     needsSpaceMew = cfg.features.mapSpaceToMew;
+    needsNavLayer = cfg.features.navigationLayer && needsHomerow;
     needsSwapAltCmd = cfg.features.swapAltCommand;
 
     # On Darwin we attempt explicit media keys; correct token names use capitalized format in Kanata.
@@ -36,13 +37,17 @@ with lib; {
         if needsSpaceMew
         then " spc"
         else "";
+      tabKey =
+        if needsNavLayer
+        then " tab"
+        else "";
       altCmdKeys =
         if needsSwapAltCmd
         then " lalt lmet ralt rmet"
         else "";
     in
-      if baseKeys != "" || spaceKey != "" || altCmdKeys != "" || mediaKeys != ""
-      then baseKeys + spaceKey + altCmdKeys + mediaKeys
+      if baseKeys != "" || spaceKey != "" || tabKey != "" || altCmdKeys != "" || mediaKeys != ""
+      then baseKeys + spaceKey + tabKey + altCmdKeys + mediaKeys
       else ""; # No remapping
 
     # Generate aliases based on enabled features
@@ -62,6 +67,9 @@ with lib; {
         ++ optionals needsSpaceMew [
           "mew (multi lctl lalt lsft)"
           "spcmew (tap-hold-release $tap-time $hold-time spc @mew)"
+        ]
+        ++ optionals needsNavLayer [
+          "tabnav (tap-hold-release $tap-time $hold-time tab (layer-toggle nav))"
         ]
         ++ optionals needsSwapAltCmd [
           "swaplalt lmet"
@@ -94,6 +102,10 @@ with lib; {
         if needsSpaceMew
         then " @spcmew"
         else "";
+      tabPart =
+        if needsNavLayer
+        then " @tabnav"
+        else "";
       altCmdPart =
         if needsSwapAltCmd
         then " @swaplalt @swaplmet @swapralt @swaprmet"
@@ -103,9 +115,21 @@ with lib; {
         then " BrightnessDown BrightnessUp KbdIllumDown KbdIllumUp VolUp VolDown MediaMute"
         else "";
     in
-      if capsPart != "" || homerowPart != "" || spacePart != "" || altCmdPart != "" || mediaPart != ""
-      then capsPart + homerowPart + spacePart + altCmdPart + mediaPart
+      if capsPart != "" || homerowPart != "" || spacePart != "" || tabPart != "" || altCmdPart != "" || mediaPart != ""
+      then capsPart + homerowPart + spacePart + tabPart + altCmdPart + mediaPart
       else "";
+
+    # Build navigation layer
+    navLayer = let
+      # Navigation layer only needs entries for keys that differ from base
+      # The defsrc order is: caps a s d f j k l ;
+      # We want: _ _ _ _ _ left down up right
+      navLayerMapping =
+        if needsNavLayer
+        then "_ _ _ _ _ left down up right"
+        else "";
+    in
+      navLayerMapping;
 
     # Generate device filtering section
     deviceFilter = import ./filtering.nix {
@@ -117,7 +141,7 @@ with lib; {
     };
     filterSection = deviceFilter.generateKanataFilter cfg;
   in
-    if needsCaps || needsHomerow || needsSpaceMew || needsSwapAltCmd || darwinMediaKeysEnabled
+    if needsCaps || needsHomerow || needsSpaceMew || needsSwapAltCmd || needsNavLayer || darwinMediaKeysEnabled
     then ''
       ;; Kanata configuration for cross-platform keyboard remapping
       ;; Generated automatically from unified keyboard module
@@ -157,6 +181,16 @@ with lib; {
       (deflayer base
         ${deflayer}
       )
+
+      ${
+        optionalString needsNavLayer ''
+          ;; Navigation layer - activated by holding Tab
+          ;; Provides hjkl navigation without triggering homerow mods
+          (deflayer nav
+            ${navLayer}
+          )
+        ''
+      }
     ''
     else ''
       ;; Kanata configuration disabled - no features enabled

@@ -62,6 +62,26 @@ in {
         '';
       };
 
+      navigationLayer = mkOption {
+        type = types.bool;
+        default = true;
+        description = ''
+          Enable navigation layer activated by holding Tab.
+          Automatically enabled when homerowMods is enabled.
+
+          When Tab is held, activates a layer where:
+          - h = Left arrow
+          - j = Down arrow
+          - k = Up arrow
+          - l = Right arrow
+
+          This allows quick cursor movement in vim/helix without
+          triggering homerow modifier behavior.
+
+          When disabled, Tab behaves normally.
+        '';
+      };
+
       swapAltCommand = mkOption {
         type = types.bool;
         default = false;

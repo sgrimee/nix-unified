@@ -1,0 +1,119 @@
+{
+  "title": "Tab-based navigation layer (hjkl arrows)",
+  "rules": [
+    {
+      "description": "Tab as navigation layer modifier (hold for hjkl arrows)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "tab",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "to_if_alone": [
+            { "key_code": "tab" }
+          ],
+          "to": [
+            {
+              "set_variable": {
+                "name": "nav_layer",
+                "value": 1
+              }
+            }
+          ],
+          "to_after_key_up": [
+            {
+              "set_variable": {
+                "name": "nav_layer",
+                "value": 0
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "description": "hjkl navigation when nav_layer is active",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "h",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "nav_layer",
+              "value": 1
+            }
+          ],
+          "to": [
+            { "key_code": "left_arrow" }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "j",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "nav_layer",
+              "value": 1
+            }
+          ],
+          "to": [
+            { "key_code": "down_arrow" }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "k",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "nav_layer",
+              "value": 1
+            }
+          ],
+          "to": [
+            { "key_code": "up_arrow" }
+          ]
+        },
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "l",
+            "modifiers": {
+              "optional": ["any"]
+            }
+          },
+          "conditions": [
+            {
+              "type": "variable_if",
+              "name": "nav_layer",
+              "value": 1
+            }
+          ],
+          "to": [
+            { "key_code": "right_arrow" }
+          ]
+        }
+      ]
+    }
+  ]
+}

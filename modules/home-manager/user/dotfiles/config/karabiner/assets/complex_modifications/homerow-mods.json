@@ -701,6 +701,13 @@
                 },
                 {
                     "from": { "key_code": "semicolon" },
+                    "conditions": [
+                        {
+                            "type": "variable_unless",
+                            "name": "nav_layer",
+                            "value": 1
+                        }
+                    ],
                     "to_delayed_action": {
                         "to_if_canceled": [{ "key_code": "semicolon" }],
                         "to_if_invoked": [{ "key_code": "vk_none" }]
@@ -721,6 +728,13 @@
                 },
                 {
                     "from": { "key_code": "l" },
+                    "conditions": [
+                        {
+                            "type": "variable_unless",
+                            "name": "nav_layer",
+                            "value": 1
+                        }
+                    ],
                     "to_delayed_action": {
                         "to_if_canceled": [{ "key_code": "l" }],
                         "to_if_invoked": [{ "key_code": "vk_none" }]
@@ -741,6 +755,13 @@
                 },
                 {
                     "from": { "key_code": "k" },
+                    "conditions": [
+                        {
+                            "type": "variable_unless",
+                            "name": "nav_layer",
+                            "value": 1
+                        }
+                    ],
                     "to_delayed_action": {
                         "to_if_canceled": [{ "key_code": "k" }],
                         "to_if_invoked": [{ "key_code": "vk_none" }]
@@ -761,6 +782,13 @@
                 },
                 {
                     "from": { "key_code": "j" },
+                    "conditions": [
+                        {
+                            "type": "variable_unless",
+                            "name": "nav_layer",
+                            "value": 1
+                        }
+                    ],
                     "to_delayed_action": {
                         "to_if_canceled": [{ "key_code": "j" }],
                         "to_if_invoked": [{ "key_code": "vk_none" }]

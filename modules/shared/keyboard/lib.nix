@@ -18,18 +18,21 @@ in {
     hasActiveFeatures =
       cfg.features.homerowMods
       || cfg.features.remapCapsLock
-      || cfg.features.mapSpaceToMew;
+      || cfg.features.mapSpaceToMew
+      || cfg.features.navigationLayer;
     shouldEnableKanata =
       cfg.remapper
       == "kanata"
       && (cfg.features.homerowMods
         || cfg.features.remapCapsLock
-        || cfg.features.mapSpaceToMew);
+        || cfg.features.mapSpaceToMew
+        || cfg.features.navigationLayer);
     shouldEnableKarabiner =
       cfg.remapper
       == "karabiner"
       && (cfg.features.homerowMods
         || cfg.features.remapCapsLock
-        || cfg.features.mapSpaceToMew);
+        || cfg.features.mapSpaceToMew
+        || cfg.features.navigationLayer);
   };
 }
