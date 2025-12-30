@@ -329,11 +329,11 @@ scan-secrets-staged:
 
 # List all available package categories
 list-package-categories:
-    nix eval .#packageCategories --json | jq '.[] | {name, description, size}'
+    nix eval .#lib.packageCategories --json | jq '.[] | {name, description, size}'
 
 # Search for packages
 search-packages TERM:
-    nix eval .#searchPackages --apply "f: f \"{{TERM}}\"" --json | jq
+    nix eval .#lib.searchPackages --apply "f: f \"{{TERM}}\"" --json | jq
 
 # Validate package combination for host (interactive selection if no HOST provided)
 validate-packages HOST="":
