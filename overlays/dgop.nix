@@ -1,6 +1,6 @@
 # Overlay to provide dgop package for dank-material-shell
 # dgop (DANK GNOME Online Provider) integrates GNOME Online Accounts
-final: prev: {
+_final: prev: {
   dgop = prev.stdenv.mkDerivation {
     pname = "dgop-placeholder";
     version = "0.0.1";
