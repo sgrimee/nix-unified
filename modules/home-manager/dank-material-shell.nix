@@ -23,7 +23,7 @@
       };
 
       # Add default configuration to prevent dms run failures
-      default.settings = {
+      settings = {
         currentThemeName = "blue";
         use24HourClock = true;
         showSeconds = false;
@@ -41,7 +41,7 @@
         animationSpeed = 2;
       };
 
-      default.session = {
+      session = {
         wallpaperFillMode = "PreserveAspectCrop";
       };
 
