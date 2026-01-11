@@ -18,6 +18,7 @@ in rec {
         homerowMods = false;
         remapCapsLock = false;
         mapSpaceToMew = false;
+        navigationLayer = false;
         swapAltCommand = false;
       };
       timing = {
@@ -41,6 +42,7 @@ in rec {
         homerowMods = false;
         remapCapsLock = false;
         mapSpaceToMew = false;
+        navigationLayer = false;
         swapAltCommand = true;
       };
       timing = {
@@ -64,6 +66,7 @@ in rec {
         homerowMods = false;
         remapCapsLock = false;
         mapSpaceToMew = false;
+        navigationLayer = false;
         swapAltCommand = true;
       };
       timing = {
@@ -87,6 +90,7 @@ in rec {
         homerowMods = true;
         remapCapsLock = true;
         mapSpaceToMew = false;
+        navigationLayer = true;
         swapAltCommand = true;
       };
       timing = {
