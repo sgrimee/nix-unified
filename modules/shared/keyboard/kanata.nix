@@ -122,11 +122,11 @@ with lib; {
     # Build navigation layer
     navLayer = let
       # Navigation layer only needs entries for keys that differ from base
-      # The defsrc order is: caps a s d f j k l ;
-      # We want: _ _ _ _ _ left down up right
+      # The defsrc order is: caps a s d f j k l ; tab
+      # We want: _ _ _ _ _ left down up right _
       navLayerMapping =
         if needsNavLayer
-        then "_ _ _ _ _ left down up right"
+        then "_ _ _ _ _ left down up right _"
         else "";
     in
       navLayerMapping;
