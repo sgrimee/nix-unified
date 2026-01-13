@@ -36,6 +36,15 @@ in {
       SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0666", GROUP="adbusers"
       # Amazon Lab126 Echo Show 8
       SUBSYSTEM=="usb", ATTR{idVendor}=="1949", ATTR{idProduct}=="0338", MODE="0666", GROUP="adbusers"
+      # MediaTek BROM/Preloader
+      SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="0003", MODE="0666", GROUP="plugdev"
+      SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="2000", MODE="0666", GROUP="plugdev"
+      SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="2001", MODE="0666", GROUP="plugdev"
+      SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="20ff", MODE="0666", GROUP="plugdev"
+      # Generic MediaTek
+      SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", MODE="0666", GROUP="plugdev"
+      # Samsung in download mode
+      SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", MODE="0666", GROUP="plugdev"
     '';
   };
 }
