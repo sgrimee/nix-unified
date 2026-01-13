@@ -729,6 +729,12 @@
 
     # Virtualization modules
     virtualizationModules = lib.flatten [
+      # Base virtualization (libvirtd, QEMU, virt-manager)
+      (
+        if resolvedCapabilities.virtualization.baseVirtualization or false
+        then moduleMapping.virtualizationModules.baseVirtualization.${platform} or []
+        else []
+      )
       # Windows GPU Passthrough
       (
         if resolvedCapabilities.virtualization.windowsGpuPassthrough or false

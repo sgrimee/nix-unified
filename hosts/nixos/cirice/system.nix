@@ -72,6 +72,10 @@
   # Configure Android development users
   android-dev.users = ["sgrimee"];
 
+  # Base virtualization is provided by modules/nixos/virtualization/base.nix
+  # via baseVirtualization capability - includes libvirtd, QEMU, virt-manager,
+  # and on-demand default network service (systemctl start libvirt-default-network)
+
   # Base system is optimized for gaming (was native-gaming specialization)
   # Disable GPU passthrough in base system - enable only in vm-passthrough specialization
   virtualization.windowsGpuPassthrough.enable = false;
@@ -91,7 +95,8 @@
     ];
   };
 
-  # Gaming performance optimizations
+  # Gaming performance optimizations - set CPU governor to performance
+  # MediaTek and Samsung udev rules are provided by android-dev.nix
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="cpu", KERNEL=="cpu[0-9]*", ATTR{cpufreq/scaling_governor}="performance"
   '';

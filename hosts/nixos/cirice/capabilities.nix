@@ -77,8 +77,8 @@
 
   # Virtualization capabilities
   virtualization = {
-    windowsGpuPassthrough =
-      true; # GPU passthrough with Looking Glass for Windows VMs
+    baseVirtualization = true; # Base libvirtd, QEMU, virt-manager
+    windowsGpuPassthrough = true; # GPU passthrough with Looking Glass for Windows VMs
   };
 
   # Security and access control
