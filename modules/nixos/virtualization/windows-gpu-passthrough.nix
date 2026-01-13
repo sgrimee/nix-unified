@@ -45,7 +45,7 @@ in {
     virtualisation.libvirtd = {
       enable = true;
       qemu = {
-        package = pkgs.qemu_kvm;
+        package = lib.mkForce pkgs.qemu_kvm;
         runAsRoot = true;
         swtpm.enable = true;
         # OVMF is now enabled by default in NixOS 25.11
