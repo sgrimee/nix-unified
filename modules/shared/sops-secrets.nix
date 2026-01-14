@@ -17,5 +17,12 @@
         then "staff"
         else "users";
     };
+    "claude_code_oauth_token" = {
+      owner = "sgrimee";
+      group =
+        if pkgs.stdenv.isDarwin
+        then "staff"
+        else "users";
+    };
   };
 }

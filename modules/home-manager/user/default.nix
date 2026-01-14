@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ../claude-code-oauth.nix # Load Claude Code OAuth token from sops
     ./dotfiles # copy dotfiles into home
     ./fonts.nix # unified fonts configuration for both Darwin and NixOS
     ./k8s-dev.nix
