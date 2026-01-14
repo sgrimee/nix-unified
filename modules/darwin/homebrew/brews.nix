@@ -1,5 +1,4 @@
 {...}: [
-  "borders" # macOS window border utility
   "bun" # Fast JavaScript runtime and package manager
   "dua-cli" # Disk usage analyzer with interactive mode
   "mongodb/brew/mongodb-database-tools" # MongoDB command-line database tools

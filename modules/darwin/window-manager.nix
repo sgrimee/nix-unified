@@ -11,6 +11,15 @@
     };
   };
 
+  # Homebrew configuration for borders
+  # Borders provides visual window border highlighting
+  # Note: tap 'felixkratz/formulae' is in modules/darwin/homebrew/taps.nix
+  homebrew = {
+    brews = [
+      "borders" # macOS window border utility
+    ];
+  };
+
   services = {
     # AeroSpace tiling window manager
     aerospace = {

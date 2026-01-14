@@ -55,6 +55,7 @@
     };
     terminal = "ghostty"; # Preferred terminal emulator
     windowManager = "aerospace"; # Aerospace window manager
+    # windowManager = "omniwm";
   };
 
   # Service configurations

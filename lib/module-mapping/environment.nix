@@ -116,6 +116,16 @@
         darwin = [../../modules/darwin/window-manager.nix];
         homeManager = [];
       };
+      omniwm = {
+        nixos = [];
+        darwin = [../../modules/darwin/omniwm.nix];
+        homeManager = [];
+      };
+      yabai = {
+        nixos = [];
+        darwin = []; # Placeholder for future yabai support
+        homeManager = [];
+      };
     };
 
     bar = {

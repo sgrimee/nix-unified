@@ -254,7 +254,7 @@
 
       # Window manager (Darwin only - for window management overlay)
       windowManager = {
-        type = lib.types.nullOr (lib.types.enum ["aerospace" "i3" "sway"]);
+        type = lib.types.nullOr (lib.types.enum ["aerospace" "omniwm" "yabai" "i3" "sway"]);
         default = null;
         description = "Window manager (Darwin only)";
       };
