@@ -1,6 +1,49 @@
 # Window Manager Module - AeroSpace + JankyBorders
 # Combined configuration for tiling window management and window borders
-{pkgs, ...}: {
+#
+# AEROSPACE LAUNCH MECHANISM:
+# ===========================
+# Aerospace is launched exclusively via launchd (not homebrew, not manual startup).
+# The service is auto-generated at ~/Library/LaunchAgents/org.nixos.aerospace.plist
+# with the following properties:
+#   - RunAtLoad: true  -> Starts on login
+#   - KeepAlive: false -> Does NOT auto-restart on crash (manual restart required)
+#
+# Binary location: /run/current-system/sw/bin/aerospace (symlink to Nix store)
+# Config location: /nix/store/...-aerospace.toml (auto-generated from settings below)
+#
+# SIMPLE-BAR INTEGRATION:
+# =======================
+# Simple-bar (Übersicht widget) integrates with aerospace via CLI commands.
+# IMPORTANT: Configure the aerospace path in simple-bar settings UI:
+#   1. Click simple-bar on an empty workspace
+#   2. Press cmd+, to open settings
+#   3. Go to Global tab
+#   4. Set "Aerospace Path" to: /run/current-system/sw/bin/aerospace
+#
+# The default in simple-bar code is /opt/homebrew/bin/aerospace (incorrect for Nix).
+# Setting it correctly in the UI ensures simple-bar can call aerospace commands.
+#
+# PREVENTING CONFLICTS:
+# =====================
+# - DO NOT install aerospace via homebrew (commented out in homebrew/casks.nix)
+# - Only one aerospace instance should run (managed by launchd service)
+# - Simple-bar does NOT launch aerospace; it only calls the CLI for queries
+#
+# MANUAL RESTART:
+# ===============
+# With KeepAlive = false, aerospace won't auto-restart on crash.
+# To manually restart aerospace:
+#   aerospace-restart  # Shell alias (defined in this module)
+# Or directly:
+#   launchctl kickstart -k gui/$(id -u)/org.nixos.aerospace
+#
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}: {
   # Add aerospace CLI to system packages
   environment.systemPackages = with pkgs; [aerospace];
 
@@ -242,6 +285,18 @@
       inactive_color = "0xff494d64"; # Dark gray for inactive windows
       width = 10.0;
       hidpi = true; # Enable for retina displays
+    };
+  };
+
+  # Override the default aerospace launchd service to disable auto-restart
+  # The nix-darwin aerospace module sets KeepAlive = true by default,
+  # but we want to disable auto-restart on crash to prevent multiple instances
+  launchd.user.agents.aerospace.serviceConfig.KeepAlive = lib.mkForce false;
+
+  # Shell alias for manually restarting aerospace
+  home-manager.users.${config.system.primaryUser} = {
+    home.shellAliases = {
+      aerospace-restart = "launchctl kickstart -k gui/$(id -u)/org.nixos.aerospace";
     };
   };
 }
