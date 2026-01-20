@@ -2,23 +2,21 @@
 # macOS tiling window manager inspired by Niri and Hyprland
 # Requires macOS 26+ (Tahoe)
 # Configuration is done via OmniWM's GUI settings
-{...}: {
-  # Install OmniWM via Homebrew
-  # Note: tap 'BarutSRB/tap' is in modules/darwin/homebrew/taps.nix
-  homebrew = {
-    casks = [
-      "omniwm" # macOS tiling window manager
-    ];
-  };
+{
+  config,
+  lib,
+  ...
+}: {
+  # Package installation handled by window-managers-base.nix
 
   # Start OmniWM at login via launchd
-  launchd.user.agents.omniwm = {
-    serviceConfig = {
-      Label = "com.barutsrb.omniwm";
-      ProgramArguments = ["/usr/bin/open" "-a" "OmniWM"];
-      RunAtLoad = true;
-      KeepAlive = false; # Don't restart if user quits intentionally
-    };
+  # Launch agent always exists, but RunAtLoad is conditional
+  # Only auto-starts when omniwm is the selected window manager
+  launchd.user.agents.omniwm.serviceConfig = {
+    Label = "com.barutsrb.omniwm";
+    ProgramArguments = ["/usr/bin/open" "-a" "OmniWM"];
+    RunAtLoad = (config.capabilities.environment.windowManager or null) == "omniwm";
+    KeepAlive = false; # Don't restart if user quits intentionally
   };
 
   # OmniWM uses GUI-based configuration, no dotfiles needed

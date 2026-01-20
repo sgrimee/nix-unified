@@ -113,12 +113,18 @@
       };
       aerospace = {
         nixos = [];
-        darwin = [../../modules/darwin/window-manager.nix];
+        darwin = [
+          ../../modules/darwin/window-managers-base.nix
+          ../../modules/darwin/window-manager.nix
+        ];
         homeManager = [];
       };
       omniwm = {
         nixos = [];
-        darwin = [../../modules/darwin/omniwm.nix];
+        darwin = [
+          ../../modules/darwin/window-managers-base.nix
+          ../../modules/darwin/omniwm.nix
+        ];
         homeManager = [];
       };
       yabai = {

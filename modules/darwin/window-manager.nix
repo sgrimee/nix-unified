@@ -44,8 +44,7 @@
   config,
   ...
 }: {
-  # Add aerospace CLI to system packages
-  environment.systemPackages = with pkgs; [aerospace];
+  # Package installation handled by window-managers-base.nix
 
   # System defaults for menu bar (used by simple-bar)
   system.defaults.CustomUserPreferences = {
@@ -57,6 +56,7 @@
   # Homebrew configuration for borders
   # Borders provides visual window border highlighting
   # Note: tap 'felixkratz/formulae' is in modules/darwin/homebrew/taps.nix
+  # Borders is always installed but only launched when aerospace is active
   homebrew = {
     brews = [
       "borders" # macOS window border utility
@@ -65,6 +65,8 @@
 
   services = {
     # AeroSpace tiling window manager
+    # Always enabled to ensure launch agent exists
+    # RunAtLoad is conditional based on selected window manager
     aerospace = {
       enable = true;
       settings = {
@@ -288,10 +290,26 @@
     };
   };
 
-  # Override the default aerospace launchd service to disable auto-restart
-  # The nix-darwin aerospace module sets KeepAlive = true by default,
-  # but we want to disable auto-restart on crash to prevent multiple instances
-  launchd.user.agents.aerospace.serviceConfig.KeepAlive = lib.mkForce false;
+  # Override the default aerospace launchd service configuration
+  # - Disable auto-restart on crash (KeepAlive = false) to prevent multiple instances
+  # - Only run at load when aerospace is the selected window manager
+  launchd.user.agents.aerospace.serviceConfig = {
+    KeepAlive = lib.mkForce false;
+    RunAtLoad = lib.mkForce ((config.capabilities.environment.windowManager or null) == "aerospace");
+  };
+
+  # Borders launch agent - only runs when aerospace is active
+  # Borders is installed via Homebrew but needs to be launched as a service
+  launchd.user.agents.borders = lib.mkIf ((config.capabilities.environment.windowManager or null) == "aerospace") {
+    serviceConfig = {
+      Label = "com.felixkratz.borders";
+      ProgramArguments = ["/opt/homebrew/bin/borders"];
+      RunAtLoad = true;
+      KeepAlive = true; # Auto-restart borders if it crashes
+      StandardOutPath = "/tmp/borders.out.log";
+      StandardErrorPath = "/tmp/borders.err.log";
+    };
+  };
 
   # Shell alias for manually restarting aerospace
   home-manager.users.${config.system.primaryUser} = {
