@@ -11,6 +11,9 @@
 #
 # Binary location: /run/current-system/sw/bin/aerospace (symlink to Nix store)
 # Config location: /nix/store/...-aerospace.toml (auto-generated from settings below)
+# Config symlink: ~/.aerospace.toml -> /nix/store/...-aerospace.toml
+#   - Ensures Finder-launched aerospace uses the same Nix-managed config
+#   - Home-manager creates and maintains this symlink
 #
 # SIMPLE-BAR INTEGRATION:
 # =======================
@@ -42,8 +45,43 @@
   pkgs,
   lib,
   config,
+  hostCapabilities ? {},
   ...
-}: {
+}: let
+  # Filter out null values recursively (same logic as aerospace service module)
+  filterAttrsRecursive = pred: set:
+    lib.listToAttrs (
+      lib.concatMap (
+        name: let
+          v = set.${name};
+        in
+          if pred v
+          then [
+            (lib.nameValuePair name (
+              if lib.isAttrs v
+              then filterAttrsRecursive pred v
+              else if lib.isList v
+              then
+                (map (i:
+                  if lib.isAttrs i
+                  then filterAttrsRecursive pred i
+                  else i)
+                (lib.filter pred v))
+              else v
+            ))
+          ]
+          else []
+      ) (lib.attrNames set)
+    );
+  filterNulls = filterAttrsRecursive (v: v != null);
+
+  # Generate aerospace config from service settings
+  # This creates the same config file that the aerospace service uses
+  format = pkgs.formats.toml {};
+  aerospaceConfig =
+    format.generate "aerospace.toml"
+    (filterNulls config.services.aerospace.settings);
+in {
   # Package installation handled by window-managers-base.nix
 
   # System defaults for menu bar (used by simple-bar)
@@ -295,12 +333,12 @@
   # - Only run at load when aerospace is the selected window manager
   launchd.user.agents.aerospace.serviceConfig = {
     KeepAlive = lib.mkForce false;
-    RunAtLoad = lib.mkForce ((config.capabilities.environment.windowManager or null) == "aerospace");
+    RunAtLoad = lib.mkForce ((hostCapabilities.environment.windowManager or null) == "aerospace");
   };
 
   # Borders launch agent - only runs when aerospace is active
   # Borders is installed via Homebrew but needs to be launched as a service
-  launchd.user.agents.borders = lib.mkIf ((config.capabilities.environment.windowManager or null) == "aerospace") {
+  launchd.user.agents.borders = lib.mkIf ((hostCapabilities.environment.windowManager or null) == "aerospace") {
     serviceConfig = {
       Label = "com.felixkratz.borders";
       ProgramArguments = ["/opt/homebrew/bin/borders"];
@@ -316,5 +354,9 @@
     home.shellAliases = {
       aerospace-restart = "launchctl kickstart -k gui/$(id -u)/org.nixos.aerospace";
     };
+
+    # Create symlink from ~/.aerospace.toml to Nix-generated config
+    # This ensures Finder-launched aerospace uses the same config as the launch agent
+    home.file.".aerospace.toml".source = aerospaceConfig;
   };
 }

@@ -5,6 +5,7 @@
 {
   config,
   lib,
+  hostCapabilities ? {},
   ...
 }: {
   # Package installation handled by window-managers-base.nix
@@ -15,7 +16,7 @@
   launchd.user.agents.omniwm.serviceConfig = {
     Label = "com.barutsrb.omniwm";
     ProgramArguments = ["/usr/bin/open" "-a" "OmniWM"];
-    RunAtLoad = (config.capabilities.environment.windowManager or null) == "omniwm";
+    RunAtLoad = (hostCapabilities.environment.windowManager or null) == "omniwm";
     KeepAlive = false; # Don't restart if user quits intentionally
   };
 

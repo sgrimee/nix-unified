@@ -2,17 +2,18 @@
   config,
   lib,
   pkgs,
+  hostCapabilities ? {},
   ...
 }: {
   # General AMD graphics support for any AMD GPU hardware
-  config = lib.mkIf (config.capabilities or {} != {} && (config.capabilities.hardware.gpu or null) == "amd") {
+  config = lib.mkIf (hostCapabilities != {} && (hostCapabilities.hardware.gpu or null) == "amd") {
     # Basic AMD graphics support
     hardware.graphics = {
       enable = true;
       extraPackages = with pkgs; [
         mesa
         libva
-        vaapiVdpau
+        libva-vdpau-driver
       ];
     };
 

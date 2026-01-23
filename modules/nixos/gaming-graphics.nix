@@ -2,22 +2,21 @@
   config,
   lib,
   pkgs,
+  hostCapabilities ? {},
   ...
 }: {
   # Only enable when gaming capability is active
-  config = lib.mkIf (config.capabilities.features.gaming or false) {
+  config = lib.mkIf (hostCapabilities.features.gaming or false) {
     hardware.graphics = {
       enable = true;
       enable32Bit = true;
       extraPackages = with pkgs; [
         mesa
-        amdvlk # AMD Vulkan driver
         libva
-        vaapiVdpau
+        libva-vdpau-driver
       ];
       extraPackages32 = with pkgs.pkgsi686Linux; [
         mesa
-        amdvlk
       ];
     };
 

@@ -1,9 +1,10 @@
 {
   config,
   lib,
+  hostCapabilities ? {},
   ...
 }: {
-  config = lib.mkIf (config.capabilities.features.gaming or false) {
+  config = lib.mkIf (hostCapabilities.features.gaming or false) {
     # CPU performance governor for gaming
     services.udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="cpu", KERNEL=="cpu[0-9]*", ATTR{cpufreq/scaling_governor}="performance"
