@@ -7,5 +7,7 @@
   "pam-reattach" # Reattach to user namespace on macOS
   "postgresql@17"
   "sgrimee/tap/webex-tui" # Terminal UI for Webex
+  "steipete/tap/imsg" # iMessage CLI - send and read iMessage/SMS from terminal
+  "steipete/tap/remindctl" # Apple Reminders CLI
   "uv" # Fast Python package manager
 ]
