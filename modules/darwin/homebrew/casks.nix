@@ -44,18 +44,18 @@
   # Media & Entertainment
   "spotify" # Music streaming service
   "vlc" # VLC media player
-  "plex" # Media server and streaming platform
+  # "plex" # Media server and streaming platform
   "sonos" # Sonos speaker system controller
-  "guitar-pro" # Guitar tablature editor
+  # "guitar-pro" # Guitar tablature editor
   "loopback" # Virtual audio routing
   # "midi-monitor" # MIDI message monitoring tool
-  "music-assistant/tap/companion" # Music Assistant companion app
+  # "music-assistant/tap/companion" # Music Assistant companion app
 
   # Gaming
-  "steam" # Steam gaming platform
-  "curseforge" # Minecraft mod manager
+  # "steam" # Steam gaming platform
+  # "curseforge" # Minecraft mod manager
 
-  "utm" # Virtual machine manager
+  # "utm" # Virtual machine manager
 
   # System Utilities
   "karabiner-elements" # Keyboard customization tool REQUIRED BY KANATA
@@ -70,8 +70,8 @@
 
   # Networking & System Tools
   # "wifi-explorer" # WiFi network analysis tool
-  "wireshark-app" # Network protocol analyzer
-  "cocoapacketanalyzer" # Network packet analyzer
+  # "wireshark-app" # Network protocol analyzer
+  # "cocoapacketanalyzer" # Network packet analyzer
   "mqtt-explorer" # MQTT client and message explorer
   "synology-surveillance-station-client" # Synology surveillance system client
   "winbox" # MikroTik RouterOS configuration tool
@@ -90,7 +90,7 @@
 
   # Music Production
   # "arturia-software-center" # Arturia software and driver manager
-  "ableton-live-suite" # Digital audio workstation
+  # "ableton-live-suite" # Digital audio workstation
 
   # Smart Home & IoT
   "home-assistant" # Home automation platform
@@ -99,6 +99,9 @@
   "tqsl" # Trusted QSL certificate manager
   "macloggerdx" # Ham radio logging software
   # "qth"                                  # Ham radio QTH locator
+
+  # Apple App Utilities
+  "memo" # Access Apple Reminders and Notes from the menu bar
 
   # Media Management
   "notunes" # Prevent iTunes from launching
