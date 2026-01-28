@@ -15,7 +15,7 @@ in {
       buildMachinesLib.mkHostKeys enabledMachines;
 
     # Configure Determinate Nix with remote builders
-    determinate-nix.customSettings = {
+    determinateNix.customSettings = {
       builders-use-substitutes = true;
       builders = buildMachinesLib.mkDarwinBuilders enabledMachines;
       # Short timeouts to avoid hanging on unreachable builders

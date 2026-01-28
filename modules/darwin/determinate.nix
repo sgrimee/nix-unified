@@ -12,7 +12,7 @@ in {
   nix.enable = lib.mkForce false;
 
   # Determinate Nix custom settings using shared configuration
-  determinate-nix.customSettings =
+  determinateNix.customSettings =
     darwin.customSettings
     // {
       # Capability-based settings from shared config
