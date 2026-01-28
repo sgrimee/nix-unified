@@ -3,24 +3,31 @@ final: prev: {
     name = "update-coding-agents";
     runtimeInputs = [];
     text = ''
-      # Check if npm is available
-      if ! command -v npm >/dev/null 2>&1; then
-        echo "Error: npm is not available in PATH"
-        echo "On NixOS: Install nodejs via package manager"
-        echo "On Darwin: Install via Homebrew (brew install node)"
-        exit 1
+      # Update Claude Code
+      if ! command -v claude >/dev/null 2>&1; then
+        echo "Warning: claude is not available in PATH"
+        echo "Skipping Claude Code update"
+      else
+        echo "========== Updating Claude Code =========="
+        claude update
       fi
 
-      echo "========== Installed Versions =========="
-      npm list -g --depth=0 | grep @anthropic-ai/claude-code || echo "@anthropic-ai/claude-code: not installed"
-      npm list -g --depth=0 | grep opencode-ai || echo "opencode-ai: not installed"
+      echo ""
 
-      echo "========== Updating Packages =========="
-      npm install -g @anthropic-ai/claude-code@latest opencode-ai@latest
+      # Update OpenCode AI
+      if ! command -v npm >/dev/null 2>&1; then
+        echo "Warning: npm is not available in PATH"
+        echo "Skipping OpenCode AI update"
+      else
+        echo "========== OpenCode AI: Installed Version =========="
+        npm list -g --depth=0 | grep opencode-ai || echo "opencode-ai: not installed"
 
-      echo "========== Updated Versions =========="
-      npm list -g --depth=0 | grep @anthropic-ai/claude-code
-      npm list -g --depth=0 | grep opencode-ai
+        echo "========== Updating OpenCode AI =========="
+        npm install -g opencode-ai@latest
+
+        echo "========== OpenCode AI: Updated Version =========="
+        npm list -g --depth=0 | grep opencode-ai
+      fi
     '';
     meta = with final.lib; {
       description = "Update Claude Code and OpenCode AI packages to latest versions";
