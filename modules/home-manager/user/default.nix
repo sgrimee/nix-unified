@@ -40,6 +40,7 @@
       ];
 
     shellAliases = {
+      caipi = "ssh -L 18789:127.0.0.1:18789 -t caipi.local /home/sgrimee/.npm-global/bin/clawdbot tui";
       cw = "cargo watch -q -c -x check";
       gst = "git status";
       history = "history 1";
