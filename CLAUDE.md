@@ -130,6 +130,8 @@ For complete command reference, see [README.md](README.md).
 2. **Make changes** and test locally
 3. **Stage changes** only when explicitly instructed
 4. **Commit** with descriptive messages (never mention AI) only when explicitly instructed
+   - **NEVER add `Co-Authored-By: Claude Sonnet ...` lines to commit messages**
+   - Keep commit messages simple and descriptive without any AI attribution
 5. **Push** - do not try to push changes, the user takes care of it.
 
 ## AI Assistant Operational Guidelines
