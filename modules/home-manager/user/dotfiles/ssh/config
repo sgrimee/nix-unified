@@ -16,6 +16,7 @@ Host *
   ServerAliveCountMax 3
   ServerAliveInterval 0
   UseKeychain yes
+  EnableEscapeCommandline yes
   UserKnownHostsFile ~/.ssh/known_hosts
 
 Host wap.* rtr-* ptmp* ptp-* lx2sg-rtr-* sxt-* ampr-gw* *.lx1duc.radio
