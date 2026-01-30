@@ -31,7 +31,6 @@
   "omnifocus" # Task and project management
   "busycal" # Calendar application
   "devonthink" # Document management and research
-  "textsniper" # Extract text from images and documents
   "shortcat" # Keyboard navigation for macOS
 
   # Microsoft Office Suite
